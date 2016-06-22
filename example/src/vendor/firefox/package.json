@@ -1,0 +1,18 @@
+{
+  "name": "mono_test",
+  "title": "Mono test!",
+  "id": "jid1-FMEmmdEbaUBgig@jetpack",
+  "description": "Mono test desc",
+  "preferences": [
+    {
+      "title": "control",
+      "type": "control",
+      "name": "settingsBtn",
+      "label": "Settings"
+    }
+  ],
+  "author": "Anton V.",
+  "license": "MPL 2.0",
+  "version": "1.0.0",
+  "main": "lib/main.js"
+}

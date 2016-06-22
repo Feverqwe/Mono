@@ -1,0 +1,13 @@
+{
+  "name": "mono",
+  "version": "1.0.0",
+  "description": "Mono cross-browser engine",
+  "dependencies": {
+    "grunt-contrib-clean": "^1.0.0",
+    "js-beautify": "^1.6.3",
+    "grunt": "^1.0.1"
+  },
+  "globalDep": {
+    "grunt-cli": ""
+  }
+}

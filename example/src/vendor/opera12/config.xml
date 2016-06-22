@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="leonardspbox@gmail.com" version="0.1" xmlns="http://www.w3.org/ns/widgets">
+    <name>Mono test</name>
+    <description>Mono test</description>
+    <author email="leonardspbox@gmail.com">Anton V.</author>
+    <icon src="icons/icon-18.png"/>
+</widget>

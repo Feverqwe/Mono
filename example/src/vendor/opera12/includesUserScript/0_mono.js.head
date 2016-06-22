@@ -1,0 +1,4 @@
+// ==UserScript==
+// @include     http://ya.ru/*
+// @include     https://ya.ru/*
+// ==/UserScript==

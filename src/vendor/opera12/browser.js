@@ -1,0 +1,313 @@
+var browserApi = function () {
+    "use strict";
+    var isInject = typeof opera.extension.broadcastMessage === 'undefined';
+    var inLocalScope = /^widget:\/\//.test(window.location && window.location.href);
+
+    var emptyFn = function () {};
+
+    /**
+     * @param {Function} fn
+     * @returns {Function}
+     */
+    var onceFn = function (fn) {
+        return function (msg) {
+            if (fn) {
+                fn(msg);
+                fn = null;
+            }
+        };
+    };
+
+    var msgTools = {
+        id: 0,
+        idPrefix: Math.floor(Math.random() * 1000),
+        /**
+         * @returns {String}
+         */
+        getId: function () {
+            return this.idPrefix + '_' + (++this.id);
+        },
+        /**
+         * @typedef {Object} Source
+         * @property {Function} postMessage
+         */
+        /**
+         * @param {string} id
+         * @param {Source} source
+         * @returns {Function}
+         */
+        asyncSendResponse: function (id, source) {
+            return function (message) {
+                message.responseId = id;
+
+                source.postMessage(message);
+            };
+        },
+        listenerList: [],
+        /**
+         * @typedef {Object} MonoMsg
+         * @property {boolean} mono
+         * @property {string} [hook]
+         * @property {string} idPrefix
+         * @property {string} [callbackId]
+         * @property {string} [responseId]
+         * @property {boolean} hasCallback
+         * @property {*} data
+         */
+        /**
+         * @param {Object} event
+         * @param {MonoMsg} event.data
+         * @param {Source} event.source
+         */
+        listener: function (event) {
+            var _this = msgTools;
+            var sendResponse = null;
+            var message = event.data;
+            if (message && message.mono && !message.responseId && message.idPrefix !== _this.idPrefix) {
+                if (message.isBroadcast && !inLocalScope) {
+                    return;
+                }
+
+                if (!message.hasCallback) {
+                    sendResponse = emptyFn;
+                } else {
+                    sendResponse = _this.asyncSendResponse(message.callbackId, event.source);
+                }
+
+                var responseFn = onceFn(function (msg) {
+                    var message = _this.wrap(msg);
+                    sendResponse(message);
+                    sendResponse = null;
+                });
+
+                _this.listenerList.forEach(function (fn) {
+                    if (message.hook === fn.hook) {
+                        fn(message.data, responseFn);
+                    }
+                });
+            }
+        },
+        async: {},
+        /**
+         * @param {Object} event
+         * @param {MonoMsg} event.data
+         * @param {Source} event.source
+         */
+        asyncListener: function (event) {
+            var _this = msgTools;
+            var message = event.data;
+            if (message && message.mono && message.responseId && message.idPrefix !== _this.idPrefix) {
+                var fn = _this.async[message.responseId];
+                if (fn) {
+                    delete _this.async[message.responseId];
+                    if (!Object.keys(_this.async).length) {
+                        opera.extension.removeEventListener('message', this.asyncListener);
+                    }
+
+                    fn(message.data);
+                }
+            }
+        },
+        /**
+         * @param {*} [msg]
+         * @returns {MonoMsg}
+         */
+        wrap: function (msg) {
+            return {
+                mono: true,
+                data: msg,
+                idPrefix: this.idPrefix
+            };
+        },
+        /**
+         * @param {string} id
+         * @param {Function} responseCallback
+         */
+        wait: function (id, responseCallback) {
+            this.async[id] = responseCallback;
+
+            opera.extension.addEventListener('message', this.asyncListener);
+        }
+    };
+
+    var api = {
+        isOpera: true,
+        /**
+         * @param {*} msg
+         * @param {Function} [responseCallback]
+         */
+        sendMessageToActiveTab: function (msg, responseCallback) {
+            var currentTab = opera.extension.tabs.getSelected();
+            if (currentTab) {
+                var message = msgTools.wrap(msg);
+
+                var hasCallback = !!responseCallback;
+                message.hasCallback = hasCallback;
+                if (hasCallback) {
+                    message.callbackId = msgTools.getId();
+                    msgTools.wait(message.callbackId, responseCallback);
+                }
+
+                currentTab.postMessage(message);
+            }
+        },
+        /**
+         * @param {*} msg
+         * @param {Function} [responseCallback]
+         * @param {String} [hook]
+         */
+        sendMessage: function (msg, responseCallback, hook) {
+            var message = msgTools.wrap(msg);
+            hook && (message.hook = hook);
+
+            var hasCallback = !!responseCallback;
+            message.hasCallback = hasCallback;
+            if (hasCallback) {
+                message.callbackId = msgTools.getId();
+                msgTools.wait(message.callbackId, responseCallback);
+            }
+
+            if (isInject) {
+                opera.extension.postMessage(message);
+            } else {
+                message.isBroadcast = true;
+                opera.extension.broadcastMessage(message);
+            }
+        },
+        onMessage: {
+            /**
+             * @param {Function} callback
+             * @param {Object} [details]
+             */
+            addListener: function (callback, details) {
+                details = details || {};
+                details.hook && (callback.hook = details.hook);
+
+                msgTools.listenerList.push(callback);
+
+                opera.extension.addEventListener('message', msgTools.listener);
+            },
+            /**
+             * @param {Function} callback
+             */
+            removeListener: function(callback) {
+                var pos = msgTools.listenerList.indexOf(callback);
+                if (pos !== -1) {
+                    msgTools.listenerList.splice(pos, 1);
+                }
+
+                if (!msgTools.listenerList.length) {
+                    opera.extension.removeEventListener('message', msgTools.listener);
+                }
+            }
+        }
+    };
+
+    var initWidgetPreferences = function () {
+        var localStorage = widget.preferences;
+
+        var readItem = function (value) {
+            var result = undefined;
+            if (typeof value === 'string') {
+                try {
+                    result = JSON.parse(value).w;
+                } catch (e) {
+                    console.error('WidgetPreferences item read error!', e, value);
+                }
+            }
+            return result;
+        };
+
+        var writeItem = function (value) {
+            return JSON.stringify({w: value});
+        };
+
+        return {
+            /**
+             * @param {String|[String]|Object|null|undefined} [keys]
+             * @param {Function} callback
+             */
+            get: function (keys, callback) {
+                var items = {};
+                var defaultItems = {};
+
+                var _keys = [];
+                if (keys === undefined || keys === null) {
+                    _keys = Object.keys(localStorage);
+                } else
+                if (Array.isArray(keys)) {
+                    _keys = keys;
+                } else
+                if (typeof keys === 'object') {
+                    _keys = Object.keys(keys);
+                    defaultItems = keys;
+                } else {
+                    _keys = [keys];
+                }
+
+                _keys.forEach(function (key) {
+                    var value = readItem(localStorage.getItem(key));
+                    if (value === undefined) {
+                        value = defaultItems[key];
+                    }
+                    if (value !== undefined) {
+                        items[key] = value;
+                    }
+                });
+
+                setTimeout(function () {
+                    callback(items);
+                }, 0);
+            },
+            /**
+             * @param {Object} items
+             * @param {Function} [callback]
+             */
+            set: function (items, callback) {
+                Object.keys(items).forEach(function (key) {
+                    if (items[key] !== undefined) {
+                        localStorage.setItem(key, writeItem(items[key]));
+                    }
+                });
+
+                callback && setTimeout(function () {
+                    callback();
+                }, 0);
+            },
+            /**
+             * @param {String|[String]} [keys]
+             * @param {Function} [callback]
+             */
+            remove: function (keys, callback) {
+                var _keys = [];
+                if (Array.isArray(keys)) {
+                    _keys = keys;
+                } else {
+                    _keys = [keys];
+                }
+
+                _keys.forEach(function (key) {
+                    localStorage.removeItem(key);
+                });
+
+                callback && setTimeout(function () {
+                    callback();
+                }, 0);
+            },
+            /**
+             * @param {Function} [callback]
+             */
+            clear: function (callback) {
+                localStorage.clear();
+
+                callback && setTimeout(function () {
+                    callback();
+                }, 0);
+            }
+        };
+    };
+
+    api.storage = initWidgetPreferences();
+
+    return api;
+};
