@@ -64,7 +64,9 @@
           if (!list) {
             list = subscribClientList[to] = [];
           }
-          list.push(cb);
+          if (list.indexOf(cb) === -1) {
+            list.push(cb);
+          }
         },
         removeListener: function(to, cb) {
           var cbList = subscribClientList[to] || [];
@@ -96,7 +98,9 @@
           if (!list) {
             list = subscribServerList[to] = [];
           }
-          list.push(cb);
+          if (list.indexOf(cb) === -1) {
+            list.push(cb);
+          }
         },
         removeListener: function(to, cb) {
           var cbList = subscribServerList[to] || [];
