@@ -183,7 +183,9 @@ var browserApi = function () {
                 details = details || {};
                 details.hook && (callback.hook = details.hook);
 
-                msgTools.listenerList.push(callback);
+                if (msgTools.listenerList.indexOf(callback) === -1) {
+                    msgTools.listenerList.push(callback);
+                }
 
                 opera.extension.addEventListener('message', msgTools.listener);
             },

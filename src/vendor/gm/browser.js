@@ -75,7 +75,9 @@ var browserApi = function () {
                     listenerList = msgTools.listenerList;
                 }
 
-                listenerList.push(callback);
+                if (listenerList.indexOf(callback) === -1) {
+                    listenerList.push(callback);
+                }
             },
             /**
              * @param {Function} callback

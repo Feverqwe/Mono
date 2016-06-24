@@ -131,7 +131,9 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
             listenerList = msgTools.listenerList;
           }
 
-          listenerList.push(callback);
+          if (listenerList.indexOf(callback) === -1) {
+            listenerList.push(callback);
+          }
         },
         /**
          * @param {Function} callback

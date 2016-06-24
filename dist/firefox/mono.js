@@ -89,7 +89,9 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
             window.postMessage(msg, "*");
           },
           on: function(pageId, callback) {
-            this.listenerList.push(callback);
+            if (this.listenerList.indexOf(callback) === -1) {
+              this.listenerList.push(callback);
+            }
 
             window.addEventListener('monoMessage', this.listener);
           },
@@ -281,7 +283,9 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
           details = details || {};
           details.hook && (callback.hook = details.hook);
 
-          msgTools.listenerList.push(callback);
+          if (msgTools.listenerList.indexOf(callback) === -1) {
+            msgTools.listenerList.push(callback);
+          }
 
           browserAddon.port.on('mono', msgTools.listener);
         },
