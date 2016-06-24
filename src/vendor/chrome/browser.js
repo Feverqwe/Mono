@@ -165,7 +165,7 @@ var browserApi = function () {
                 } else {
                     return msgTools.wait(message.callbackId, responseCallback);
                 }
-            };
+            } || emptyFn; // < chrome 27 fix
         }
     };
 

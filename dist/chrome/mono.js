@@ -221,7 +221,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
           } else {
             return msgTools.wait(message.callbackId, responseCallback);
           }
-        };
+        } || emptyFn; // < chrome 27 fix
       }
     };
 
