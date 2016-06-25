@@ -36,6 +36,7 @@ module.exports = function (grunt) {
             },
             edge: {
                 useEdge: 1,
+                useLocalStorage: 1,
                 edgeForceDefineBgPage: 1
             }
         }
