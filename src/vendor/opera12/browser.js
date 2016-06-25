@@ -108,7 +108,7 @@ var browserApi = function () {
                 if (fn) {
                     delete _this.async[message.responseId];
                     if (!Object.keys(_this.async).length) {
-                        opera.extension.removeEventListener('message', this.asyncListener);
+                        opera.extension.removeEventListener('message', _this.asyncListener);
                     }
 
                     fn(message.data);
