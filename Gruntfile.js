@@ -49,7 +49,7 @@ module.exports = function (grunt) {
         return content;
     };
 
-    ['chrome', 'firefox', 'gm', 'opera12', 'safari'].forEach(function (browser) {
+    ['chrome', 'firefox', 'edge', 'gm', 'opera12', 'safari'].forEach(function (browser) {
         grunt.registerTask(browser, function () {
             var path = grunt.config('source') + 'components';
 
@@ -83,6 +83,7 @@ module.exports = function (grunt) {
         'chrome',
         'firefox',
         'firefoxLib',
+        'edge',
         'gm',
         'opera12',
         'safari'

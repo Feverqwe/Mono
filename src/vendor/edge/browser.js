@@ -1,17 +1,17 @@
 var browserApi = function () {
     "use strict";
-    var isInject = !chrome.hasOwnProperty('tabs');
+    var isInject = !browser.hasOwnProperty('tabs');
     var isBgPage = false;
     (function () {
-        if (chrome.runtime.hasOwnProperty('getBackgroundPage')) {
+        if (browser.runtime.hasOwnProperty('getBackgroundPage')) {
             isBgPage = location.href.indexOf('_generated_background_page.html') !== -1;
-            //@if chromeForceDefineBgPage=1>
+            //@if browserForceDefineBgPage=1>
             try {
-                chrome.runtime.getBackgroundPage(function(bgWin) {
+                browser.runtime.getBackgroundPage(function(bgWin) {
                     isBgPage = bgWin === window;
                 });
             } catch (e){}
-            //@if chromeForceDefineBgPage=1<
+            //@if browserForceDefineBgPage=1<
         }
     })();
 
@@ -70,10 +70,9 @@ var browserApi = function () {
                 message.responseId = id;
 
                 if (sender.tab && sender.tab.id >= 0) {
-                    // note! frameId only for chrome >= 41
-                    chrome.tabs.sendMessage(sender.tab.id, message, {frameId: sender.frameId});
+                    browser.tabs.sendMessage(sender.tab.id, message, {frameId: sender.frameId});
                 } else {
-                    chrome.runtime.sendMessage(message);
+                    browser.runtime.sendMessage(message);
                 }
             };
         },
@@ -132,7 +131,7 @@ var browserApi = function () {
                 if (fn) {
                     delete _this.async[message.responseId];
                     if (!Object.keys(_this.async).length) {
-                        chrome.runtime.onMessage.removeListener(_this.asyncListener);
+                        browser.runtime.onMessage.removeListener(_this.asyncListener);
                     }
 
                     fn(message.data);
@@ -163,8 +162,8 @@ var browserApi = function () {
                 time: getTime()
             };
 
-            if (!chrome.runtime.onMessage.hasListener(this.asyncListener)) {
-                chrome.runtime.onMessage.addListener(this.asyncListener);
+            if (!browser.runtime.onMessage.hasListener(this.asyncListener)) {
+                browser.runtime.onMessage.addListener(this.asyncListener);
             }
 
             this.gc();
@@ -180,7 +179,7 @@ var browserApi = function () {
                 } else {
                     return msgTools.wait(message.callbackId, responseCallback);
                 }
-            } || emptyFn; // < chrome 27 fix
+            };
         },
         gcTimeout: 0,
         gc: function () {
@@ -196,14 +195,14 @@ var browserApi = function () {
                 });
 
                 if (!Object.keys(async).length) {
-                    chrome.runtime.onMessage.removeListener(this.asyncListener);
+                    browser.runtime.onMessage.removeListener(this.asyncListener);
                 }
             }
         }
     };
 
     var api = {
-        isChrome: true,
+        isEdge: true,
         /**
          * @param {*} msg
          * @param {Function} [responseCallback]
@@ -212,13 +211,13 @@ var browserApi = function () {
             var message = msgTools.wrap(msg);
 
             message.hasCallback = !!responseCallback;
-            chrome.tabs.query({
+            browser.tabs.query({
                 active: true,
                 currentWindow: true
             }, function(tabs) {
                 var tabId = tabs[0] && tabs[0].id;
                 if (tabId >= 0) {
-                    chrome.tabs.sendMessage(tabId, message, msgTools.responseFn(responseCallback));
+                    browser.tabs.sendMessage(tabId, message, msgTools.responseFn(responseCallback));
                 }
             });
         },
@@ -232,7 +231,7 @@ var browserApi = function () {
             hook && (message.hook = hook);
             
             message.hasCallback = !!responseCallback;
-            chrome.runtime.sendMessage(message, msgTools.responseFn(responseCallback));
+            browser.runtime.sendMessage(message, msgTools.responseFn(responseCallback));
         },
         onMessage: {
             /**
@@ -247,8 +246,8 @@ var browserApi = function () {
                     msgTools.listenerList.push(callback);
                 }
 
-                if (!chrome.runtime.onMessage.hasListener(msgTools.listener)) {
-                    chrome.runtime.onMessage.addListener(msgTools.listener);
+                if (!browser.runtime.onMessage.hasListener(msgTools.listener)) {
+                    browser.runtime.onMessage.addListener(msgTools.listener);
                 }
             },
             /**
@@ -261,40 +260,40 @@ var browserApi = function () {
                 }
 
                 if (!msgTools.listenerList.length) {
-                    chrome.runtime.onMessage.removeListener(msgTools.listener);
+                    browser.runtime.onMessage.removeListener(msgTools.listener);
                 }
             }
         }
     };
 
-    var initChromeStorage = function () {
+    var initEdgeStorage = function () {
         return {
             /**
              * @param {String|[String]|Object|null|undefined} [keys]
              * @param {Function} callback
              */
             get: function (keys, callback) {
-                chrome.storage.local.get(keys, callback);
+                browser.storage.local.get(keys, callback);
             },
             /**
              * @param {Object} items
              * @param {Function} [callback]
              */
             set: function (items, callback) {
-                chrome.storage.local.set(items, callback);
+                browser.storage.local.set(items, callback);
             },
             /**
              * @param {String|[String]} [keys]
              * @param {Function} [callback]
              */
             remove: function (keys, callback) {
-                chrome.storage.local.remove(keys, callback);
+                browser.storage.local.remove(keys, callback);
             },
             /**
              * @param {Function} [callback]
              */
             clear: function (callback) {
-                chrome.storage.local.clear(callback);
+                browser.storage.local.clear(callback);
             }
         };
     };
@@ -303,8 +302,8 @@ var browserApi = function () {
     //@include ../../components/localStorage.js
     //@if useLocalStorage=1<
 
-    if (chrome.storage) {
-        api.storage = initChromeStorage();
+    if (browser.storage) {
+        api.storage = initEdgeStorage();
     }
     //@if useLocalStorage=1>
     else {
