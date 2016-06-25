@@ -101,6 +101,8 @@ var browserApi = function () {
         }
     };
 
+    api.msgClean = emptyFn;
+
     if (window.chrome) {
         api.isTM = true;
     } else

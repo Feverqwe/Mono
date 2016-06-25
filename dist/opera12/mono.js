@@ -72,6 +72,13 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
       };
     };
 
+    /**
+     * @returns {Number}
+     */
+    var getTime = function() {
+      return parseInt(Date.now() / 1000);
+    };
+
     var msgTools = {
       id: 0,
       idPrefix: Math.floor(Math.random() * 1000),
@@ -151,7 +158,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
         var _this = msgTools;
         var message = event.data;
         if (message && message.mono && message.responseId && message.idPrefix !== _this.idPrefix) {
-          var fn = _this.async[message.responseId];
+          var fn = _this.async[message.responseId].fn;
           if (fn) {
             delete _this.async[message.responseId];
             if (!Object.keys(_this.async).length) {
@@ -178,7 +185,10 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
        * @param {Function} responseCallback
        */
       wait: function(id, responseCallback) {
-        this.async[id] = responseCallback;
+        this.async[id] = {
+          fn: responseCallback,
+          time: getTime()
+        };
 
         opera.extension.addEventListener('message', this.asyncListener);
       }
@@ -257,6 +267,16 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
           }
         }
       }
+    };
+
+    api.msgClean = function() {
+      var async = msgTools.async;
+      var now = getTime();
+      Object.keys(async).forEach(function(responseId) {
+        if (async [responseId].time + 180 < now) {
+          delete async [responseId];
+        }
+      });
     };
 
     var initWidgetPreferences = function() {

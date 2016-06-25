@@ -37,6 +37,13 @@ var browserApi = function () {
         };
     };
 
+    /**
+     * @returns {Number}
+     */
+    var getTime = function () {
+        return parseInt(Date.now() / 1000);
+    };
+
     var msgTools = {
         id: 0,
         idPrefix: Math.floor(Math.random() * 1000),
@@ -113,7 +120,7 @@ var browserApi = function () {
             var _this = msgTools;
             var message = event.message;
             if (message && message.mono && message.responseId && message.idPrefix !== _this.idPrefix) {
-                var fn = _this.async[message.responseId];
+                var fn = _this.async[message.responseId].fn;
                 if (fn) {
                     delete _this.async[message.responseId];
                     if (!Object.keys(_this.async).length) {
@@ -140,7 +147,10 @@ var browserApi = function () {
          * @param {Function} responseCallback
          */
         wait: function (id, responseCallback) {
-            this.async[id] = responseCallback;
+            this.async[id] = {
+                fn: responseCallback,
+                time: getTime()
+            };
 
             msgTools.addMessageListener(this.asyncListener);
         },
@@ -296,6 +306,16 @@ var browserApi = function () {
                 }
             }
         }
+    };
+
+    api.msgClean = function () {
+        var async = msgTools.async;
+        var now = getTime();
+        Object.keys(async).forEach(function (responseId) {
+            if (async[responseId].time + 180 < now) {
+                delete async[responseId];
+            }
+        });
     };
 
     //@include ../../components/localStorage.js
