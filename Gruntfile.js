@@ -33,6 +33,10 @@ module.exports = function (grunt) {
             },
             safari: {
                 useSafari: 1
+            },
+            edge: {
+                useEdge: 1,
+                edgeForceDefineBgPage: 1
             }
         }
     });

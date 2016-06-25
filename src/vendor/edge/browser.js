@@ -5,13 +5,13 @@ var browserApi = function () {
     (function () {
         if (browser.runtime.hasOwnProperty('getBackgroundPage')) {
             isBgPage = location.href.indexOf('_generated_background_page.html') !== -1;
-            //@if browserForceDefineBgPage=1>
+            //@if edgeForceDefineBgPage=1>
             try {
                 browser.runtime.getBackgroundPage(function(bgWin) {
                     isBgPage = bgWin === window;
                 });
             } catch (e){}
-            //@if browserForceDefineBgPage=1<
+            //@if edgeForceDefineBgPage=1<
         }
     })();
 

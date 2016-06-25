@@ -60,6 +60,12 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
       if (browser.runtime.hasOwnProperty('getBackgroundPage')) {
         isBgPage = location.href.indexOf('_generated_background_page.html') !== -1;
 
+        try {
+          browser.runtime.getBackgroundPage(function(bgWin) {
+            isBgPage = bgWin === window;
+          });
+        } catch (e) {}
+
       }
     })();
 
