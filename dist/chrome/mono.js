@@ -193,6 +193,8 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
             fn(message.data);
           }
         }
+
+        _this.gc();
       },
       /**
        * @param {*} [msg]
@@ -219,6 +221,8 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
         if (!chrome.runtime.onMessage.hasListener(this.asyncListener)) {
           chrome.runtime.onMessage.addListener(this.asyncListener);
         }
+
+        this.gc();
       },
       responseFn: function(responseCallback) {
         return responseCallback && function(message) {
@@ -232,6 +236,24 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
             return msgTools.wait(message.callbackId, responseCallback);
           }
         } || emptyFn; // < chrome 27 fix
+      },
+      gcTimeout: 0,
+      gc: function() {
+        var expire = 180;
+        var now = getTime();
+        if (this.gcTimeout < now) {
+          this.gcTimeout = now + expire;
+          var async = this.async;
+          Object.keys(async).forEach(function(responseId) {
+            if (async [responseId].time + expire < now) {
+              delete async [responseId];
+            }
+          });
+
+          if (!Object.keys(async).length) {
+            chrome.runtime.onMessage.removeListener(this.asyncListener);
+          }
+        }
       }
     };
 
@@ -298,16 +320,6 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
           }
         }
       }
-    };
-
-    api.msgClean = function() {
-      var async = msgTools.async;
-      var now = getTime();
-      Object.keys(async).forEach(function(responseId) {
-        if (async [responseId].time + 180 < now) {
-          delete async [responseId];
-        }
-      });
     };
 
     var initChromeStorage = function() {

@@ -154,6 +154,8 @@ var browserApi = function (_addon) {
                     fn(message.data);
                 }
             }
+
+            _this.gc();
         },
         /**
          * @param {*} [msg]
@@ -177,6 +179,26 @@ var browserApi = function (_addon) {
             };
 
             browserAddon.port.on('mono', this.asyncListener);
+
+            this.gc();
+        },
+        gcTimeout: 0,
+        gc: function () {
+            var expire = 180;
+            var now = getTime();
+            if (this.gcTimeout < now) {
+                this.gcTimeout = now + expire;
+                var async = this.async;
+                Object.keys(async).forEach(function (responseId) {
+                    if (async[responseId].time + expire < now) {
+                        delete async[responseId];
+                    }
+                });
+
+                if (!Object.keys(async).length) {
+                    browserAddon.port.removeListener('mono', this.asyncListener);
+                }
+            }
         }
     };
 
@@ -254,16 +276,6 @@ var browserApi = function (_addon) {
                 }
             }
         }
-    };
-
-    api.msgClean = function () {
-        var async = msgTools.async;
-        var now = getTime();
-        Object.keys(async).forEach(function (responseId) {
-            if (async[responseId].time + 180 < now) {
-                delete async[responseId];
-            }
-        });
     };
 
     var externalStorage = function () {

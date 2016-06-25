@@ -157,8 +157,6 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
       }
     };
 
-    api.msgClean = emptyFn;
-
     if (window.chrome) {
       api.isTM = true;
     } else

@@ -124,12 +124,14 @@ var browserApi = function () {
                 if (fn) {
                     delete _this.async[message.responseId];
                     if (!Object.keys(_this.async).length) {
-                        msgTools.removeMessageListener(_this.asyncListener)
+                        msgTools.removeMessageListener(_this.asyncListener);
                     }
 
                     fn(message.data);
                 }
             }
+
+            _this.gc();
         },
         /**
          * @param {*} [msg]
@@ -153,6 +155,8 @@ var browserApi = function () {
             };
 
             msgTools.addMessageListener(this.asyncListener);
+
+            this.gc();
         },
         /**
          * @param {MonoMsg} message
@@ -217,6 +221,24 @@ var browserApi = function () {
                 safari.application.removeEventListener("message", callback);
             } else {
                 safari.self.removeEventListener("message", callback);
+            }
+        },
+        gcTimeout: 0,
+        gc: function () {
+            var expire = 180;
+            var now = getTime();
+            if (this.gcTimeout < now) {
+                this.gcTimeout = now + expire;
+                var async = this.async;
+                Object.keys(async).forEach(function (responseId) {
+                    if (async[responseId].time + expire < now) {
+                        delete async[responseId];
+                    }
+                });
+
+                if (!Object.keys(async).length) {
+                    msgTools.removeMessageListener(this.asyncListener);
+                }
             }
         }
     };
@@ -306,16 +328,6 @@ var browserApi = function () {
                 }
             }
         }
-    };
-
-    api.msgClean = function () {
-        var async = msgTools.async;
-        var now = getTime();
-        Object.keys(async).forEach(function (responseId) {
-            if (async[responseId].time + 180 < now) {
-                delete async[responseId];
-            }
-        });
     };
 
     //@include ../../components/localStorage.js
