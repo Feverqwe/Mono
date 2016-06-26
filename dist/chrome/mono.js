@@ -534,10 +534,12 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
     } else {
       api.storage = initLocalStorage(isInject);
     }
-    return api;
+    return {
+      api: api
+    };
   };
 
-  var mono = browserApi(_addon);
+  var mono = browserApi(_addon).api;
   mono.isLoaded = true;
   mono.onReady = function(cb) {
     return cb();

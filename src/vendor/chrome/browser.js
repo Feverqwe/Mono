@@ -312,5 +312,7 @@ var browserApi = function () {
     }
     //@if useLocalStorage=1<
 
-    return api;
+    return {
+        api: api
+    };
 };

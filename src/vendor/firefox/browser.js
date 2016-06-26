@@ -323,5 +323,7 @@ var browserApi = function (_addon) {
 
     api.storage = externalStorage();
 
-    return api;
+    return {
+        api: api
+    };
 };

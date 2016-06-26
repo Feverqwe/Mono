@@ -61,7 +61,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
     "use strict";
     //@include {browserApiPath}
 
-    var mono = browserApi(_addon);
+    var mono = browserApi(_addon).api;
     mono.isLoaded = true;
     mono.onReady = function(cb) {
         return cb();

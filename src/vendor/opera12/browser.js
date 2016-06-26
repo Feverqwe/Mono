@@ -343,5 +343,7 @@ var browserApi = function () {
 
     api.storage = initWidgetPreferences();
 
-    return api;
+    return {
+        api: api
+    };
 };

@@ -334,5 +334,7 @@ var browserApi = function () {
 
     api.storage = initLocalStorage(isInject);
 
-    return api;
+    return {
+        api: api
+    };
 };

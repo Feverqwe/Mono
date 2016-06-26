@@ -210,5 +210,7 @@ var browserApi = function () {
 
     api.storage = initGmStorage();
 
-    return api;
+    return {
+        api: api
+    };
 };
