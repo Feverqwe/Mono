@@ -263,7 +263,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
 
     var api = {
       isFF: true,
-      isModule: typeof window === 'undefined',
+      isModule: typeof _addon !== 'undefined',
       /**
        * @param {*} msg
        * @param {Function} [responseCallback]

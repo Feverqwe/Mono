@@ -204,7 +204,7 @@ var browserApi = function (_addon) {
 
     var api = {
         isFF: true,
-        isModule: typeof window === 'undefined',
+        isModule: typeof _addon !== 'undefined',
         /**
          * @param {*} msg
          * @param {Function} [responseCallback]

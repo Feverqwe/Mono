@@ -234,7 +234,13 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
             msgTools.wait(message.callbackId, responseCallback);
           }
 
-          currentTab.postMessage(message);
+          try {
+            currentTab.postMessage(message);
+          } catch (e) {
+            if (!/INVALID_STATE_ERR/.test(e.message)) {
+              throw e;
+            }
+          }
         }
       },
       /**
