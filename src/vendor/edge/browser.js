@@ -183,11 +183,11 @@ var browserApi = function () {
         },
         gcTimeout: 0,
         gc: function () {
-            var expire = 180;
             var now = getTime();
             if (this.gcTimeout < now) {
-                this.gcTimeout = now + expire;
+                var expire = 180;
                 var async = this.async;
+                this.gcTimeout = now + expire;
                 Object.keys(async).forEach(function (responseId) {
                     if (async[responseId].time + expire < now) {
                         delete async[responseId];
