@@ -64,7 +64,7 @@ var browserApi = function () {
             /**
              * @param {Function} callback
              * @param {Object} [details]
-             * @param {Object} [details.isBg]
+             * @param {Boolean} [details.isBg]
              */
             addListener: function (callback,  details) {
                 details = details || {};
@@ -82,7 +82,7 @@ var browserApi = function () {
             /**
              * @param {Function} callback
              * @param {Object} [details]
-             * @param {Object} [details.isBg]
+             * @param {Boolean} [details.isBg]
              */
             removeListener: function(callback, details) {
                 details = details || {};
