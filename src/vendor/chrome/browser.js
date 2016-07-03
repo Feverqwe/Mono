@@ -1,6 +1,6 @@
 var browserApi = function () {
     "use strict";
-    var isInject = !chrome.hasOwnProperty('tabs');
+    var isInject = !chrome.hasOwnProperty('tabs') || !chrome.tabs;
     var isBgPage = false;
     (function () {
         if (chrome.runtime.hasOwnProperty('getBackgroundPage')) {
