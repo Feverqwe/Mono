@@ -54,7 +54,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
   "use strict";
   var browserApi = function() {
     "use strict";
-    var isInject = !browser.hasOwnProperty('tabs');
+    var isInject = location.protocol !== 'ms-browser-extension:' || location.host !== browser.runtime.id;
     var isBgPage = false;
     !isInject && (function() {
       isBgPage = location.pathname.indexOf('_generated_background_page.html') !== -1;
@@ -107,20 +107,12 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
        * @property {number} [frameId]
        */
       /**
-       * @param {Function} sendResponse
+       * @param {string} id
        * @param {Sender} sender
        * @returns {Function}
        */
-      asyncSendResponse: function(sendResponse, sender) {
-        var id = this.getId();
-
-        var message = this.wrap();
-        message.async = true;
-        message.callbackId = id;
-        sendResponse(message);
-
+      asyncSendResponse: function(id, sender) {
         return function(message) {
-          message.async = true;
           message.responseId = id;
 
           if (sender.tab && sender.tab.id >= 0) {
@@ -152,14 +144,18 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
       /**
        * @param {MonoMsg} message
        * @param {Sender} sender
-       * @param {Function} sendResponse
+       * @param {Function} _sendResponse
        */
-      listener: function(message, sender, sendResponse) {
+      listener: function(message, sender, _sendResponse) {
         var _this = msgTools;
+        var sendResponse = null;
         if (message && message.mono && !message.responseId && message.idPrefix !== _this.idPrefix && message.isBgPage !== isBgPage) {
           if (!message.hasCallback) {
             sendResponse = emptyFn;
+          } else {
+            sendResponse = _this.asyncSendResponse(message.callbackId, sender);
           }
+
           var responseFn = onceFn(function(msg) {
             var message = _this.wrap(msg);
             sendResponse(message);
@@ -171,10 +167,6 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
               fn(message.data, responseFn);
             }
           });
-
-          if (sendResponse && message.hasCallback) {
-            sendResponse = _this.asyncSendResponse(sendResponse, sender);
-          }
         }
       },
       async: {},
@@ -228,19 +220,6 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
 
         this.gc();
       },
-      responseFn: function(responseCallback) {
-        return responseCallback && function(message) {
-          if (!message || !message.mono) {
-            return;
-          }
-
-          if (!message.async) {
-            return responseCallback(message.data);
-          } else {
-            return msgTools.wait(message.callbackId, responseCallback);
-          }
-        };
-      },
       gcTimeout: 0,
       gc: function() {
         var now = getTime();
@@ -270,14 +249,20 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
       sendMessageToActiveTab: function(msg, responseCallback) {
         var message = msgTools.wrap(msg);
 
-        message.hasCallback = !!responseCallback;
         browser.tabs.query({
           active: true,
           currentWindow: true
         }, function(tabs) {
           var tabId = tabs[0] && tabs[0].id;
           if (tabId >= 0) {
-            browser.tabs.sendMessage(tabId, message, msgTools.responseFn(responseCallback));
+            var hasCallback = !!responseCallback;
+            message.hasCallback = hasCallback;
+            if (hasCallback) {
+              message.callbackId = msgTools.getId();
+              msgTools.wait(message.callbackId, responseCallback);
+            }
+
+            browser.tabs.sendMessage(tabId, message, emptyFn);
           }
         });
       },
@@ -290,8 +275,14 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
         var message = msgTools.wrap(msg);
         hook && (message.hook = hook);
 
-        message.hasCallback = !!responseCallback;
-        browser.runtime.sendMessage(message, msgTools.responseFn(responseCallback));
+        var hasCallback = !!responseCallback;
+        message.hasCallback = hasCallback;
+        if (hasCallback) {
+          message.callbackId = msgTools.getId();
+          msgTools.wait(message.callbackId, responseCallback);
+        }
+
+        browser.runtime.sendMessage(message, emptyFn);
       },
       onMessage: {
         /**
@@ -537,7 +528,9 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
     } else {
       api.storage = initLocalStorage(isInject);
     }
-    return api;
+    return {
+      api: api
+    };
   };
 
   var mono = browserApi(_addon).api;
