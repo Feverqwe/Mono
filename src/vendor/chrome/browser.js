@@ -53,20 +53,12 @@ var browserApi = function () {
          * @property {number} [frameId]
          */
         /**
-         * @param {Function} sendResponse
+         * @param {string} id
          * @param {Sender} sender
          * @returns {Function}
          */
-        asyncSendResponse: function (sendResponse, sender) {
-            var id = this.getId();
-
-            var message = this.wrap();
-            message.async = true;
-            message.callbackId = id;
-            sendResponse(message);
-
+        asyncSendResponse: function (id, sender) {
             return function (message) {
-                message.async = true;
                 message.responseId = id;
 
                 if (sender.tab && sender.tab.id >= 0) {
@@ -98,14 +90,18 @@ var browserApi = function () {
         /**
          * @param {MonoMsg} message
          * @param {Sender} sender
-         * @param {Function} sendResponse
+         * @param {Function} _sendResponse
          */
-        listener: function (message, sender, sendResponse) {
+        listener: function (message, sender, _sendResponse) {
             var _this = msgTools;
+            var sendResponse = null;
             if (message && message.mono && !message.responseId && message.idPrefix !== _this.idPrefix && message.isBgPage !== isBgPage) {
                 if (!message.hasCallback) {
                     sendResponse = emptyFn;
+                } else {
+                    sendResponse = _this.asyncSendResponse(message.callbackId, sender);
                 }
+
                 var responseFn = onceFn(function (msg) {
                     var message = _this.wrap(msg);
                     sendResponse(message);
@@ -117,10 +113,6 @@ var browserApi = function () {
                         fn(message.data, responseFn);
                     }
                 });
-
-                if (sendResponse && message.hasCallback) {
-                    sendResponse = _this.asyncSendResponse(sendResponse, sender);
-                }
             }
         },
         async: {},
@@ -174,19 +166,6 @@ var browserApi = function () {
 
             this.gc();
         },
-        responseFn: function (responseCallback) {
-            return responseCallback && function (message) {
-                if (!message || !message.mono) {
-                    return;
-                }
-
-                if (!message.async) {
-                    return responseCallback(message.data);
-                } else {
-                    return msgTools.wait(message.callbackId, responseCallback);
-                }
-            } || emptyFn; // < chrome 27 fix
-        },
         gcTimeout: 0,
         gc: function () {
             var now = getTime();
@@ -216,14 +195,20 @@ var browserApi = function () {
         sendMessageToActiveTab: function (msg, responseCallback) {
             var message = msgTools.wrap(msg);
 
-            message.hasCallback = !!responseCallback;
             chrome.tabs.query({
                 active: true,
                 currentWindow: true
-            }, function(tabs) {
+            }, function (tabs) {
                 var tabId = tabs[0] && tabs[0].id;
                 if (tabId >= 0) {
-                    chrome.tabs.sendMessage(tabId, message, msgTools.responseFn(responseCallback));
+                    var hasCallback = !!responseCallback;
+                    message.hasCallback = hasCallback;
+                    if (hasCallback) {
+                        message.callbackId = msgTools.getId();
+                        msgTools.wait(message.callbackId, responseCallback);
+                    }
+
+                    chrome.tabs.sendMessage(tabId, message, emptyFn);
                 }
             });
         },
@@ -235,9 +220,15 @@ var browserApi = function () {
         sendMessage: function (msg, responseCallback, hook) {
             var message = msgTools.wrap(msg);
             hook && (message.hook = hook);
-            
-            message.hasCallback = !!responseCallback;
-            chrome.runtime.sendMessage(message, msgTools.responseFn(responseCallback));
+
+            var hasCallback = !!responseCallback;
+            message.hasCallback = hasCallback;
+            if (hasCallback) {
+                message.callbackId = msgTools.getId();
+                msgTools.wait(message.callbackId, responseCallback);
+            }
+
+            chrome.runtime.sendMessage(message, emptyFn);
         },
         onMessage: {
             /**
@@ -259,7 +250,7 @@ var browserApi = function () {
             /**
              * @param {Function} callback
              */
-            removeListener: function(callback) {
+            removeListener: function (callback) {
                 var pos = msgTools.listenerList.indexOf(callback);
                 if (pos !== -1) {
                     msgTools.listenerList.splice(pos, 1);
