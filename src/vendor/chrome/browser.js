@@ -70,8 +70,13 @@ var browserApi = function () {
                 message.responseId = id;
 
                 if (sender.tab && sender.tab.id >= 0) {
-                    // note! frameId only for chrome >= 41
-                    chrome.tabs.sendMessage(sender.tab.id, message, {frameId: sender.frameId});
+                    if (sender.frameId !== undefined) {
+                        chrome.tabs.sendMessage(sender.tab.id, message, {
+                            frameId: sender.frameId
+                        });
+                    } else {
+                        chrome.tabs.sendMessage(sender.tab.id, message);
+                    }
                 } else {
                     chrome.runtime.sendMessage(message);
                 }
