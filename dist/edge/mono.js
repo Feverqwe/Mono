@@ -57,7 +57,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
     var isInject = !browser.hasOwnProperty('tabs');
     var isBgPage = false;
     !isInject && (function() {
-      isBgPage = location.href.indexOf('_generated_background_page.html') !== -1;
+      isBgPage = location.pathname.indexOf('_generated_background_page.html') !== -1;
 
       if (!isBgPage && browser.runtime.hasOwnProperty('getBackgroundPage')) {
         try {
