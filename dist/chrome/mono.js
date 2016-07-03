@@ -56,18 +56,18 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
     "use strict";
     var isInject = location.protocol !== 'chrome-extension:' || location.host !== chrome.runtime.id;
     var isBgPage = false;
-    !isInject && (function() {
-      if (chrome.runtime.hasOwnProperty('getBackgroundPage')) {
-        isBgPage = location.href.indexOf('_generated_background_page.html') !== -1;
+    if (!isInject) {
+      isBgPage = location.pathname.indexOf('_generated_background_page.html') !== -1;
 
+      if (!isBgPage && chrome.runtime.hasOwnProperty('getBackgroundPage')) {
         try {
           chrome.runtime.getBackgroundPage(function(bgWin) {
             isBgPage = bgWin === window;
           });
         } catch (e) {}
-
       }
-    })();
+
+    }
 
     var emptyFn = function() {};
 

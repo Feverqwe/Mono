@@ -2,18 +2,18 @@ var browserApi = function () {
     "use strict";
     var isInject = !browser.hasOwnProperty('tabs');
     var isBgPage = false;
-    (function () {
-        if (browser.runtime.hasOwnProperty('getBackgroundPage')) {
-            isBgPage = location.href.indexOf('_generated_background_page.html') !== -1;
-            //@if edgeForceDefineBgPage=1>
+    if (!isInject) {
+        isBgPage = location.href.indexOf('_generated_background_page.html') !== -1;
+        //@if edgeForceDefineBgPage=1>
+        if (!isBgPage && browser.runtime.hasOwnProperty('getBackgroundPage')) {
             try {
                 browser.runtime.getBackgroundPage(function(bgWin) {
                     isBgPage = bgWin === window;
                 });
-            } catch (e){}
-            //@if edgeForceDefineBgPage=1<
+            } catch (e) {}
         }
-    })();
+        //@if edgeForceDefineBgPage=1<
+    }
 
     var emptyFn = function () {};
 
