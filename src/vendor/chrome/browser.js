@@ -1,5 +1,6 @@
 var browserApi = function () {
     "use strict";
+    // !chrome.tabs 27 chrome inject detect fix
     var isInject = !chrome.hasOwnProperty('tabs') || !chrome.tabs;
     var isBgPage = false;
     (function () {
