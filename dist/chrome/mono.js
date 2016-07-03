@@ -54,10 +54,9 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
   "use strict";
   var browserApi = function() {
     "use strict";
-    // !chrome.tabs 27 chrome inject detect fix
-    var isInject = !chrome.hasOwnProperty('tabs') || !chrome.tabs;
+    var isInject = location.protocol !== 'chrome-extension:' || location.host !== chrome.runtime.id;
     var isBgPage = false;
-    (function() {
+    !isInject && (function() {
       if (chrome.runtime.hasOwnProperty('getBackgroundPage')) {
         isBgPage = location.href.indexOf('_generated_background_page.html') !== -1;
 
