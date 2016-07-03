@@ -124,9 +124,13 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
           message.responseId = id;
 
           if (sender.tab && sender.tab.id >= 0) {
-            browser.tabs.sendMessage(sender.tab.id, message, {
-              frameId: sender.frameId
-            });
+            if (sender.frameId !== undefined) {
+              browser.tabs.sendMessage(sender.tab.id, message, {
+                frameId: sender.frameId
+              });
+            } else {
+              browser.tabs.sendMessage(sender.tab.id, message);
+            }
           } else {
             browser.runtime.sendMessage(message);
           }
