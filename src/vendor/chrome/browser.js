@@ -2,7 +2,7 @@ var browserApi = function () {
     "use strict";
     var isInject = location.protocol !== 'chrome-extension:' || location.host !== chrome.runtime.id;
     var isBgPage = false;
-    if (!isInject) {
+    !isInject && (function () {
         isBgPage = location.pathname.indexOf('_generated_background_page.html') !== -1;
         //@if chromeForceDefineBgPage=1>
         if (!isBgPage && chrome.runtime.hasOwnProperty('getBackgroundPage')) {
@@ -13,7 +13,7 @@ var browserApi = function () {
             } catch (e) {}
         }
         //@if chromeForceDefineBgPage=1<
-    }
+    })();
 
     var emptyFn = function () {};
 

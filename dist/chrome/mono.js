@@ -56,7 +56,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
     "use strict";
     var isInject = location.protocol !== 'chrome-extension:' || location.host !== chrome.runtime.id;
     var isBgPage = false;
-    if (!isInject) {
+    !isInject && (function() {
       isBgPage = location.pathname.indexOf('_generated_background_page.html') !== -1;
 
       if (!isBgPage && chrome.runtime.hasOwnProperty('getBackgroundPage')) {
@@ -67,7 +67,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
         } catch (e) {}
       }
 
-    }
+    })();
 
     var emptyFn = function() {};
 

@@ -56,7 +56,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
     "use strict";
     var isInject = !browser.hasOwnProperty('tabs');
     var isBgPage = false;
-    if (!isInject) {
+    !isInject && (function() {
       isBgPage = location.href.indexOf('_generated_background_page.html') !== -1;
 
       if (!isBgPage && browser.runtime.hasOwnProperty('getBackgroundPage')) {
@@ -67,7 +67,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
         } catch (e) {}
       }
 
-    }
+    })();
 
     var emptyFn = function() {};
 
