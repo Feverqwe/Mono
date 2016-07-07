@@ -203,11 +203,12 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
       asyncListener: function(message) {
         var _this = msgTools;
         if (message && message.mono && message.responseId && message.idPrefix !== _this.idPrefix) {
-          var fn = _this.async[message.responseId].fn;
+          var item = _this.async[message.responseId];
+          var fn = item && item.fn;
           if (fn) {
             delete _this.async[message.responseId];
             if (!Object.keys(_this.async).length) {
-              browserAddon.port.removeListener('mono', _this.asyncListener);
+              _this.removeMessageListener(_this.asyncListener);
             }
 
             fn(message.data);
@@ -237,9 +238,31 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
           time: getTime()
         };
 
-        browserAddon.port.on('mono', this.asyncListener);
+        this.addMessageListener(this.asyncListener);
 
         this.gc();
+      },
+      messageListeners: [],
+      /**
+       * @param {Function} callback
+       */
+      addMessageListener: function(callback) {
+        var listeners = this.messageListeners;
+        if (listeners.indexOf(callback) === -1) {
+          browserAddon.port.on('mono', callback);
+          listeners.push(callback);
+        }
+      },
+      /**
+       * @param {Function} callback
+       */
+      removeMessageListener: function(callback) {
+        var listeners = this.messageListeners;
+        var pos = listeners.indexOf(callback);
+        if (pos !== -1) {
+          browserAddon.port.removeListener('mono', callback);
+          listeners.splice(pos, 1);
+        }
       },
       gcTimeout: 0,
       gc: function() {
@@ -255,7 +278,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
           });
 
           if (!Object.keys(async).length) {
-            browserAddon.port.removeListener('mono', this.asyncListener);
+            this.removeMessageListener(this.asyncListener);
           }
         }
       }
@@ -272,20 +295,22 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
         this.sendMessage({
           action: 'getActiveWindowActiveTab'
         }, function(tabs) {
-          var tabId = tabs[0] && tabs[0].id;
-          if (tabId >= 0) {
-            var message = msgTools.wrap(msg);
-            message.to = tabId;
+          tabs.forEach(function(tab) {
+            var tabId = tab.id;
+            if (tabId >= 0) {
+              var message = msgTools.wrap(msg);
+              message.to = tabId;
 
-            var hasCallback = !!responseCallback;
-            message.hasCallback = hasCallback;
-            if (hasCallback) {
-              message.callbackId = msgTools.getId();
-              msgTools.wait(message.callbackId, responseCallback);
+              var hasCallback = !!responseCallback;
+              message.hasCallback = hasCallback;
+              if (hasCallback) {
+                message.callbackId = msgTools.getId();
+                msgTools.wait(message.callbackId, responseCallback);
+              }
+
+              browserAddon.port.emit('mono', message);
             }
-
-            browserAddon.port.emit('mono', message);
-          }
+          });
         }, 'service');
       },
       /**
@@ -319,7 +344,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
             msgTools.listenerList.push(callback);
           }
 
-          browserAddon.port.on('mono', msgTools.listener);
+          msgTools.addMessageListener(msgTools.listener);
         },
         /**
          * @param {Function} callback
@@ -331,7 +356,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
           }
 
           if (!msgTools.listenerList.length) {
-            browserAddon.port.removeListener('mono', msgTools.listener);
+            msgTools.removeMessageListener(msgTools.listener);
           }
         }
       }

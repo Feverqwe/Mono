@@ -192,6 +192,7 @@
   };
 
   var monoOnMessage = function(message) {
+    var mPage = null;
     if (message.hook) {
       var hookFunc = sendHook[message.hook];
       if (hookFunc !== undefined) {
@@ -199,7 +200,7 @@
       }
     }
     if (message.to !== undefined) {
-      var mPage = map[message.to];
+      mPage = map[message.to];
       if (!mPage || mPage.active === false) {
         return;
       }
@@ -215,7 +216,7 @@
 
     if (flags.enableLocalScope && fmPage !== undefined && fmPage.page.isVirtual && message.from !== undefined) {
       for (var index in map) {
-        var mPage = map[index];
+        mPage = map[index];
         if (fmPage === mPage || mPage.isLocal === false || mPage.active === false) continue;
         mPage.page.port.emit('mono', message);
       }
@@ -372,7 +373,7 @@
     var msg = message.data || {};
     var service = serviceList[msg.action];
     if (service !== undefined) {
-      service(msg, response);
+      service(msg, response, message);
     }
   };
 })();

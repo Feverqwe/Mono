@@ -5,7 +5,7 @@ var browserApi = function () {
     var cloneObj = function (msg) {
         var obj = null;
         try {
-            obj = JSON.parse(JSON.stringify({w:msg})).w;
+            obj = JSON.parse(JSON.stringify({w: msg})).w;
         } catch (e) {
             console.error('CloneObj error!', e);
         }
@@ -66,7 +66,7 @@ var browserApi = function () {
              * @param {Object} [details]
              * @param {Boolean} [details.isBg]
              */
-            addListener: function (callback,  details) {
+            addListener: function (callback, details) {
                 details = details || {};
                 var listenerList = null;
                 if (details.isBg) {
@@ -84,7 +84,7 @@ var browserApi = function () {
              * @param {Object} [details]
              * @param {Boolean} [details.isBg]
              */
-            removeListener: function(callback, details) {
+            removeListener: function (callback, details) {
                 details = details || {};
                 var listenerList = null;
                 if (details.isBg) {
@@ -139,10 +139,10 @@ var browserApi = function () {
                 var _keys = [];
                 if (keys === undefined || keys === null) {
                     _keys = GM_listValues();
-                } else
+                } else 
                 if (Array.isArray(keys)) {
                     _keys = keys;
-                } else
+                } else 
                 if (typeof keys === 'object') {
                     _keys = Object.keys(keys);
                     defaultItems = keys;

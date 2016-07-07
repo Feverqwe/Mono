@@ -16,7 +16,7 @@ var browserApi = function () {
     var cloneObj = function (msg) {
         var obj = null;
         try {
-            obj = JSON.parse(JSON.stringify({w:msg})).w;
+            obj = JSON.parse(JSON.stringify({w: msg})).w;
         } catch (e) {
             console.error('CloneObj error!', e);
         }
@@ -67,7 +67,9 @@ var browserApi = function () {
             return function (message) {
                 message.responseId = id;
 
-                target.page.dispatchMessage("message", message);
+                if (target.page) {
+                    target.page.dispatchMessage("message", message);
+                }
             };
         },
         listenerList: [],
@@ -120,7 +122,8 @@ var browserApi = function () {
             var _this = msgTools;
             var message = event.message;
             if (message && message.mono && message.responseId && message.idPrefix !== _this.idPrefix) {
-                var fn = _this.async[message.responseId].fn;
+                var item = _this.async[message.responseId];
+                var fn = item && item.fn;
                 if (fn) {
                     delete _this.async[message.responseId];
                     if (!Object.keys(_this.async).length) {
@@ -194,7 +197,7 @@ var browserApi = function () {
                 message: cloneObj(message),
                 target: {
                     page: {
-                        dispatchMessage: function(name, message) {
+                        dispatchMessage: function (name, message) {
                             setTimeout(function () {
                                 _this.asyncListener({message: cloneObj(message)});
                             }, 0);
@@ -203,24 +206,34 @@ var browserApi = function () {
                 }
             });
         },
+        messageListeners: [],
         /**
          * @param {Function} callback
          */
         addMessageListener: function (callback) {
-            if (isBgPage) {
-                safari.application.addEventListener("message", callback);
-            } else {
-                safari.self.addEventListener("message", callback);
+            var listeners = this.messageListeners;
+            if (listeners.indexOf(callback) === -1) {
+                if (isBgPage) {
+                    safari.application.addEventListener("message", callback);
+                } else {
+                    safari.self.addEventListener("message", callback);
+                }
+                listeners.push(callback);
             }
         },
         /**
          * @param {Function} callback
          */
         removeMessageListener: function (callback) {
-            if (isBgPage) {
-                safari.application.removeEventListener("message", callback);
-            } else {
-                safari.self.removeEventListener("message", callback);
+            var listeners = this.messageListeners;
+            var pos = listeners.indexOf(callback);
+            if (pos !== -1) {
+                if (isBgPage) {
+                    safari.application.removeEventListener("message", callback);
+                } else {
+                    safari.self.removeEventListener("message", callback);
+                }
+                listeners.splice(pos, 1);
             }
         },
         gcTimeout: 0,
@@ -249,9 +262,9 @@ var browserApi = function () {
          * @param {*} msg
          * @param {Function} [responseCallback]
          */
-        sendMessageToActiveTab: function(msg, responseCallback) {
+        sendMessageToActiveTab: function (msg, responseCallback) {
             var activeTab = safari.application.activeBrowserWindow && safari.application.activeBrowserWindow.activeTab;
-            if (activeTab) {
+            if (activeTab && activeTab.page) {
                 var message = msgTools.wrap(msg);
 
                 var hasCallback = !!responseCallback;
@@ -282,7 +295,7 @@ var browserApi = function () {
 
             if (isInject) {
                 safari.self.tab.dispatchMessage("message", message);
-            } else
+            } else 
             if (isPopup) {
                 msgTools.sendMessageViaBridge(message);
             } else {
@@ -314,7 +327,7 @@ var browserApi = function () {
             /**
              * @param {Function} callback
              */
-            removeListener: function(callback) {
+            removeListener: function (callback) {
                 var pos = msgTools.listenerList.indexOf(callback);
                 if (pos !== -1) {
                     msgTools.listenerList.splice(pos, 1);

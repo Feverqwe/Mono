@@ -16,7 +16,7 @@
      * Response id for page
      * @returns {number}
      */
-    var getPageId = function() {
+    var getPageId = function () {
         return pageIndex++;
     };
 
@@ -25,7 +25,7 @@
      * @param page
      * @returns {Object}
      */
-    var getMonoPage = function(page) {
+    var getMonoPage = function (page) {
         for (var index in map) {
             if (map[index].page === page) {
                 return map[index];
@@ -38,7 +38,7 @@
     /**
      * Virtual port for background page
      */
-    exports.virtualAddon = function() {
+    exports.virtualAddon = function () {
         var subscribClientList = {};
         var subscribServerList = {};
         var obj = {
@@ -48,7 +48,7 @@
                  * @param {number} to
                  * @param message
                  */
-                emit: function(to, message) {
+                emit: function (to, message) {
                     var list = subscribServerList[to] || [];
                     for (var i = 0, item; item = list[i]; i++) {
                         item(message);
@@ -59,7 +59,7 @@
                  * @param {number} to
                  * @param {function} cb - Callback function
                  */
-                on: function(to, cb) {
+                on: function (to, cb) {
                     var list = subscribClientList[to];
                     if (!list) {
                         list = subscribClientList[to] = [];
@@ -68,7 +68,7 @@
                         list.push(cb);
                     }
                 },
-                removeListener: function(to, cb) {
+                removeListener: function (to, cb) {
                     var cbList = subscribClientList[to] || [];
                     var pos = cbList.indexOf(cb);
                     if (pos !== -1) {
@@ -82,7 +82,7 @@
                  * @param {number} to
                  * @param message
                  */
-                emit: function(to, message) {
+                emit: function (to, message) {
                     var list = subscribClientList[to] || [];
                     for (var i = 0, item; item = list[i]; i++) {
                         item(message);
@@ -93,7 +93,7 @@
                  * @param {number} to
                  * @param {function} cb - Callback function
                  */
-                on: function(to, cb) {
+                on: function (to, cb) {
                     var list = subscribServerList[to];
                     if (!list) {
                         list = subscribServerList[to] = [];
@@ -102,7 +102,7 @@
                         list.push(cb);
                     }
                 },
-                removeListener: function(to, cb) {
+                removeListener: function (to, cb) {
                     var cbList = subscribServerList[to] || [];
                     var pos = cbList.indexOf(cb);
                     if (pos !== -1) {
@@ -119,15 +119,15 @@
     /**
      * Virtual port function for pages without addon, but with mono.js work like bridge
      */
-    exports.virtualPort = function() {
-        window.addEventListener('message', function(e) {
+    exports.virtualPort = function () {
+        window.addEventListener('message', function (e) {
             if (e.data[0] !== '>') {
                 return;
             }
             var json = JSON.parse(e.data.substr(1));
             self.port.emit('mono', json);
         });
-        self.port.on('mono', function(message) {
+        self.port.on('mono', function (message) {
             var msg = '<' + JSON.stringify(message);
             var event = new CustomEvent("monoMessage", {
                 detail: msg
@@ -136,22 +136,22 @@
         });
     };
 
-    var bindPage = function(mPage) {
+    var bindPage = function (mPage) {
         if (mPage.page.isVirtual) {
             mPage.active = true;
             map[mPage.id] = mPage;
             return;
         }
 
-        var onPageShow = function() {
+        var onPageShow = function () {
             mPage.active = true;
         };
 
-        var onPageHide = function() {
+        var onPageHide = function () {
             mPage.active = false;
         };
 
-        var onAttach = function() {
+        var onAttach = function () {
             mPage.active = true;
             map[mPage.id] = mPage;
 
@@ -163,7 +163,7 @@
             mPage.page.on('pagehide', onPageHide);
         };
 
-        var onDetach = function() {
+        var onDetach = function () {
             delete map[mPage.id];
             mPage.active = false;
 
@@ -178,7 +178,7 @@
         onAttach();
     };
 
-    var responseFn = function(message) {
+    var responseFn = function (message) {
         return function (msg) {
             if (message.hasCallback) {
                 monoOnMessage({
@@ -191,7 +191,8 @@
         }
     };
 
-    var monoOnMessage = function(message) {
+    var monoOnMessage = function (message) {
+        var mPage = null;
         if (message.hook) {
             var hookFunc = sendHook[message.hook];
             if (hookFunc !== undefined) {
@@ -199,7 +200,7 @@
             }
         }
         if (message.to !== undefined) {
-            var mPage = map[message.to];
+            mPage = map[message.to];
             if (!mPage || mPage.active === false) {
                 return;
             }
@@ -215,7 +216,7 @@
 
         if (flags.enableLocalScope && fmPage !== undefined && fmPage.page.isVirtual && message.from !== undefined) {
             for (var index in map) {
-                var mPage = map[index];
+                mPage = map[index];
                 if (fmPage === mPage || mPage.isLocal === false || mPage.active === false) continue;
                 mPage.page.port.emit('mono', message);
             }
@@ -223,7 +224,7 @@
     };
 
     var localUrl = require("sdk/self").data.url().match(/([^:]+:\/\/[^/]+)\//)[1];
-    exports.addPage = function(page) {
+    exports.addPage = function (page) {
         var mPage = getMonoPage(page);
         if (mPage) {
             return;
@@ -237,19 +238,19 @@
         bindPage(mPage);
 
         var type = (page.isVirtual !== undefined) ? 'lib' : 'port';
-        page[type].on('mono', function(message) {
+        page[type].on('mono', function (message) {
             message.from = mPage.id;
             monoOnMessage(message);
         });
 
         return {
-            detach: function() {
+            detach: function () {
                 mPage.detach();
             }
         };
     };
 
-    var ffSimpleStorage = (function() {
+    var ffSimpleStorage = (function () {
         var ss = require('sdk/simple-storage');
 
         return {
@@ -257,7 +258,7 @@
              * @param {String|[String]|Object|null|undefined} [keys]
              * @param {Function} callback
              */
-            get: function(keys, callback) {
+            get: function (keys, callback) {
                 var items = {};
                 var defaultItems = {};
 
@@ -293,7 +294,7 @@
              * @param {Object} items
              * @param {Function} [callback]
              */
-            set: function(items, callback) {
+            set: function (items, callback) {
                 Object.keys(items).forEach(function (key) {
                     if (items[key] !== undefined) {
                         ss.storage[key] = items[key];
@@ -306,7 +307,7 @@
              * @param {String|[String]} [keys]
              * @param {Function} [callback]
              */
-            remove: function(keys, callback) {
+            remove: function (keys, callback) {
                 var _keys = [];
                 if (Array.isArray(keys)) {
                     _keys = keys;
@@ -323,7 +324,7 @@
             /**
              * @param {Function} [callback]
              */
-            clear: function(callback) {
+            clear: function (callback) {
                 this.remove(Object.keys(ss.storage), callback);
             }
         }
@@ -331,7 +332,7 @@
     exports.storage = ffSimpleStorage;
 
     var sendHook = {};
-    
+
     sendHook.storage = function (message, response) {
         var msg = message.data || {};
         if (msg.get !== undefined) {
@@ -366,11 +367,11 @@
         return response(tabs);
     };
 
-    sendHook.service = function(message, response) {
+    sendHook.service = function (message, response) {
         var msg = message.data || {};
         var service = serviceList[msg.action];
         if (service !== undefined) {
-            service(msg, response);
+            service(msg, response, message);
         }
     };
 })();

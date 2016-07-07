@@ -104,11 +104,12 @@ var browserApi = function () {
             var _this = msgTools;
             var message = event.data;
             if (message && message.mono && message.responseId && message.idPrefix !== _this.idPrefix) {
-                var fn = _this.async[message.responseId].fn;
+                var item = _this.async[message.responseId];
+                var fn = item && item.fn;
                 if (fn) {
                     delete _this.async[message.responseId];
                     if (!Object.keys(_this.async).length) {
-                        opera.extension.removeEventListener('message', _this.asyncListener);
+                        _this.removeMessageListener(_this.asyncListener);
                     }
 
                     fn(message.data);
@@ -138,9 +139,31 @@ var browserApi = function () {
                 time: getTime()
             };
 
-            opera.extension.addEventListener('message', this.asyncListener);
+            this.addMessageListener(this.asyncListener);
 
             this.gc();
+        },
+        messageListeners: [],
+        /**
+         * @param {Function} callback
+         */
+        addMessageListener: function (callback) {
+            var listeners = this.messageListeners;
+            if (listeners.indexOf(callback) === -1) {
+                opera.extension.addEventListener('message', callback);
+                listeners.push(callback);
+            }
+        },
+        /**
+         * @param {Function} callback
+         */
+        removeMessageListener: function (callback) {
+            var listeners = this.messageListeners;
+            var pos = listeners.indexOf(callback);
+            if (pos !== -1) {
+                opera.extension.removeEventListener('message', callback);
+                listeners.splice(pos, 1);
+            }
         },
         gcTimeout: 0,
         gc: function () {
@@ -156,7 +179,7 @@ var browserApi = function () {
                 });
 
                 if (!Object.keys(async).length) {
-                    opera.extension.removeEventListener('message', this.asyncListener);
+                    this.removeMessageListener(this.asyncListener);
                 }
             }
         }
@@ -225,19 +248,19 @@ var browserApi = function () {
                     msgTools.listenerList.push(callback);
                 }
 
-                opera.extension.addEventListener('message', msgTools.listener);
+                msgTools.addMessageListener(msgTools.listener);
             },
             /**
              * @param {Function} callback
              */
-            removeListener: function(callback) {
+            removeListener: function (callback) {
                 var pos = msgTools.listenerList.indexOf(callback);
                 if (pos !== -1) {
                     msgTools.listenerList.splice(pos, 1);
                 }
 
                 if (!msgTools.listenerList.length) {
-                    opera.extension.removeEventListener('message', msgTools.listener);
+                    msgTools.removeMessageListener(msgTools.listener);
                 }
             }
         }
@@ -245,7 +268,7 @@ var browserApi = function () {
 
     var initWidgetPreferences = function () {
         var localStorage = widget.preferences;
-
+        
         var readItem = function (value) {
             var result = undefined;
             if (typeof value === 'string') {
@@ -274,10 +297,10 @@ var browserApi = function () {
                 var _keys = [];
                 if (keys === undefined || keys === null) {
                     _keys = Object.keys(localStorage);
-                } else
+                } else 
                 if (Array.isArray(keys)) {
                     _keys = keys;
-                } else
+                } else 
                 if (typeof keys === 'object') {
                     _keys = Object.keys(keys);
                     defaultItems = keys;

@@ -125,7 +125,8 @@ var browserApi = function () {
         asyncListener: function (message, sender, sendResponse) {
             var _this = msgTools;
             if (message && message.mono && message.responseId && message.idPrefix !== _this.idPrefix && message.isBgPage !== isBgPage) {
-                var fn = _this.async[message.responseId].fn;
+                var item = _this.async[message.responseId];
+                var fn = item && item.fn;
                 if (fn) {
                     delete _this.async[message.responseId];
                     if (!Object.keys(_this.async).length) {
@@ -294,7 +295,7 @@ var browserApi = function () {
             }
         };
     };
-
+    
     //@if useLocalStorage=1>
     //@include ../../components/localStorage.js
     //@if useLocalStorage=1<

@@ -123,7 +123,9 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
         return function(message) {
           message.responseId = id;
 
-          target.page.dispatchMessage("message", message);
+          if (target.page) {
+            target.page.dispatchMessage("message", message);
+          }
         };
       },
       listenerList: [],
@@ -176,7 +178,8 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
         var _this = msgTools;
         var message = event.message;
         if (message && message.mono && message.responseId && message.idPrefix !== _this.idPrefix) {
-          var fn = _this.async[message.responseId].fn;
+          var item = _this.async[message.responseId];
+          var fn = item && item.fn;
           if (fn) {
             delete _this.async[message.responseId];
             if (!Object.keys(_this.async).length) {
@@ -263,24 +266,34 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
           }
         });
       },
+      messageListeners: [],
       /**
        * @param {Function} callback
        */
       addMessageListener: function(callback) {
-        if (isBgPage) {
-          safari.application.addEventListener("message", callback);
-        } else {
-          safari.self.addEventListener("message", callback);
+        var listeners = this.messageListeners;
+        if (listeners.indexOf(callback) === -1) {
+          if (isBgPage) {
+            safari.application.addEventListener("message", callback);
+          } else {
+            safari.self.addEventListener("message", callback);
+          }
+          listeners.push(callback);
         }
       },
       /**
        * @param {Function} callback
        */
       removeMessageListener: function(callback) {
-        if (isBgPage) {
-          safari.application.removeEventListener("message", callback);
-        } else {
-          safari.self.removeEventListener("message", callback);
+        var listeners = this.messageListeners;
+        var pos = listeners.indexOf(callback);
+        if (pos !== -1) {
+          if (isBgPage) {
+            safari.application.removeEventListener("message", callback);
+          } else {
+            safari.self.removeEventListener("message", callback);
+          }
+          listeners.splice(pos, 1);
         }
       },
       gcTimeout: 0,
@@ -311,7 +324,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
        */
       sendMessageToActiveTab: function(msg, responseCallback) {
         var activeTab = safari.application.activeBrowserWindow && safari.application.activeBrowserWindow.activeTab;
-        if (activeTab) {
+        if (activeTab && activeTab.page) {
           var message = msgTools.wrap(msg);
 
           var hasCallback = !!responseCallback;
