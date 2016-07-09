@@ -4,7 +4,7 @@ mono.js
 
 This library, allow create unified interface for send and receive messages in browser extensions.
 
-Support Opera 12, Chrome, Safari, Firefox.
+Support Opera 12, Chrome, Safari, Firefox, Edge.
 
 
 Build
