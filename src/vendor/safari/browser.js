@@ -1,3 +1,7 @@
+if (typeof safari === 'undefined') {
+    throw new Error("Safari API is not found!");
+}
+
 var browserApi = function () {
     "use strict";
     var isPopup = safari.self.identifier === 'popup';

@@ -1,4 +1,4 @@
-var mono = (typeof mono !== 'undefined') ? mono : null;
+var mono = (typeof mono !== 'undefined') ? mono : undefined;
 
 (function(base, factory) {
   "use strict";
@@ -52,6 +52,10 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
   return base;
 }, function initMono(_mono, _addon) {
   "use strict";
+  if (typeof safari === 'undefined') {
+    throw new Error("Safari API is not found!");
+  }
+
   var browserApi = function() {
     "use strict";
     var isPopup = safari.self.identifier === 'popup';

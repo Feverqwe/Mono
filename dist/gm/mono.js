@@ -1,4 +1,4 @@
-var mono = (typeof mono !== 'undefined') ? mono : null;
+var mono = (typeof mono !== 'undefined') ? mono : undefined;
 
 (function(base, factory) {
   "use strict";
@@ -82,6 +82,16 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
       };
     };
 
+    /**
+     * @param {Function} fn
+     * @returns {Function}
+     */
+    var cloneResponse = function(fn) {
+      return function(response) {
+        fn(cloneObj(response));
+      };
+    };
+
     var msgTools = {
       listenerBgList: [],
       listenerList: []
@@ -94,7 +104,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
        * @param {Function} [responseCallback]
        */
       sendMessageToActiveTab: function(msg, responseCallback) {
-        var responseFn = !responseCallback ? emptyFn : onceFn(responseCallback);
+        var responseFn = !responseCallback ? emptyFn : onceFn(cloneResponse(responseCallback));
 
         msgTools.listenerList.forEach(function(fn) {
           setTimeout(function() {
@@ -107,7 +117,7 @@ var mono = (typeof mono !== 'undefined') ? mono : null;
        * @param {Function} [responseCallback]
        */
       sendMessage: function(msg, responseCallback) {
-        var responseFn = !responseCallback ? emptyFn : onceFn(responseCallback);
+        var responseFn = !responseCallback ? emptyFn : onceFn(cloneResponse(responseCallback));
 
         var cloneMsg = cloneObj(msg);
         msgTools.listenerBgList.forEach(function(fn) {

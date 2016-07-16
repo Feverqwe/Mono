@@ -1,4 +1,4 @@
-var mono = (typeof mono !== 'undefined') ? mono : null;
+var mono = (typeof mono !== 'undefined') ? mono : undefined;
 
 (function(base, factory) {
     "use strict";
