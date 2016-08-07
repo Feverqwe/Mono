@@ -27,25 +27,19 @@ var mono = (typeof mono !== 'undefined') ? mono : undefined;
         return factory();
     }
 
-    var base = Object.create({
+    var base = {
         isLoaded: true,
         onReadyStack: [],
         onReady: function() {
             base.onReadyStack.push([this, arguments]);
         }
-    });
+    };
 
     var onLoad = function() {
         document.removeEventListener('DOMContentLoaded', onLoad, false);
         window.removeEventListener('load', onLoad, false);
 
         mono = factory();
-
-        for (var key in base) {
-            if (base.hasOwnProperty(key)) {
-                mono[key] = base[key];
-            }
-        }
 
         var item;
         while (item = base.onReadyStack.shift()) {
