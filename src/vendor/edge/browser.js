@@ -15,8 +15,6 @@ var browserApi = function () {
         //@if edgeForceDefineBgPage=1<
     })();
 
-    var emptyFn = function () {};
-
     var cbWrapper = {
         map: {},
         wrapFn: function (fn) {

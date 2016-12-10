@@ -15,8 +15,6 @@ var browserApi = function () {
         //@if chromeForceDefineBgPage=1<
     })();
 
-    var emptyFn = function () {};
-
     var cbWrapper = {
         map: {},
         wrapFn: function (fn) {

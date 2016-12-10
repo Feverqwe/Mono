@@ -63,8 +63,6 @@ var mono = (typeof mono !== 'undefined') ? mono : undefined;
 
     })();
 
-    var emptyFn = function() {};
-
     var cbWrapper = {
       map: {},
       wrapFn: function(fn) {
