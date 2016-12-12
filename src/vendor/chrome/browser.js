@@ -21,7 +21,7 @@ var browserApi = function () {
             var id;
             do {
                 id = parseInt(Math.random() * 1000);
-            } while (this.map[fn]);
+            } while (this.map[id]);
             fn.monoWrapperId = id;
             return this.map[id] = function (msg, sender, response) {
                 fn(msg, response);
