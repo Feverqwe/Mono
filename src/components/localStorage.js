@@ -65,10 +65,10 @@ var initLocalStorage = function (isInject) {
              * @param {Function} callback
              */
             get: function (keys, callback) {
-                var items = {};
-                var defaultItems = {};
+                var result = {};
+                var defaultItems = null;
 
-                var _keys = [];
+                var _keys = null;
                 if (keys === undefined || keys === null) {
                     _keys = Object.keys(localStorage);
                 } else
@@ -84,16 +84,16 @@ var initLocalStorage = function (isInject) {
 
                 _keys.forEach(function (key) {
                     var value = readItem(localStorage.getItem(key));
-                    if (value === undefined) {
+                    if (defaultItems && value === undefined) {
                         value = defaultItems[key];
                     }
                     if (value !== undefined) {
-                        items[key] = value;
+                        result[key] = value;
                     }
                 });
 
                 setTimeout(function () {
-                    callback(items);
+                    callback(result);
                 }, 0);
             },
             /**
@@ -116,7 +116,7 @@ var initLocalStorage = function (isInject) {
              * @param {Function} [callback]
              */
             remove: function (keys, callback) {
-                var _keys = [];
+                var _keys = null;
                 if (Array.isArray(keys)) {
                     _keys = keys;
                 } else {
