@@ -6,12 +6,11 @@ var initLocalStorage = function (isInject) {
              * @param {Function} callback
              */
             get: function (keys, callback) {
-                if (keys === undefined) {
-                    keys = null;
-                }
                 return api.sendMessage({
-                    get: keys
-                }, callback, 'storage');
+                    scope: 'mono',
+                    action: 'storageGet',
+                    data: keys
+                }, callback);
             },
             /**
              * @param {Object} items
@@ -19,8 +18,10 @@ var initLocalStorage = function (isInject) {
              */
             set: function (items, callback) {
                 return api.sendMessage({
-                    set: items
-                }, callback, 'storage');
+                    scope: 'mono',
+                    action: 'storageSet',
+                    data: items
+                }, callback);
             },
             /**
              * @param {String|[String]} [keys]
@@ -28,16 +29,19 @@ var initLocalStorage = function (isInject) {
              */
             remove: function (keys, callback) {
                 return api.sendMessage({
-                    remove: keys
-                }, callback, 'storage');
+                    scope: 'mono',
+                    action: 'storageRemove',
+                    data: keys
+                }, callback);
             },
             /**
              * @param {Function} [callback]
              */
             clear: function (callback) {
                 return api.sendMessage({
-                    clear: true
-                }, callback, 'storage');
+                    scope: 'mono',
+                    action: 'storageClear'
+                }, callback);
             }
         };
     };
@@ -92,9 +96,7 @@ var initLocalStorage = function (isInject) {
                     }
                 });
 
-                setTimeout(function () {
-                    callback(result);
-                }, 0);
+                callback(result);
             },
             /**
              * @param {Object} items
@@ -107,9 +109,7 @@ var initLocalStorage = function (isInject) {
                     }
                 });
 
-                callback && setTimeout(function () {
-                    callback();
-                }, 0);
+                callback && callback();
             },
             /**
              * @param {String|[String]} [keys]
@@ -127,9 +127,7 @@ var initLocalStorage = function (isInject) {
                     localStorage.removeItem(key);
                 });
 
-                callback && setTimeout(function () {
-                    callback();
-                }, 0);
+                callback && callback();
             },
             /**
              * @param {Function} [callback]
@@ -137,28 +135,26 @@ var initLocalStorage = function (isInject) {
             clear: function (callback) {
                 localStorage.clear();
 
-                callback && setTimeout(function () {
-                    callback();
-                }, 0);
+                callback && callback();
             }
         };
 
         api.onMessage.addListener(function (msg, response) {
-            if (msg) {
-                if (msg.get !== undefined) {
-                    storage.get(msg.get, response);
+            if (msg && msg.scope === 'mono') {
+                if (msg.action === 'storageGet') {
+                    storage.get(msg.data, response);
                 } else
-                if (msg.set !== undefined) {
-                    storage.set(msg.set, response);
+                if (msg.action === 'storageSet') {
+                    storage.set(msg.data, response);
                 } else
-                if (msg.remove !== undefined) {
-                    storage.remove(msg.remove, response);
+                if (msg.action === 'storageRemove') {
+                    storage.remove(msg.data, response);
                 } else
-                if (msg.clear !== undefined) {
+                if (msg.action === 'storageClear') {
                     storage.clear(response);
                 }
             }
-        }, {hook: 'storage'});
+        });
 
         return storage;
     };
