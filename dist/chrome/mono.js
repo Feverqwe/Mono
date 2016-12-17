@@ -63,25 +63,50 @@ var mono = (typeof mono !== 'undefined') ? mono : undefined;
 
     })();
 
-    var cbWrapper = {
-      map: {},
-      wrapFn: function(fn) {
-        var id;
-        do {
-          id = parseInt(Math.random() * 1000);
-        } while (this.map[id]);
-        fn.monoWrapperId = id;
-        return this.map[id] = function(msg, sender, response) {
-          fn(msg, response);
+    var msgTools = {
+      idPrefix: Math.floor(Math.random() * 1000),
+      /**
+       * @typedef {Object} Sender
+       * @property {Object} [tab]
+       * @property {number} [frameId]
+       */
+      listenerList: [],
+      /**
+       * @typedef {Object} MonoMsg
+       * @property {boolean} mono
+       * @property {string} [hook]
+       * @property {string} idPrefix
+       * @property {boolean} isBgPage
+       * @property {string} [responseId]
+       * @property {*} data
+       */
+      /**
+       * @param {MonoMsg} message
+       * @param {Sender} sender
+       * @param {Function} response
+       */
+      listener: function(message, sender, response) {
+        var _this = msgTools;
+        if (message && message.mono && !message.responseId && message.idPrefix !== _this.idPrefix && message.isBgPage !== isBgPage) {
+          _this.listenerList.forEach(function(fn) {
+            if (message.hook === fn.hook) {
+              fn(message.data, response);
+            }
+          });
           return true;
+        }
+      },
+      /**
+       * @param {*} [msg]
+       * @returns {MonoMsg}
+       */
+      wrap: function(msg) {
+        return {
+          mono: true,
+          data: msg,
+          idPrefix: this.idPrefix,
+          isBgPage: isBgPage
         };
-      },
-      getFn: function(fn) {
-        return this.map[fn.monoWrapperId] || this.wrapFn(fn);
-      },
-      removeFn: function(fn) {
-        var id = fn.monoWrapperId;
-        delete this.map[id];
       }
     };
 
@@ -92,41 +117,56 @@ var mono = (typeof mono !== 'undefined') ? mono : undefined;
        * @param {Function} [responseCallback]
        */
       sendMessageToActiveTab: function(msg, responseCallback) {
+        var message = msgTools.wrap(msg);
+
         chrome.tabs.query({
           active: true,
           currentWindow: true
         }, function(tabs) {
           var tabId = tabs[0] && tabs[0].id;
           if (tabId >= 0) {
-            chrome.tabs.sendMessage(tabId, msg, responseCallback);
+            chrome.tabs.sendMessage(tabId, message, responseCallback);
           }
         });
       },
       /**
        * @param {*} msg
        * @param {Function} [responseCallback]
+       * @param {String} [hook]
        */
-      sendMessage: function(msg, responseCallback) {
-        chrome.runtime.sendMessage(msg, responseCallback);
+      sendMessage: function(msg, responseCallback, hook) {
+        var message = msgTools.wrap(msg);
+        hook && (message.hook = hook);
+        chrome.runtime.sendMessage(message, responseCallback);
       },
       onMessage: {
         /**
          * @param {Function} callback
+         * @param {Object} [details]
          */
-        addListener: function(callback) {
-          var wrappedCallback = cbWrapper.getFn(callback);
-          if (!chrome.runtime.onMessage.hasListener(wrappedCallback)) {
-            chrome.runtime.onMessage.addListener(wrappedCallback);
+        addListener: function(callback, details) {
+          details = details || {};
+          details.hook && (callback.hook = details.hook);
+
+          if (msgTools.listenerList.indexOf(callback) === -1) {
+            msgTools.listenerList.push(callback);
+          }
+
+          if (!chrome.runtime.onMessage.hasListener(msgTools.listener)) {
+            chrome.runtime.onMessage.addListener(msgTools.listener);
           }
         },
         /**
          * @param {Function} callback
          */
         removeListener: function(callback) {
-          var wrappedCallback = cbWrapper.getFn(callback);
-          if (chrome.runtime.onMessage.hasListener(wrappedCallback)) {
-            chrome.runtime.onMessage.removeListener(wrappedCallback);
-            cbWrapper.removeFn(callback);
+          var pos = msgTools.listenerList.indexOf(callback);
+          if (pos !== -1) {
+            msgTools.listenerList.splice(pos, 1);
+          }
+
+          if (!msgTools.listenerList.length) {
+            chrome.runtime.onMessage.removeListener(msgTools.listener);
           }
         }
       }
@@ -171,12 +211,11 @@ var mono = (typeof mono !== 'undefined') ? mono : undefined;
            * @param {Function} callback
            */
           get: function(keys, callback) {
-            if (keys === undefined) {
-              keys = null;
-            }
             return api.sendMessage({
-              get: keys
-            }, callback, 'storage');
+              scope: 'mono',
+              action: 'storageGet',
+              data: keys
+            }, callback);
           },
           /**
            * @param {Object} items
@@ -184,8 +223,10 @@ var mono = (typeof mono !== 'undefined') ? mono : undefined;
            */
           set: function(items, callback) {
             return api.sendMessage({
-              set: items
-            }, callback, 'storage');
+              scope: 'mono',
+              action: 'storageSet',
+              data: items
+            }, callback);
           },
           /**
            * @param {String|[String]} [keys]
@@ -193,16 +234,19 @@ var mono = (typeof mono !== 'undefined') ? mono : undefined;
            */
           remove: function(keys, callback) {
             return api.sendMessage({
-              remove: keys
-            }, callback, 'storage');
+              scope: 'mono',
+              action: 'storageRemove',
+              data: keys
+            }, callback);
           },
           /**
            * @param {Function} [callback]
            */
           clear: function(callback) {
             return api.sendMessage({
-              clear: true
-            }, callback, 'storage');
+              scope: 'mono',
+              action: 'storageClear'
+            }, callback);
           }
         };
       };
@@ -232,10 +276,10 @@ var mono = (typeof mono !== 'undefined') ? mono : undefined;
            * @param {Function} callback
            */
           get: function(keys, callback) {
-            var items = {};
-            var defaultItems = {};
+            var result = {};
+            var defaultItems = null;
 
-            var _keys = [];
+            var _keys = null;
             if (keys === undefined || keys === null) {
               _keys = Object.keys(localStorage);
             } else
@@ -251,17 +295,15 @@ var mono = (typeof mono !== 'undefined') ? mono : undefined;
 
             _keys.forEach(function(key) {
               var value = readItem(localStorage.getItem(key));
-              if (value === undefined) {
+              if (defaultItems && value === undefined) {
                 value = defaultItems[key];
               }
               if (value !== undefined) {
-                items[key] = value;
+                result[key] = value;
               }
             });
 
-            setTimeout(function() {
-              callback(items);
-            }, 0);
+            callback(result);
           },
           /**
            * @param {Object} items
@@ -274,16 +316,14 @@ var mono = (typeof mono !== 'undefined') ? mono : undefined;
               }
             });
 
-            callback && setTimeout(function() {
-              callback();
-            }, 0);
+            callback && callback();
           },
           /**
            * @param {String|[String]} [keys]
            * @param {Function} [callback]
            */
           remove: function(keys, callback) {
-            var _keys = [];
+            var _keys = null;
             if (Array.isArray(keys)) {
               _keys = keys;
             } else {
@@ -294,9 +334,7 @@ var mono = (typeof mono !== 'undefined') ? mono : undefined;
               localStorage.removeItem(key);
             });
 
-            callback && setTimeout(function() {
-              callback();
-            }, 0);
+            callback && callback();
           },
           /**
            * @param {Function} [callback]
@@ -304,29 +342,25 @@ var mono = (typeof mono !== 'undefined') ? mono : undefined;
           clear: function(callback) {
             localStorage.clear();
 
-            callback && setTimeout(function() {
-              callback();
-            }, 0);
+            callback && callback();
           }
         };
 
         api.onMessage.addListener(function(msg, response) {
-          if (msg) {
-            if (msg.get !== undefined) {
-              storage.get(msg.get, response);
+          if (msg && msg.scope === 'mono') {
+            if (msg.action === 'storageGet') {
+              storage.get(msg.data, response);
             } else
-            if (msg.set !== undefined) {
-              storage.set(msg.set, response);
+            if (msg.action === 'storageSet') {
+              storage.set(msg.data, response);
             } else
-            if (msg.remove !== undefined) {
-              storage.remove(msg.remove, response);
+            if (msg.action === 'storageRemove') {
+              storage.remove(msg.data, response);
             } else
-            if (msg.clear !== undefined) {
+            if (msg.action === 'storageClear') {
               storage.clear(response);
             }
           }
-        }, {
-          hook: 'storage'
         });
 
         return storage;
