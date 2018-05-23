@@ -1,0 +1,34 @@
+{
+  "manifest_version": 2,
+  "minimum_chrome_version": "29",
+  "browser_action": {
+    "default_icon":  {
+      "19": "icons/icon_19.png",
+      "38": "icons/icon_38.png"
+    },
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icons/icon_16.png",
+    "48": "icons/icon_48.png",
+    "128": "icons/icon_128.png"
+  },
+  "background": {
+    "scripts": [
+      "js/background.js"
+    ],
+    "persistent": true
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["includes/any.js"]
+    }
+  ],
+  "permissions": [ "storage" ],
+  "name": "__MSG_name__",
+  "description": "__MSG_description__",
+  "default_locale": "en",
+  "version": "1.0.0"
+}
