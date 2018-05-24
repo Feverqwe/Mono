@@ -51,10 +51,9 @@ const config = {
   },
   resolve: {
     alias: {
-      'mono/backgroundPage': path.resolve(__dirname, '../src/chrome/backgroundPage'),
-      'mono/popupPage': path.resolve(__dirname, '../src/chrome/popupPage'),
-      'mono/optionsPage': path.resolve(__dirname, '../src/chrome/optionsPage'),
-      'mono/contentScript': path.resolve(__dirname, '../src/chrome/contentScript'),
+      'mono/src/backgroundPage': path.resolve(__dirname, '../src/browsers/chrome/backgroundPage'),
+      'mono/src/contentScript': path.resolve(__dirname, '../src/browsers/chrome/contentScript'),
+      'mono/src/page': path.resolve(__dirname, '../src/browsers/chrome/page'),
     }
   },
   plugins: [
