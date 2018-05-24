@@ -3,47 +3,17 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
 
-const isWatch = process.argv.some(function (arg) {
-  return arg === '--watch';
-});
+const isWatch = require('./isWatch');
 
-let mode = null;
-process.argv.some((arg, index) => {
-  if (arg === '--mode') {
-    mode = process.argv[index + 1];
-    return true;
-  }
-});
+const mode = require('./getMode');
 
-let browser = null;
-process.argv.some((arg, index) => {
-  if (arg === '--mono-browser') {
-    browser = process.argv[index + 1];
-    return true;
-  }
-});
+const browser = require('./getBrowser');
 
 const outputPath = path.resolve(`./dist/${browser}`);
 
-const CONTENT_SCRIPT_MAP = {};
-const CONTENT_SCRIPTS = [];
-require('./src/manifest').content_scripts.map(item => {
-  item.js.forEach(filename => {
-    if (!CONTENT_SCRIPT_MAP[filename]) {
-      CONTENT_SCRIPT_MAP[filename] = String(fs.readFileSync(path.join(outputPath, filename)));
-    }
-  });
-  CONTENT_SCRIPTS.push({
-    matches: item.matches,
-    js: item.js,
-  });
-});
+const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./getContentScripts')(outputPath);
 
-const env = {
-  targets: {
-    browsers: ['Chrome >= 36']
-  }
-};
+const env = require('./getEnv');
 
 const config = {
   entry: {

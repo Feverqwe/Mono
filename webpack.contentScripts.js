@@ -1,33 +1,15 @@
 const {DefinePlugin} = require('webpack');
 const path = require('path');
 
-const isWatch = process.argv.some(function (arg) {
-  return arg === '--watch';
-});
+const isWatch = require('./isWatch');
 
-let mode = null;
-process.argv.some((arg, index) => {
-  if (arg === '--mode') {
-    mode = process.argv[index + 1];
-    return true;
-  }
-});
+const mode = require('./getMode');
 
-let browser = null;
-process.argv.some((arg, index) => {
-  if (arg === '--mono-browser') {
-    browser = process.argv[index + 1];
-    return true;
-  }
-});
+const browser = require('./getBrowser');
 
 const outputPath = path.resolve(`./dist/${browser}`);
 
-const env = {
-  targets: {
-    browsers: ['Chrome >= 36']
-  }
-};
+const env = require('./getEnv');
 
 const config = {
   entry: {

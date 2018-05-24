@@ -2,17 +2,9 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
-const isWatch = process.argv.some(function (arg) {
-  return arg === '--watch';
-});
+const isWatch = require('./isWatch');
 
-let mode = null;
-process.argv.some((arg, index) => {
-  if (arg === '--mode') {
-    mode = process.argv[index + 1];
-    return true;
-  }
-});
+const mode = require('./getMode');
 
 const outputPath = path.resolve(`./dist/userscript`);
 
