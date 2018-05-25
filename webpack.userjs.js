@@ -6,6 +6,8 @@ const isWatch = require('./builder/isWatch');
 
 const mode = require('./builder/getMode');
 
+const source = require('./builder/getSource');
+
 const output = require('./builder/getOutput');
 
 const config = {
@@ -23,7 +25,7 @@ const config = {
       path.join(output, '../userjs.entry')
     ]),
     new CopyWebpackPlugin([
-      {from: './src/icons', to: './icons'},
+      {from: path.join(source, './icons'), to: './icons'},
     ]),
   ],
 };

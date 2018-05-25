@@ -8,6 +8,8 @@ const mode = require('./builder/getMode');
 
 const browser = require('./builder/getBrowser');
 
+const source = require('./builder/getSource');
+
 const output = require('./builder/getOutput');
 
 const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./builder/getContentScripts')(output);
@@ -42,7 +44,7 @@ const config = {
   },
   resolve: {
     alias: {
-      'router': path.resolve(__dirname, `./vendor/mono/browsers/${browser}/router`),
+      'router': path.join(source, `./vendor/mono/browsers/${browser}/router`),
     }
   },
   plugins: [

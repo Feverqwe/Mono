@@ -7,13 +7,15 @@ const mode = require('./builder/getMode');
 
 const browser = require('./builder/getBrowser');
 
+const source = require('./builder/getSource');
+
 const output = require('./builder/getOutput');
 
 const env = require('./builder/getEnv');
 
 const config = {
   entry: {
-    any: './src/includes/any',
+    any: path.join(source, './includes/any'),
   },
   output: {
     path: output,
@@ -39,7 +41,7 @@ const config = {
   },
   resolve: {
     alias: {
-      'mono': path.resolve(__dirname, `./vendor/mono/browsers/${browser}/contentScript`),
+      'mono': path.join(source, `./vendor/mono/browsers/${browser}/contentScript`),
     }
   },
   plugins: [

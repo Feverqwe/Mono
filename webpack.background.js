@@ -7,13 +7,15 @@ const mode = require('./builder/getMode');
 
 const browser = require('./builder/getBrowser');
 
+const source = require('./builder/getSource');
+
 const output = require('./builder/getOutput');
 
 const env = require('./builder/getEnv');
 
 const config = {
   entry: {
-    background: './src/js/background',
+    background: path.join(source, 'js/background'),
   },
   output: {
     path: output,
@@ -39,7 +41,7 @@ const config = {
   },
   resolve: {
     alias: {
-      'mono': path.resolve(__dirname, `./vendor/mono/browsers/${browser}/backgroundPage`),
+      'mono': path.join(source, `./vendor/mono/browsers/${browser}/backgroundPage`),
     }
   },
   plugins: [

@@ -9,16 +9,18 @@ const mode = require('./builder/getMode');
 
 const browser = require('./builder/getBrowser');
 
+const source = require('./builder/getSource');
+
 const output = require('./builder/getOutput');
 
-const localesPath = path.resolve('./src/_locales');
+const localesPath = path.resolve(path.join(source, './_locales'));
 
 const LOCALE_MAP = {};
 fs.readdirSync(localesPath).forEach(locale => {
   LOCALE_MAP[locale] = require(path.join(localesPath, locale, 'messages.json'));
 });
 
-const BACKGROUND_SCRIPTS = require('./src/manifest').background.scripts.map(filename => {
+const BACKGROUND_SCRIPTS = require(path.join(source, './manifest')).background.scripts.map(filename => {
   return String(fs.readFileSync(path.join(output, filename)));
 });
 
@@ -62,7 +64,7 @@ const config = {
   },
   resolve: {
     alias: {
-      'bundle': path.resolve(__dirname, `./vendor/mono/browsers/${browser}/bundle`),
+      'bundle': path.join(source, `./vendor/mono/browsers/${browser}/bundle`),
     }
   },
   plugins: [

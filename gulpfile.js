@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const path = require('path');
 const runSequence = require('run-sequence');
 
-const runWebpack = (config, callback) => {
+const runWebpack = config => {
   return new Promise((resolve, reject) => {
     webpack(config, (err, stats) => {
       if (err) return reject(err);
@@ -28,41 +28,44 @@ const runWebpack = (config, callback) => {
   });
 };
 
-gulp.task('buildBase', callback => {
+gulp.task('buildBase', () => {
   return runWebpack([
     require('./webpack.background'),
     require('./webpack.pages'),
     require('./webpack.contentScripts'),
-  ], callback);
+  ]);
 });
 
-gulp.task('buildBundle', callback => {
-  return runWebpack(require('./webpack.bundle'), callback);
+gulp.task('buildBundle', () => {
+  return runWebpack(require('./webpack.bundle'));
 });
 
-gulp.task('buildRouter', callback => {
-  return runWebpack(require('./webpack.router'), callback);
+gulp.task('buildRouter', () => {
+  return runWebpack(require('./webpack.router'));
 });
 
-gulp.task('buildUserjs', callback => {
+gulp.task('buildUserjs', () => {
+  process.argv.push('--source-path', path.resolve('./src'));
   process.argv.push('--output-path', path.resolve('./dist/userjs'));
   process.argv.push('--mono-browser', 'userscript');
   process.argv.push('--mode', 'development');
-  return runWebpack(require('./webpack.userjs'), callback);
+  return runWebpack(require('./webpack.userjs'));
 });
 
-gulp.task('buildSafari', callback => {
+gulp.task('buildSafari', () => {
+  process.argv.push('--source-path', path.resolve('./src'));
   process.argv.push('--output-path', path.resolve('./dist/safari'));
   process.argv.push('--mono-browser', 'safari');
   process.argv.push('--mode', 'development');
-  return runWebpack(require('./webpack.safari'), callback);
+  return runWebpack(require('./webpack.safari'));
 });
 
-gulp.task('buildChrome', callback => {
+gulp.task('buildChrome', () => {
+  process.argv.push('--source-path', path.resolve('./src'));
   process.argv.push('--output-path', path.resolve('./dist/chrome'));
   process.argv.push('--mono-browser', 'chrome');
   process.argv.push('--mode', 'development');
-  return runWebpack(require('./webpack.chrome'), callback);
+  return runWebpack(require('./webpack.chrome'));
 });
 
 gulp.task('userjs', callback => {

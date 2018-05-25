@@ -8,14 +8,16 @@ const mode = require('./builder/getMode');
 
 const browser = require('./builder/getBrowser');
 
+const source = require('./builder/getSource');
+
 const output = require('./builder/getOutput');
 
 const env = require('./builder/getEnv');
 
 const config = {
   entry: {
-    popup: './src/js/popup',
-    options: './src/js/options',
+    popup: path.join(source, './js/popup'),
+    options: path.join(source, './js/options'),
   },
   output: {
     path: output,
@@ -41,18 +43,18 @@ const config = {
   },
   resolve: {
     alias: {
-      'mono': path.resolve(__dirname, `./vendor/mono/browsers/${browser}/page`),
+      'mono': path.join(source, `./vendor/mono/browsers/${browser}/page`),
     }
   },
   plugins: [
     new HtmlWebpackPlugin({
       filename: 'popup.html',
-      template: './src/popup.html',
+      template: path.join(source, './popup.html'),
       chunks: ['popup']
     }),
     new HtmlWebpackPlugin({
       filename: 'options.html',
-      template: './src/options.html',
+      template: path.join(source, './options.html'),
       chunks: ['options']
     }),
     new DefinePlugin({
