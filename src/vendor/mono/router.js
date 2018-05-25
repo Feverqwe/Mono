@@ -7,14 +7,14 @@ class Router {
     this.loadedContentScripts = [];
   }
   hasInjectScripts() {
-    return this.contentScripts.some(item => this.isMatched(item));
+    return this.contentScripts.some(item => isMatchItem(item));
   }
   inject() {
     const documentEndScripts = [];
     const documentStartScripts = [];
     const documentIdleScripts = [];
     this.contentScripts.forEach(item => {
-      if (this.isMatched(item)) {
+      if (isMatchItem(item)) {
         item.js.forEach(filename => {
           if (this.loadedContentScripts.indexOf(filename) === -1) {
             this.loadedContentScripts.push(filename);
@@ -58,22 +58,6 @@ class Router {
       });
     }
   }
-  isMatched(item) {
-    let isMatched = window.top !== window.self ? item.all_frames : true;
-    if (isMatched) {
-      isMatched = (new RegExp(item.matches, 'i')).test(location.href);
-    }
-    if (isMatched && item.exclude_matches) {
-      isMatched = !(new RegExp(item.exclude_matches, 'i')).test(location.href);
-    }
-    if (isMatched && item.include_globs) {
-      isMatched = (new RegExp(item.include_globs, 'i')).test(location.href);
-    }
-    if (isMatched && item.exclude_globs) {
-      isMatched = !(new RegExp(item.exclude_globs, 'i')).test(location.href);
-    }
-    return isMatched;
-  }
   runWhenDocumentStart(listener) {
     listener();
   }
@@ -106,5 +90,23 @@ class Router {
     return new Function('MONO', code)(this.contentScriptMono);
   }
 }
+
+
+const isMatchItem = (item) => {
+  let isMatched = window.top !== window.self ? item.all_frames : true;
+  if (isMatched) {
+    isMatched = (new RegExp(item.matches, 'i')).test(location.href);
+  }
+  if (isMatched && item.exclude_matches) {
+    isMatched = !(new RegExp(item.exclude_matches, 'i')).test(location.href);
+  }
+  if (isMatched && item.include_globs) {
+    isMatched = (new RegExp(item.include_globs, 'i')).test(location.href);
+  }
+  if (isMatched && item.exclude_globs) {
+    isMatched = !(new RegExp(item.exclude_globs, 'i')).test(location.href);
+  }
+  return isMatched;
+};
 
 export default Router;
