@@ -12,7 +12,7 @@ const output = require('./builder/getOutput');
 
 const config = {
   entry: {
-    empty: 'noop2',
+    empty: './builder/noop',
   },
   output: {
     path: output,
