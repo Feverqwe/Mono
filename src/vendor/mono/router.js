@@ -15,14 +15,14 @@ class Router {
         item.js.forEach(filename => {
           if (this.loadedContentScripts.indexOf(filename) === -1) {
             this.loadedContentScripts.push(filename);
-            scripts.push(this.contentScriptMap[filename]);
+            scripts.push(filename);
           }
         });
       }
     });
     if (scripts.length) {
       try {
-        this.executeContentScript(scripts.join('\n'));
+        this.executeContentScript(scripts.map(filename => this.contentScriptMap[filename]).join('\n'));
       } catch (err) {
         console.error('executeContentScript error', err);
       }
