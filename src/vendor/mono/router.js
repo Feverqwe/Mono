@@ -89,12 +89,14 @@ class Router {
         linstener();
       } else {
         const _listener = () => {
-          if (document.readyState === 'interactive') {
-            document.removeEventListener('readystatechange', _listener);
+          if (['interactive', 'complete'].indexOf(document.readyState) !== -1) {
+            document.removeEventListener('DOMContentLoaded', _listener);
+            window.removeEventListener('load', _listener);
             linstener();
           }
         };
-        document.addEventListener('readystatechange', _listener);
+        document.addEventListener('DOMContentLoaded', _listener);
+        window.addEventListener('load', _listener);
       }
     });
   }
