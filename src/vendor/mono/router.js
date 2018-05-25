@@ -93,9 +93,12 @@ class Router {
   }
 }
 
-
 const isMatchItem = (item) => {
-  let isMatched = window.top !== window.self ? item.all_frames : true;
+  if (typeof item._isMatch === 'boolean') {
+    return item._isMatch;
+  }
+
+  let isMatched = window.top !== window.self ? item.all_frames === true : true;
   if (isMatched) {
     isMatched = (new RegExp(item.matches, 'i')).test(location.href);
   }
@@ -108,7 +111,7 @@ const isMatchItem = (item) => {
   if (isMatched && item.exclude_globs) {
     isMatched = !(new RegExp(item.exclude_globs, 'i')).test(location.href);
   }
-  return isMatched;
+  return item._isMatch = isMatched;
 };
 
 export default Router;
