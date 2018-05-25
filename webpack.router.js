@@ -12,7 +12,7 @@ const source = require('./builder/getSource');
 
 const output = require('./builder/getOutput');
 
-const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./builder/getContentScripts')(output);
+const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./builder/getContentScripts');
 
 const env = require('./builder/getEnv');
 

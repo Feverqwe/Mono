@@ -32,7 +32,7 @@ const POPUP_SCRIPTS = [
   String(fs.readFileSync(path.join(output, 'js/popup.js')))
 ];
 
-const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./builder/getContentScripts')(output);
+const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./builder/getContentScripts');
 
 const env = require('./builder/getEnv');
 
