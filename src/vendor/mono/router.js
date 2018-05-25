@@ -8,6 +8,9 @@ class Router {
     this.contentScriptMap = CONTENT_SCRIPT_MAP;
     this.loadedContentScripts = [];
   }
+  hasInjectScripts() {
+    return this.contentScripts.some(item => item.matches.some(pattern => matchPattern(pattern, location.href)));
+  }
   inject() {
     const scripts = [];
     this.contentScripts.forEach(item => {

@@ -14,9 +14,11 @@ class Bundle extends Router {
     this.init();
   }
   init() {
-    this.runBackgroundPage().then(() => {
-      return this.inject();
-    });
+    if (this.hasInjectScripts()) {
+      this.runBackgroundPage().then(() => {
+        return this.inject();
+      });
+    }
   }
   showPopup() {
     this.closePopup();
