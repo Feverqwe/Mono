@@ -68,14 +68,20 @@ gulp.task('buildChrome', () => {
   return runWebpack(require('./webpack.chrome'));
 });
 
+let fired = false;
+gulp.task('singleTaskLock', () => {
+  if (fired) throw new Error("Another task is already running");
+  fired = true;
+});
+
 gulp.task('userjs', callback => {
-  runSequence('buildUserjs', 'buildBase', 'buildBundle', callback);
+  runSequence('singleTaskLock', 'buildUserjs', 'buildBase', 'buildBundle', callback);
 });
 
 gulp.task('safari', callback => {
-  runSequence('buildSafari', 'buildBase', 'buildRouter', callback);
+  runSequence('singleTaskLock', 'buildSafari', 'buildBase', 'buildRouter', callback);
 });
 
 gulp.task('chrome', callback => {
-  runSequence('buildChrome', 'buildBase', callback);
+  runSequence('singleTaskLock', 'buildChrome', 'buildBase', callback);
 });
