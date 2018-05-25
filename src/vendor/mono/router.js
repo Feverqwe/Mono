@@ -81,9 +81,11 @@ class Router {
   }
   runWhenDocumentIdle(listener) {
     this.runWhenDocumentEnd(() => {
-      (window.requestIdleCallback || setTimeout)(() => {
-        listener();
-      });
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(listener);
+      } else {
+        setTimeout(listener, 1);
+      }
     });
   }
   executeContentScript(code) {
