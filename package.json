@@ -3,13 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "buildBundle": "webpack --mode development --config webpack.bundle.js --mono-browser userscript",
-    "buildRouter": "webpack --mode development --config webpack.router.js --mono-browser safari",
-    "buildBase": "webpack --mode development --config webpack.background.js --config webpack.pages.js --config webpack.contentScripts.js",
-    "buildUserjs": "webpack --mode development --mono-browser userscript --config webpack.userjs.js && npm run buildBase -- --mono-browser userscript && npm run buildBundle",
-    "buildSafari": "webpack --mode development --mono-browser safari --config webpack.safari.js && npm run buildBase -- --mono-browser safari && npm run buildRouter",
-    "buildChrome": "webpack --mode development --mono-browser chrome --config webpack.chrome.js && npm run buildBase -- --mono-browser chrome",
-    "watchChrome": "webpack --mode development --watch --mono-browser chrome --config webpack.chrome.js --config webpack.background.js --config webpack.pages.js --config webpack.contentScripts.js"
+    "buildUserjs": "gulp userjs",
+    "buildSafari": "gulp safari",
+    "buildChrome": "gulp chrome",
+    "watchChrome": "webpack --mode development --watch --output ./dist --mono-browser chrome --config webpack.chrome.js --config webpack.background.js --config webpack.pages.js --config webpack.contentScripts.js"
   },
   "devDependencies": {
     "babel": "^6.23.0",
@@ -22,6 +19,7 @@
     "html-webpack-plugin": "^3.2.0",
     "loader-utils": "^1.1.0",
     "noop2": "^2.0.0",
+    "run-sequence": "^2.2.1",
     "webpack": "^4.8.3",
     "webpack-cli": "^2.1.4"
   },

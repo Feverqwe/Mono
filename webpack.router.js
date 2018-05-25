@@ -1,19 +1,18 @@
 const {DefinePlugin} = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const path = require('path');
-const fs = require('fs');
 
-const isWatch = require('./isWatch');
+const isWatch = require('./builder/isWatch');
 
-const mode = require('./getMode');
+const mode = require('./builder/getMode');
 
-const browser = require('./getBrowser');
+const browser = require('./builder/getBrowser');
 
-const outputPath = path.resolve(`./dist/${browser}`);
+const outputPath = require('./builder/getOutput');
 
-const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./getContentScripts')(outputPath);
+const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./builder/getContentScripts')(outputPath);
 
-const env = require('./getEnv');
+const env = require('./builder/getEnv');
 
 const config = {
   entry: {
@@ -23,6 +22,7 @@ const config = {
     path: outputPath,
     filename: 'includes/[name].js'
   },
+  mode: mode,
   devtool: 'source-map',
   module: {
     rules: [

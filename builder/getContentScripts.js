@@ -4,7 +4,7 @@ const fs = require('fs');
 module.exports = (outputPath) => {
   const CONTENT_SCRIPT_MAP = {};
   const CONTENT_SCRIPTS = [];
-  require('./src/manifest').content_scripts.map(item => {
+  require('../src/manifest').content_scripts.map(item => {
     item.js.forEach(filename => {
       if (!CONTENT_SCRIPT_MAP[filename]) {
         CONTENT_SCRIPT_MAP[filename] = String(fs.readFileSync(path.join(outputPath, filename)));
