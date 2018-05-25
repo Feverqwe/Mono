@@ -1,7 +1,6 @@
 const {DefinePlugin} = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const path = require('path');
-const fs = require('fs');
 
 const isWatch = require('./builder/isWatch');
 
@@ -13,24 +12,13 @@ const source = require('./builder/getSource');
 
 const output = require('./builder/getOutput');
 
-const localesPath = path.resolve(path.join(source, './_locales'));
+const LOCALE_MAP = require('./builder/getLocaleMap');
 
-const LOCALE_MAP = {};
-fs.readdirSync(localesPath).forEach(locale => {
-  LOCALE_MAP[locale] = require(path.join(localesPath, locale, 'messages.json'));
-});
+const BACKGROUND_SCRIPTS = require('./builder/getBackgroundScripts');
 
-const BACKGROUND_SCRIPTS = require(path.join(source, './manifest')).background.scripts.map(filename => {
-  return String(fs.readFileSync(path.join(output, filename)));
-});
+const OPTIONS_SCRIPTS = require('./builder/getOptionsScripts');
 
-const OPTIONS_SCRIPTS = [
-  String(fs.readFileSync(path.join(output, 'js/options.js')))
-];
-
-const POPUP_SCRIPTS = [
-  String(fs.readFileSync(path.join(output, 'js/popup.js')))
-];
+const POPUP_SCRIPTS = require('./builder/getPopupScripts');
 
 const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./builder/getContentScripts');
 
