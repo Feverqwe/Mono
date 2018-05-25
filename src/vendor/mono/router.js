@@ -98,7 +98,7 @@ const isMatchItem = (item) => {
     return item._isMatch;
   }
 
-  let isMatched = window.top !== window.self ? item.all_frames === true : true;
+  let isMatched = window.top === window.self || item.all_frames === true;
   if (isMatched) {
     isMatched = (new RegExp(item.matches, 'i')).test(location.href);
   }
