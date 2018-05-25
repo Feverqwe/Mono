@@ -15,10 +15,10 @@ const getPath = path => {
 };
 
 const hostnameToRePattern = (scheme, hostname, path) => {
-  return '^' + getScheme(scheme) + escapeStringRegexp(hostname.toLowerCase()).replace(/\\\*/g, '.+') + getPath(path) + '$';
+  return '^' + getScheme(scheme) + escapeStringRegexp(hostname.toLowerCase()).replace(/\\\*/g, '[^\\/]*') + getPath(path) + '$';
 };
 
-const matchPattern = (pattern, url) => {
+const matchPattern = pattern => {
   const regexpList = [];
   if (pattern === '<all_urls>') {
     pattern = '*://*/*';
@@ -34,15 +34,13 @@ const matchPattern = (pattern, url) => {
       hostnameList.push(hostname.substr(2));
     }
     hostnameList.forEach(hostname => {
-      regexpList.push(new RegExp(hostnameToRePattern(scheme, hostname, path), 'i'));
+      regexpList.push(hostnameToRePattern(scheme, hostname, path));
     });
 
-    return regexpList.some(re => {
-      return re.test(url);
-    });
+    return regexpList;
   } else {
     throw new Error('Match pattern error');
   }
 };
 
-export default matchPattern;
+module.exports = matchPattern;

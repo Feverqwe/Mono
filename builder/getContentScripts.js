@@ -1,5 +1,7 @@
 const path = require('path');
 const fs = require('fs');
+const matchPattern = require('./matchPattern');
+const matchGlobPattern = require('./matchGlobPattern');
 
 const output = require('./getOutput');
 const source = require('./getSource');
@@ -14,10 +16,10 @@ require(path.join(source, './manifest')).content_scripts.map(item => {
     }
   });
   CONTENT_SCRIPTS.push({
-    matches: item.matches,
-    exclude_matches: item.exclude_matches,
-    include_globs: item.include_globs,
-    exclude_globs: item.exclude_globs,
+    matches: [].concat(...item.matches.map(pattern => matchPattern(pattern))).join('|'),
+    exclude_matches: item.exclude_matches && [].concat(...item.exclude_matches.map(pattern => matchPattern(pattern))).join('|'),
+    include_globs: item.include_globs && [].concat(...item.include_globs.map(pattern => matchGlobPattern(pattern))).join('|'),
+    exclude_globs: item.exclude_globs && [].concat(...item.exclude_globs.map(pattern => matchGlobPattern(pattern))).join('|'),
     run_at: item.run_at,
     all_frames: item.all_frames,
     js: item.js,

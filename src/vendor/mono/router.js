@@ -1,6 +1,3 @@
-import matchPattern from "./matchPattern";
-import matchGlobPattern from "./matchGlobPattern";
-
 class Router {
   constructor() {
     this.localeMap = LOCALE_MAP;
@@ -64,16 +61,16 @@ class Router {
   isMatched(item) {
     let isMatched = window.top !== window.self ? item.all_frames : true;
     if (isMatched) {
-      isMatched = item.matches.some(pattern => matchPattern(pattern, location.href));
+      isMatched = (new RegExp(item.matches, 'i')).test(location.href);
     }
     if (isMatched && item.exclude_matches) {
-      isMatched = !item.exclude_matches.some(pattern => matchPattern(pattern, location.href));
+      isMatched = !(new RegExp(item.exclude_matches, 'i')).test(location.href);
     }
     if (isMatched && item.include_globs) {
-      isMatched = item.include_globs.some(globPattern => matchGlobPattern(globPattern, location.href));
+      isMatched = (new RegExp(item.include_globs, 'i')).test(location.href);
     }
     if (isMatched && item.exclude_globs) {
-      isMatched = !item.exclude_globs.some(globPattern => matchGlobPattern(globPattern, location.href));
+      isMatched = !(new RegExp(item.exclude_globs, 'i')).test(location.href);
     }
     return isMatched;
   }
