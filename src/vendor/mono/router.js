@@ -42,19 +42,19 @@ class Router {
         }
       });
     }
-    if (documentIdleScripts.length) {
-      this.runWhenDocumentIdle(() => {
+    if (documentEndScripts.length) {
+      this.runWhenDocumentEnd(() => {
         try {
-          this.executeContentScript(documentIdleScripts.map(filename => this.contentScriptMap[filename]).join('\n'));
+          this.executeContentScript(documentEndScripts.map(filename => this.contentScriptMap[filename]).join('\n'));
         } catch (err) {
           console.error('executeContentScript error', err);
         }
       });
     }
-    if (documentEndScripts.length) {
-      this.runWhenDocumentEnd(() => {
+    if (documentIdleScripts.length) {
+      this.runWhenDocumentIdle(() => {
         try {
-          this.executeContentScript(documentEndScripts.map(filename => this.contentScriptMap[filename]).join('\n'));
+          this.executeContentScript(documentIdleScripts.map(filename => this.contentScriptMap[filename]).join('\n'));
         } catch (err) {
           console.error('executeContentScript error', err);
         }
