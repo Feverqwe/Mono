@@ -6,13 +6,20 @@ const matchGlobPattern = require('./matchGlobPattern');
 const output = require('./getOutput');
 const source = require('./getSource');
 
-const CONTENT_SCRIPT_MAP = {};
+const CONTENT_SCRIPT_MAP = [];
 const CONTENT_SCRIPTS = [];
+
+let index = 0;
+const filenameIndexMap = {};
 
 require(path.join(source, './manifest')).content_scripts.map(item => {
   item.js.forEach(filename => {
-    if (!CONTENT_SCRIPT_MAP[filename]) {
-      CONTENT_SCRIPT_MAP[filename] = String(fs.readFileSync(path.join(output, filename)));
+    if (typeof filenameIndexMap[filename] !== 'number') {
+      filenameIndexMap[filename] = index++;
+    }
+    const idx = filenameIndexMap[filename];
+    if (!CONTENT_SCRIPT_MAP[idx]) {
+      CONTENT_SCRIPT_MAP[idx] = String(fs.readFileSync(path.join(output, filename)));
     }
   });
   CONTENT_SCRIPTS.push({
@@ -22,7 +29,7 @@ require(path.join(source, './manifest')).content_scripts.map(item => {
     exclude_globs: item.exclude_globs && [].concat(...item.exclude_globs.map(pattern => matchGlobPattern(pattern))).join('|'),
     run_at: item.run_at,
     all_frames: item.all_frames,
-    js: item.js,
+    js: item.js.map(filename => filenameIndexMap[filename]),
   });
 });
 

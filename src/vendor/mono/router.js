@@ -15,16 +15,16 @@ class Router {
     const documentIdleScripts = [];
     this.contentScripts.forEach(item => {
       if (isMatchItem(item)) {
-        item.js.forEach(filename => {
-          if (this.loadedContentScripts.indexOf(filename) === -1) {
-            this.loadedContentScripts.push(filename);
+        item.js.forEach(index => {
+          if (this.loadedContentScripts.indexOf(index) === -1) {
+            this.loadedContentScripts.push(index);
             if (item.run_at === 'document_start') {
-              documentStartScripts.push(filename);
+              documentStartScripts.push(index);
             } else
             if (item.run_at === 'document_end') {
-              documentEndScripts.push(filename);
+              documentEndScripts.push(index);
             } else {
-              documentIdleScripts.push(filename);
+              documentIdleScripts.push(index);
             }
           }
         });
@@ -33,7 +33,7 @@ class Router {
     if (documentStartScripts.length) {
       this.runWhenDocumentStart(() => {
         try {
-          this.executeContentScript(documentStartScripts.map(filename => this.contentScriptMap[filename]).join('\n'));
+          this.executeContentScript(documentStartScripts.map(index => this.contentScriptMap[index]).join('\n'));
         } catch (err) {
           console.error('executeContentScript document_start error', err);
         }
@@ -42,7 +42,7 @@ class Router {
     if (documentEndScripts.length) {
       this.runWhenDocumentEnd(() => {
         try {
-          this.executeContentScript(documentEndScripts.map(filename => this.contentScriptMap[filename]).join('\n'));
+          this.executeContentScript(documentEndScripts.map(index => this.contentScriptMap[index]).join('\n'));
         } catch (err) {
           console.error('executeContentScript document_end error', err);
         }
@@ -51,7 +51,7 @@ class Router {
     if (documentIdleScripts.length) {
       this.runWhenDocumentIdle(() => {
         try {
-          this.executeContentScript(documentIdleScripts.map(filename => this.contentScriptMap[filename]).join('\n'));
+          this.executeContentScript(documentIdleScripts.map(index => this.contentScriptMap[index]).join('\n'));
         } catch (err) {
           console.error('executeContentScript document_idle error', err);
         }
