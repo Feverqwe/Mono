@@ -1,3 +1,3 @@
-const mono = SCOPE_MONO;
+const mono = MONO;
 
 export default mono;
