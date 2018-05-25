@@ -6,21 +6,21 @@ const isWatch = require('./builder/isWatch');
 
 const mode = require('./builder/getMode');
 
-const outputPath = require('./builder/getOutput');
+const output = require('./builder/getOutput');
 
 const config = {
   entry: {
     empty: 'noop2',
   },
   output: {
-    path: outputPath,
+    path: output,
     filename: '../safari.entry'
   },
   mode: mode,
   plugins: [
     new CleanWebpackPlugin([
-      outputPath,
-      path.join(outputPath, '../safari.entry')
+      output,
+      path.join(output, '../safari.entry')
     ]),
     new CopyWebpackPlugin([
       {from: './src/icons', to: './icons'},

@@ -45,21 +45,21 @@ gulp.task('buildRouter', callback => {
 });
 
 gulp.task('buildUserjs', callback => {
-  process.argv.push('--output', path.resolve('./dist/userjs'));
+  process.argv.push('--output-path', path.resolve('./dist/userjs'));
   process.argv.push('--mono-browser', 'userscript');
   process.argv.push('--mode', 'development');
   return runWebpack(require('./webpack.userjs'), callback);
 });
 
 gulp.task('buildSafari', callback => {
-  process.argv.push('--output', path.resolve('./dist/safari'));
+  process.argv.push('--output-path', path.resolve('./dist/safari'));
   process.argv.push('--mono-browser', 'safari');
   process.argv.push('--mode', 'development');
   return runWebpack(require('./webpack.safari'), callback);
 });
 
 gulp.task('buildChrome', callback => {
-  process.argv.push('--output', path.resolve('./dist/chrome'));
+  process.argv.push('--output-path', path.resolve('./dist/chrome'));
   process.argv.push('--mono-browser', 'chrome');
   process.argv.push('--mode', 'development');
   return runWebpack(require('./webpack.chrome'), callback);

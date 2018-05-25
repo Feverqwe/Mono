@@ -8,9 +8,9 @@ const mode = require('./builder/getMode');
 
 const browser = require('./builder/getBrowser');
 
-const outputPath = require('./builder/getOutput');
+const output = require('./builder/getOutput');
 
-const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./builder/getContentScripts')(outputPath);
+const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./builder/getContentScripts')(output);
 
 const env = require('./builder/getEnv');
 
@@ -19,7 +19,7 @@ const config = {
     router: 'router',
   },
   output: {
-    path: outputPath,
+    path: output,
     filename: 'includes/[name].js'
   },
   mode: mode,
@@ -47,7 +47,7 @@ const config = {
   },
   plugins: [
     new CleanWebpackPlugin([
-      path.join(outputPath, 'includes')
+      path.join(output, 'includes')
     ]),
     new DefinePlugin({
       CONTENT_SCRIPTS: JSON.stringify(CONTENT_SCRIPTS),

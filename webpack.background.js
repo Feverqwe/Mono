@@ -7,7 +7,7 @@ const mode = require('./builder/getMode');
 
 const browser = require('./builder/getBrowser');
 
-const outputPath = require('./builder/getOutput');
+const output = require('./builder/getOutput');
 
 const env = require('./builder/getEnv');
 
@@ -16,7 +16,7 @@ const config = {
     background: './src/js/background',
   },
   output: {
-    path: outputPath,
+    path: output,
     filename: 'js/[name].js'
   },
   mode: mode,

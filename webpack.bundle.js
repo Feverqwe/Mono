@@ -9,7 +9,7 @@ const mode = require('./builder/getMode');
 
 const browser = require('./builder/getBrowser');
 
-const outputPath = require('./builder/getOutput');
+const output = require('./builder/getOutput');
 
 const localesPath = path.resolve('./src/_locales');
 
@@ -19,18 +19,18 @@ fs.readdirSync(localesPath).forEach(locale => {
 });
 
 const BACKGROUND_SCRIPTS = require('./src/manifest').background.scripts.map(filename => {
-  return String(fs.readFileSync(path.join(outputPath, filename)));
+  return String(fs.readFileSync(path.join(output, filename)));
 });
 
 const OPTIONS_SCRIPTS = [
-  String(fs.readFileSync(path.join(outputPath, 'js/options.js')))
+  String(fs.readFileSync(path.join(output, 'js/options.js')))
 ];
 
 const POPUP_SCRIPTS = [
-  String(fs.readFileSync(path.join(outputPath, 'js/popup.js')))
+  String(fs.readFileSync(path.join(output, 'js/popup.js')))
 ];
 
-const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./builder/getContentScripts')(outputPath);
+const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./builder/getContentScripts')(output);
 
 const env = require('./builder/getEnv');
 
@@ -39,7 +39,7 @@ const config = {
     bundle: 'bundle',
   },
   output: {
-    path: outputPath,
+    path: output,
     filename: '[name].js'
   },
   mode: mode,
@@ -67,11 +67,11 @@ const config = {
   },
   plugins: [
     new CleanWebpackPlugin([
-      path.join(outputPath, 'includes'),
-      path.join(outputPath, 'js'),
-      path.join(outputPath, '_locales'),
-      path.join(outputPath, 'options.html'),
-      path.join(outputPath, 'popup.html'),
+      path.join(output, 'includes'),
+      path.join(output, 'js'),
+      path.join(output, '_locales'),
+      path.join(output, 'options.html'),
+      path.join(output, 'popup.html'),
     ]),
     new DefinePlugin({
       LOCALE_MAP: JSON.stringify(LOCALE_MAP),
