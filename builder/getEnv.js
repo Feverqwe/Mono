@@ -1,6 +1,6 @@
 const env = {
   targets: {
-    browsers: ['Chrome >= 36']
+    browsers: ['Chrome >= 65']
   }
 };
 

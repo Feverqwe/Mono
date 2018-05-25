@@ -1,21 +1,21 @@
-import _escapeRegExp from "lodash.escaperegexp";
+const escapeStringRegexp = require('escape-string-regexp');
 
 const getScheme = scheme => {
   if (!scheme || scheme === '*:') {
     return '(?:https?|file|ftp):\/\/';
   }
-  return _escapeRegExp(scheme.toLowerCase()) + '\/\/';
+  return escapeStringRegexp(scheme.toLowerCase()) + '\/\/';
 };
 
 const getPath = path => {
   if (!path) {
     return '\/.*';
   }
-  return _escapeRegExp(path.toLowerCase()).replace(/\\\*/g, '.*');
+  return escapeStringRegexp(path.toLowerCase()).replace(/\\\*/g, '.*');
 };
 
 const hostnameToRePattern = (scheme, hostname, path) => {
-  return '^' + getScheme(scheme) + _escapeRegExp(hostname.toLowerCase()).replace(/\\\*/g, '.+') + getPath(path) + '$';
+  return '^' + getScheme(scheme) + escapeStringRegexp(hostname.toLowerCase()).replace(/\\\*/g, '.+') + getPath(path) + '$';
 };
 
 const matchPattern = (pattern, url) => {

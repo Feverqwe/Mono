@@ -16,6 +16,7 @@ const env = require('./builder/getEnv');
 const config = {
   entry: {
     any: path.join(source, './includes/any'),
+    ya: path.join(source, './includes/ya'),
   },
   output: {
     path: output,
