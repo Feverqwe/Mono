@@ -2,6 +2,7 @@ import matchPattern from "./matchPattern";
 
 class Router {
   constructor() {
+    this.localeMap = LOCALE_MAP;
     this.contentScriptMono = null;
     this.contentScripts = CONTENT_SCRIPTS;
     this.contentScriptMap = CONTENT_SCRIPT_MAP;

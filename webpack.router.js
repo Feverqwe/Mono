@@ -12,6 +12,8 @@ const source = require('./builder/getSource');
 
 const output = require('./builder/getOutput');
 
+const LOCALE_MAP = require('./builder/getLocaleMap');
+
 const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./builder/getContentScripts');
 
 const env = require('./builder/getEnv');
@@ -52,6 +54,7 @@ const config = {
       path.join(output, 'includes')
     ]),
     new DefinePlugin({
+      LOCALE_MAP: JSON.stringify(LOCALE_MAP),
       CONTENT_SCRIPTS: JSON.stringify(CONTENT_SCRIPTS),
       CONTENT_SCRIPT_MAP: JSON.stringify(CONTENT_SCRIPT_MAP),
       'process.env': {
