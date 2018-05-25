@@ -81,7 +81,7 @@ class Router {
   }
   runWhenDocumentIdle(listener) {
     this.runWhenDocumentEnd(() => {
-      (window.setImmediate || setTimeout)(() => {
+      (window.requestIdleCallback || setTimeout)(() => {
         listener();
       });
     });
