@@ -1,4 +1,5 @@
 const {DefinePlugin, BannerPlugin} = require('webpack');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
@@ -37,7 +38,21 @@ const config = {
     filename: '[name].js'
   },
   mode: mode,
-  devtool: 'source-map',
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: false,
+        uglifyOptions: {
+          output: {
+            comments: /^\s+(@|==\/?UserScript==)/,
+          }
+        }
+      })
+    ]
+  },
+  devtool: 'none',
   module: {
     rules: [
       {
