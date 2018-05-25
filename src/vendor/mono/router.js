@@ -21,7 +21,11 @@ class Router {
       }
     });
     if (scripts.length) {
-      this.executeContentScript(scripts.join('\n'));
+      try {
+        this.executeContentScript(scripts.join('\n'));
+      } catch (err) {
+        console.error('executeContentScript error', err);
+      }
     }
   }
   executeContentScript(code) {
