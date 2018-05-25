@@ -32,17 +32,29 @@ class Router {
     });
     if (documentStartScripts.length) {
       this.runWhenDocumentStart(() => {
-        this.executeContentScript(documentStartScripts.map(filename => this.contentScriptMap[filename]).join('\n'));
+        try {
+          this.executeContentScript(documentStartScripts.map(filename => this.contentScriptMap[filename]).join('\n'));
+        } catch (err) {
+          console.error('executeContentScript document_start error', err);
+        }
       });
     }
     if (documentEndScripts.length) {
       this.runWhenDocumentEnd(() => {
-        this.executeContentScript(documentEndScripts.map(filename => this.contentScriptMap[filename]).join('\n'));
+        try {
+          this.executeContentScript(documentEndScripts.map(filename => this.contentScriptMap[filename]).join('\n'));
+        } catch (err) {
+          console.error('executeContentScript document_end error', err);
+        }
       });
     }
     if (documentIdleScripts.length) {
       this.runWhenDocumentIdle(() => {
-        this.executeContentScript(documentIdleScripts.map(filename => this.contentScriptMap[filename]).join('\n'));
+        try {
+          this.executeContentScript(documentIdleScripts.map(filename => this.contentScriptMap[filename]).join('\n'));
+        } catch (err) {
+          console.error('executeContentScript document_idle error', err);
+        }
       });
     }
   }
@@ -75,11 +87,7 @@ class Router {
     });
   }
   executeContentScript(code) {
-    try {
-      return new Function('MONO', code)(this.contentScriptMono);
-    } catch (err) {
-      console.error('executeContentScript error', err);
-    }
+    return new Function('MONO', code)(this.contentScriptMono);
   }
 }
 
