@@ -10,18 +10,6 @@ const runWebpack = config => {
       if (err) return reject(err);
       gutil.log(stats.toString({
         colors: gutil.colors.supportsColor,
-        hash: false,
-        timings: false,
-        chunks: false,
-        chunkModules: false,
-        modules: false,
-        children: true,
-        version: true,
-        cached: false,
-        cachedAssets: false,
-        reasons: false,
-        source: false,
-        errorDetails: false
       }));
       resolve();
     });
