@@ -92,7 +92,8 @@ class Router {
           if (['interactive', 'complete'].indexOf(document.readyState) !== -1) {
             document.removeEventListener('DOMContentLoaded', _listener);
             window.removeEventListener('load', _listener);
-            linstener();
+            linstener && linstener();
+            linstener = null;
           }
         };
         document.addEventListener('DOMContentLoaded', _listener);
