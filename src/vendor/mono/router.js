@@ -62,7 +62,7 @@ class Router {
     }
   }
   isMatched(item) {
-    let isMatched = !this.isFrame() ? true : item.all_frames;
+    let isMatched = window.top !== window.self ? item.all_frames : true;
     if (isMatched) {
       isMatched = item.matches.some(pattern => matchPattern(pattern, location.href));
     }
@@ -76,9 +76,6 @@ class Router {
       isMatched = !item.exclude_globs.some(globPattern => matchGlobPattern(globPattern, location.href));
     }
     return isMatched;
-  }
-  isFrame() {
-    return window.top !== window.self;
   }
   runWhenDocumentStart(listener) {
     listener();
