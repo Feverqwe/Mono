@@ -1,6 +1,7 @@
-const {DefinePlugin} = require('webpack');
+const {DefinePlugin, BannerPlugin} = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const path = require('path');
+const fs = require('fs');
 
 const isWatch = require('./builder/isWatch');
 
@@ -21,6 +22,9 @@ const OPTIONS_SCRIPTS = require('./builder/getOptionsScripts');
 const POPUP_SCRIPTS = require('./builder/getPopupScripts');
 
 const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./builder/getContentScripts');
+
+let meta = String(fs.readFileSync(path.join(source, `./vendor/mono/browsers/${browser}/meta.txt`)));
+meta = meta.replace('{version}', require(path.join(source, 'manifest')).version);
 
 const env = require('./builder/getEnv');
 
@@ -63,6 +67,11 @@ const config = {
       path.join(output, 'options.html'),
       path.join(output, 'popup.html'),
     ]),
+    new BannerPlugin({
+      banner: meta,
+      raw: true,
+      entryOnly: true
+    }),
     new DefinePlugin({
       LOCALE_MAP: JSON.stringify(LOCALE_MAP),
       BACKGROUND_SCRIPTS: JSON.stringify(BACKGROUND_SCRIPTS),

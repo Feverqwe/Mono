@@ -15,6 +15,7 @@ require(path.join(source, './manifest')).content_scripts.map(item => {
   });
   CONTENT_SCRIPTS.push({
     matches: item.matches,
+    run_at: item.run_at,
     js: item.js,
   });
 });

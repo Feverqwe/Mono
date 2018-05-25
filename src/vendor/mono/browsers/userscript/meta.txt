@@ -1,0 +1,11 @@
+// ==UserScript==
+// @name        MonoExtension
+// @version     {version}
+// @include     http://*
+// @include     https://*
+// @run-at      document-end
+// @grant       GM_listValues
+// @grant       GM_setValue
+// @grant       GM_getValue
+// @grant       GM_deleteValue
+// ==/UserScript==

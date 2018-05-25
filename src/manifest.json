@@ -26,7 +26,7 @@
       "js": ["includes/any.js"]
     },
     {
-      "matches": ["*//:*.ya.ru"],
+      "matches": ["*://*.ya.ru/*"],
       "js": ["includes/ya.js"]
     }
   ],
