@@ -1,3 +1,3 @@
 import mono from "mono";
 
-console.log('Ya');
+console.log('Ya', location.href);

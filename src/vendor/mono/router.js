@@ -1,4 +1,5 @@
 import matchPattern from "./matchPattern";
+import matchGlobPattern from "./matchGlobPattern";
 
 class Router {
   constructor() {
@@ -9,15 +10,14 @@ class Router {
     this.loadedContentScripts = [];
   }
   hasInjectScripts() {
-    return this.contentScripts.some(item => item.matches.some(pattern => matchPattern(pattern, location.href)));
+    return this.contentScripts.some(item => this.isMatched(item));
   }
   inject() {
     const documentEndScripts = [];
     const documentStartScripts = [];
     const documentIdleScripts = [];
     this.contentScripts.forEach(item => {
-      const isMatched = item.matches.some(pattern => matchPattern(pattern, location.href));
-      if (isMatched) {
+      if (this.isMatched(item)) {
         item.js.forEach(filename => {
           if (this.loadedContentScripts.indexOf(filename) === -1) {
             this.loadedContentScripts.push(filename);
@@ -60,6 +60,25 @@ class Router {
         }
       });
     }
+  }
+  isMatched(item) {
+    let isMatched = !this.isFrame() ? true : item.all_frames;
+    if (isMatched) {
+      isMatched = item.matches.some(pattern => matchPattern(pattern, location.href));
+    }
+    if (isMatched && item.exclude_matches) {
+      isMatched = !item.exclude_matches.some(pattern => matchPattern(pattern, location.href));
+    }
+    if (isMatched && item.include_globs) {
+      isMatched = item.include_globs.some(globPattern => matchGlobPattern(globPattern, location.href));
+    }
+    if (isMatched && item.exclude_globs) {
+      isMatched = !item.exclude_globs.some(globPattern => matchGlobPattern(globPattern, location.href));
+    }
+    return isMatched;
+  }
+  isFrame() {
+    return window.top !== window.self;
   }
   runWhenDocumentStart(listener) {
     listener();

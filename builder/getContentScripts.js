@@ -15,9 +15,33 @@ require(path.join(source, './manifest')).content_scripts.map(item => {
   });
   CONTENT_SCRIPTS.push({
     matches: item.matches,
+    exclude_matches: item.exclude_matches,
+    include_globs: item.include_globs,
+    exclude_globs: item.exclude_globs,
     run_at: item.run_at,
+    all_frames: item.all_frames,
     js: item.js,
   });
+});
+
+const getWight = (type) => {
+  switch (type) {
+    case 'document_start': {
+      return 2;
+    }
+    case 'document_end': {
+      return 1;
+    }
+    default: {
+      return 0;
+    }
+  }
+};
+
+CONTENT_SCRIPTS.sort(({run_at: aa}, {run_at: bb}) => {
+  const a = getWight(aa);
+  const b = getWight(bb);
+  return a === b ? 0 : a > b ? -1 : 1;
 });
 
 module.exports = {

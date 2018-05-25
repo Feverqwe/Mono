@@ -26,8 +26,20 @@
       "js": ["includes/any.js"]
     },
     {
+      "matches": ["<all_urls>"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "js": ["includes/anyFrame.js"]
+    },
+    {
       "matches": ["*://*.ya.ru/*"],
+      "run_at": "document_end",
       "js": ["includes/ya.js"]
+    },
+    {
+      "matches": ["*://*.ya.ru/*"],
+      "all_frames": true,
+      "js": ["includes/yaFrame.js"]
     }
   ],
   "permissions": [ "storage" ],
