@@ -77,17 +77,17 @@ class Router {
   runWhenDocumentStart(listener) {
     listener();
   }
-  runWhenDocumentEnd(linstener) {
+  runWhenDocumentEnd(listener) {
     this.runWhenDocumentStart(() => {
       if (['interactive', 'complete'].indexOf(document.readyState) !== -1) {
-        linstener();
+        listener();
       } else {
         const _listener = () => {
           if (['interactive', 'complete'].indexOf(document.readyState) !== -1) {
             document.removeEventListener('DOMContentLoaded', _listener);
             window.removeEventListener('load', _listener);
-            linstener && linstener();
-            linstener = null;
+            listener && listener();
+            listener = null;
           }
         };
         document.addEventListener('DOMContentLoaded', _listener);
@@ -95,10 +95,10 @@ class Router {
       }
     });
   }
-  runWhenDocumentIdle(linstener) {
+  runWhenDocumentIdle(listener) {
     this.runWhenDocumentEnd(() => {
       (window.setImmediate || setTimeout)(() => {
-        linstener();
+        listener();
       });
     });
   }
