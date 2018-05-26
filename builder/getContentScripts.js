@@ -12,16 +12,18 @@ const CONTENT_SCRIPTS = [];
 
 let index = 0;
 
+const insertFile = filename => {
+  if (typeof CONTENT_SCRIPT_MAP[filename] !== 'number') {
+    CONTENT_SCRIPT_MAP[filename] = index++;
+  }
+  const idx = CONTENT_SCRIPT_MAP[filename];
+  if (!CONTENT_SCRIPT_INDEX[idx]) {
+    CONTENT_SCRIPT_INDEX[idx] = String(fs.readFileSync(path.join(output, filename)));
+  }
+};
+
 require(path.join(source, './manifest')).content_scripts.map(item => {
-  item.js.forEach(filename => {
-    if (typeof CONTENT_SCRIPT_MAP[filename] !== 'number') {
-      CONTENT_SCRIPT_MAP[filename] = index++;
-    }
-    const idx = CONTENT_SCRIPT_MAP[filename];
-    if (!CONTENT_SCRIPT_INDEX[idx]) {
-      CONTENT_SCRIPT_INDEX[idx] = String(fs.readFileSync(path.join(output, filename)));
-    }
-  });
+  item.js.forEach(insertFile);
   CONTENT_SCRIPTS.push({
     matches: [].concat(...item.matches.map(pattern => matchPattern(pattern))).join('|'),
     exclude_matches: item.exclude_matches && [].concat(...item.exclude_matches.map(pattern => matchPattern(pattern))).join('|'),
@@ -33,15 +35,7 @@ require(path.join(source, './manifest')).content_scripts.map(item => {
   });
 });
 
-fs.readdirSync(path.join(source, './includes')).filter(filename => /\.js$/.test(filename)).map(filename => `includes/${filename}`).forEach(filename => {
-  if (typeof CONTENT_SCRIPT_MAP[filename] !== 'number') {
-    CONTENT_SCRIPT_MAP[filename] = index++;
-  }
-  const idx = CONTENT_SCRIPT_MAP[filename];
-  if (!CONTENT_SCRIPT_INDEX[idx]) {
-    CONTENT_SCRIPT_INDEX[idx] = String(fs.readFileSync(path.join(output, filename)));
-  }
-});
+fs.readdirSync(path.join(source, './includes')).filter(filename => /\.js$/.test(filename)).map(filename => `includes/${filename}`).forEach(insertFile);
 
 module.exports = {
   CONTENT_SCRIPT_MAP,
