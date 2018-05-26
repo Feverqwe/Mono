@@ -4,7 +4,11 @@ class PopupPageUi extends PageUi {
   constructor(bundle) {
     super(bundle);
 
+    this.popupPage = POPUP_PAGE;
     this.popupScripts = POPUP_SCRIPTS;
+  }
+  getPageContent() {
+    return this.optionsPage;
   }
   getPageScripts() {
     return this.popupScripts;

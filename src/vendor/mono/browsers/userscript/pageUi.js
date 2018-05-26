@@ -19,7 +19,11 @@ class PageUi {
   createPageContainer() {
     this.destroyContainer();
     this.containerNode = document.createElement('div');
+    this.containerNode.innerHTML = this.getPageContent();
     document.appendChild(this.containerNode);
+  }
+  getPageContent() {
+    return '';
   }
   getPageScripts() {
     return [];

@@ -18,9 +18,9 @@ const LOCALE_MAP = require('./builder/getLocaleMap');
 
 const BACKGROUND_SCRIPTS = require('./builder/getBackgroundScripts');
 
-const OPTIONS_SCRIPTS = require('./builder/getOptionsScripts');
+const {OPTIONS_SCRIPTS, OPTIONS_PAGE} = require('./builder/getOptions');
 
-const POPUP_SCRIPTS = require('./builder/getPopupScripts');
+const {POPUP_SCRIPTS, POPUP_PAGE} = require('./builder/getPopup');
 
 const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPTS} = require('./builder/getContentScripts');
 
@@ -90,7 +90,9 @@ const config = {
     new DefinePlugin({
       LOCALE_MAP: JSON.stringify(LOCALE_MAP),
       BACKGROUND_SCRIPTS: JSON.stringify(BACKGROUND_SCRIPTS),
+      OPTIONS_PAGE: JSON.stringify(OPTIONS_PAGE),
       OPTIONS_SCRIPTS: JSON.stringify(OPTIONS_SCRIPTS),
+      POPUP_PAGE: JSON.stringify(POPUP_PAGE),
       POPUP_SCRIPTS: JSON.stringify(POPUP_SCRIPTS),
       CONTENT_SCRIPTS: JSON.stringify(CONTENT_SCRIPTS),
       CONTENT_SCRIPT_MAP: JSON.stringify(CONTENT_SCRIPT_MAP),
