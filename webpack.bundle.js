@@ -22,7 +22,7 @@ const {OPTIONS_SCRIPTS, OPTIONS_PAGE} = require('./builder/getOptions');
 
 const {POPUP_SCRIPTS, POPUP_PAGE} = require('./builder/getPopup');
 
-const {CONTENT_SCRIPT_INDEX, CONTENT_SCRIPTS} = require('./builder/getContentScripts');
+const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPT_INDEX, CONTENT_SCRIPTS} = require('./builder/getContentScripts');
 
 let meta = String(fs.readFileSync(path.join(source, `./vendor/mono/browsers/${browser}/meta.txt`)));
 meta = meta.replace('{version}', require(path.join(source, 'manifest')).version);
@@ -95,6 +95,7 @@ const config = {
       POPUP_PAGE: JSON.stringify(POPUP_PAGE),
       POPUP_SCRIPTS: JSON.stringify(POPUP_SCRIPTS),
       CONTENT_SCRIPTS: JSON.stringify(CONTENT_SCRIPTS),
+      CONTENT_SCRIPT_MAP: JSON.stringify(CONTENT_SCRIPT_MAP),
       CONTENT_SCRIPT_INDEX: JSON.stringify(CONTENT_SCRIPT_INDEX),
       'process.env': {
         'DEBUG': JSON.stringify('*')

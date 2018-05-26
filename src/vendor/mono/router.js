@@ -5,6 +5,7 @@ class Router {
     this.localeMap = LOCALE_MAP;
     this.contentScripts = CONTENT_SCRIPTS;
     this.contentScriptIndex = CONTENT_SCRIPT_INDEX;
+    this.contentScriptMap = CONTENT_SCRIPT_MAP;
 
     this.contentScriptMono = null;
   }
