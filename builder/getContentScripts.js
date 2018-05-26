@@ -33,6 +33,16 @@ require(path.join(source, './manifest')).content_scripts.map(item => {
   });
 });
 
+fs.readdirSync(path.join(source, './includes')).filter(filename => /\.js$/.test(filename)).map(filename => `includes/${filename}`).forEach(filename => {
+  if (typeof CONTENT_SCRIPT_MAP[filename] !== 'number') {
+    CONTENT_SCRIPT_MAP[filename] = index++;
+  }
+  const idx = CONTENT_SCRIPT_MAP[filename];
+  if (!CONTENT_SCRIPT_INDEX[idx]) {
+    CONTENT_SCRIPT_INDEX[idx] = String(fs.readFileSync(path.join(output, filename)));
+  }
+});
+
 module.exports = {
   CONTENT_SCRIPT_MAP,
   CONTENT_SCRIPT_INDEX,
