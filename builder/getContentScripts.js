@@ -6,7 +6,7 @@ const matchGlobPattern = require('./matchGlobPattern');
 const output = require('./getOutput');
 const source = require('./getSource');
 
-const CONTENT_SCRIPT_MAP = [];
+const CONTENT_SCRIPT_INDEX = [];
 const CONTENT_SCRIPTS = [];
 
 let index = 0;
@@ -18,8 +18,8 @@ require(path.join(source, './manifest')).content_scripts.map(item => {
       filenameIndexMap[filename] = index++;
     }
     const idx = filenameIndexMap[filename];
-    if (!CONTENT_SCRIPT_MAP[idx]) {
-      CONTENT_SCRIPT_MAP[idx] = String(fs.readFileSync(path.join(output, filename)));
+    if (!CONTENT_SCRIPT_INDEX[idx]) {
+      CONTENT_SCRIPT_INDEX[idx] = String(fs.readFileSync(path.join(output, filename)));
     }
   });
   CONTENT_SCRIPTS.push({
@@ -54,6 +54,6 @@ CONTENT_SCRIPTS.sort(({run_at: aa}, {run_at: bb}) => {
 });
 
 module.exports = {
-  CONTENT_SCRIPT_MAP,
+  CONTENT_SCRIPT_INDEX,
   CONTENT_SCRIPTS
 };
