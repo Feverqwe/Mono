@@ -33,27 +33,27 @@ gulp.task('buildRouter', () => {
 });
 
 gulp.task('buildUserjs', () => {
-  process.argv.push('--source-path', path.resolve('./src'));
   process.argv.push('--output-path', path.resolve('./dist/userjs'));
   process.argv.push('--mono-browser', 'userscript');
-  process.argv.push('--mode', 'development');
   return runWebpack(require('./webpack.userjs'));
 });
 
 gulp.task('buildSafari', () => {
-  process.argv.push('--source-path', path.resolve('./src'));
   process.argv.push('--output-path', path.resolve('./dist/safari'));
   process.argv.push('--mono-browser', 'safari');
-  process.argv.push('--mode', 'development');
   return runWebpack(require('./webpack.safari'));
 });
 
 gulp.task('buildChrome', () => {
-  process.argv.push('--source-path', path.resolve('./src'));
   process.argv.push('--output-path', path.resolve('./dist/chrome'));
   process.argv.push('--mono-browser', 'chrome');
-  process.argv.push('--mode', 'development');
   return runWebpack(require('./webpack.chrome'));
+});
+
+gulp.task('setArgv', () => {
+  process.argv.push('--source-path', path.resolve('./src'));
+  // process.argv.push('--mode', 'production');
+  process.argv.push('--mode', 'development');
 });
 
 let fired = false;
@@ -63,13 +63,13 @@ gulp.task('singleTaskLock', () => {
 });
 
 gulp.task('userjs', callback => {
-  runSequence('singleTaskLock', 'buildUserjs', 'buildBase', 'buildBundle', callback);
+  runSequence('singleTaskLock', 'setArgv', 'buildUserjs', 'buildBase', 'buildBundle', callback);
 });
 
 gulp.task('safari', callback => {
-  runSequence('singleTaskLock', 'buildSafari', 'buildBase', 'buildRouter', callback);
+  runSequence('singleTaskLock', 'setArgv', 'buildSafari', 'buildBase', 'buildRouter', callback);
 });
 
 gulp.task('chrome', callback => {
-  runSequence('singleTaskLock', 'buildChrome', 'buildBase', callback);
+  runSequence('singleTaskLock', 'setArgv', 'buildChrome', 'buildBase', callback);
 });
