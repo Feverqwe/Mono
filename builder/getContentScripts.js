@@ -17,7 +17,7 @@ const insertFile = filename => {
     CONTENT_SCRIPT_MAP[filename] = index++;
   }
   const idx = CONTENT_SCRIPT_MAP[filename];
-  if (!CONTENT_SCRIPT_INDEX[idx]) {
+  if (typeof CONTENT_SCRIPT_INDEX[idx] !== 'string') {
     CONTENT_SCRIPT_INDEX[idx] = String(fs.readFileSync(path.join(output, filename)));
   }
 };
