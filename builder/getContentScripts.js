@@ -22,7 +22,7 @@ const insertFile = filename => {
   }
 };
 
-require(path.join(source, './manifest')).content_scripts.map(item => {
+require(path.join(source, './manifest')).content_scripts.forEach(item => {
   item.js.forEach(insertFile);
   CONTENT_SCRIPTS.push({
     matches: [].concat(...item.matches.map(pattern => matchPattern(pattern))).join('|'),
