@@ -5,7 +5,6 @@ class Router {
     this.localeMap = LOCALE_MAP;
     this.contentScripts = CONTENT_SCRIPTS;
     this.contentScriptMap = CONTENT_SCRIPT_MAP;
-    this.loadedContentScripts = [];
 
     this.contentScriptMono = null;
   }
@@ -37,14 +36,17 @@ class Router {
     this.contentScripts.forEach(item => {
       if (isMatchItem(item)) {
         item.js.forEach(index => {
-          if (this.loadedContentScripts.indexOf(index) === -1) {
-            this.loadedContentScripts.push(index);
-            if (item.run_at === 'document_start') {
+          if (item.run_at === 'document_start') {
+            if (documentStartScripts.indexOf(index) === -1) {
               documentStartScripts.push(index);
-            } else
-            if (item.run_at === 'document_end') {
+            }
+          } else
+          if (item.run_at === 'document_end') {
+            if (documentEndScripts.indexOf(index) === -1) {
               documentEndScripts.push(index);
-            } else {
+            }
+          } else {
+            if (documentIdleScripts.indexOf(index) === -1) {
               documentIdleScripts.push(index);
             }
           }
