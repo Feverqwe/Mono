@@ -33,26 +33,6 @@ require(path.join(source, './manifest')).content_scripts.map(item => {
   });
 });
 
-const getPriority = (type) => {
-  switch (type) {
-    case 'document_start': {
-      return 2;
-    }
-    case 'document_end': {
-      return 1;
-    }
-    default: {
-      return 0;
-    }
-  }
-};
-
-CONTENT_SCRIPTS.sort(({run_at: aa}, {run_at: bb}) => {
-  const a = getPriority(aa);
-  const b = getPriority(bb);
-  return a === b ? 0 : a > b ? -1 : 1;
-});
-
 module.exports = {
   CONTENT_SCRIPT_MAP,
   CONTENT_SCRIPT_INDEX,
