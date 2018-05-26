@@ -1,6 +1,9 @@
 import Router from "../../router";
 import PopupPageUi from "./popupPageUi";
 import OptionsPageUi from "./optionsPageUi";
+import UserscriptBackgroundPageMono from "./backgroundPageMono";
+import UserscriptPageMono from "./pageMono";
+import UserscriptContentScriptMono from "./contentScriptMono";
 
 class Bundle extends Router {
   constructor() {
@@ -18,15 +21,15 @@ class Bundle extends Router {
     let instance = null;
     switch (type) {
       case 'backgroundPage': {
-        instance = null;// new Mono(this);
+        instance = new UserscriptBackgroundPageMono(this);
         break;
       }
       case 'page': {
-        instance = null;// new Mono(this);
+        instance = new UserscriptPageMono(this);
         break;
       }
       case 'contentScript': {
-        instance = null; // new Mono(this);
+        instance = new UserscriptContentScriptMono(this);
         break;
       }
       default: {

@@ -1,4 +1,5 @@
 import Router from "../../router";
+import SafariContentScriptMono from "./contentScriptMono";
 
 class SafariRouter extends Router {
   constructor() {
@@ -10,7 +11,7 @@ class SafariRouter extends Router {
     let instance = null;
     switch (type) {
       case 'contentScript': {
-        instance = null; // new Mono(this);
+        instance = new SafariContentScriptMono(this);
         break;
       }
       default: {
