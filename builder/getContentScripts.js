@@ -35,7 +35,7 @@ require(path.join(source, './manifest')).content_scripts.forEach(item => {
   });
 });
 
-fs.readdirSync(path.join(source, './includes')).filter(filename => /\.js$/.test(filename)).map(filename => `includes/${filename}`).forEach(insertFile);
+fs.readdirSync(path.join(output, './includes')).filter(filename => /\.js$/.test(filename)).map(filename => `includes/${filename}`).forEach(insertFile);
 
 module.exports = {
   CONTENT_SCRIPT_MAP,
