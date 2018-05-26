@@ -1,10 +1,31 @@
 class Router {
   constructor() {
+    this.monoInstances = [];
+
     this.localeMap = LOCALE_MAP;
-    this.contentScriptMono = null;
     this.contentScripts = CONTENT_SCRIPTS;
     this.contentScriptMap = CONTENT_SCRIPT_MAP;
     this.loadedContentScripts = [];
+
+    this.contentScriptMono = null;
+  }
+  createMonoInstance(type) {
+    throw new Error(`Instance type (${type}) is not found`);
+  }
+  addMonoInstance(instance) {
+    instance.onDestroy.addListener(() => {
+      const pos = this.monoInstances.indexOf(instance);
+      if (pos !== -1) {
+        this.monoInstances.splice(pos, 1);
+      }
+    });
+    this.monoInstances.push(instance);
+  }
+  getContentScriptMono() {
+    if (!this.contentScriptMono) {
+      this.contentScriptMono = this.createMonoInstance('contentScript');
+    }
+    return this.contentScriptMono;
   }
   hasInjectScripts() {
     return this.contentScripts.some(item => isMatchItem(item));
@@ -89,7 +110,7 @@ class Router {
     });
   }
   executeContentScript(code) {
-    return new Function('MONO', code)(this.contentScriptMono);
+    return new Function('MONO', code)(this.getContentScriptMono());
   }
 }
 

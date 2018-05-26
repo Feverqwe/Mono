@@ -1,5 +1,3 @@
-const Mono = null;
-
 class PageUi {
   constructor(bundle) {
     this.bundle = bundle;
@@ -14,7 +12,7 @@ class PageUi {
   }
   createMono() {
     this.destroyMono();
-    this.mono = new Mono();
+    this.mono = this.bundle.createMonoInstance('page');
   }
   createPageContainer() {
     this.destroyContainer();

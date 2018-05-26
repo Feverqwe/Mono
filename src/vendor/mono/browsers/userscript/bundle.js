@@ -7,11 +7,34 @@ class Bundle extends Router {
     super();
 
     this.backgroundScripts = BACKGROUND_SCRIPTS;
+    this.backgroundPageMono = null;
 
     this.popupPageUi = null;
     this.optionsPageUi = null;
 
     this.init();
+  }
+  createMonoInstance(type) {
+    let instance = null;
+    switch (type) {
+      case 'backgroundPage': {
+        instance = null;// new Mono(this);
+        break;
+      }
+      case 'page': {
+        instance = null;// new Mono(this);
+        break;
+      }
+      case 'contentScript': {
+        instance = null; // new Mono(this);
+        break;
+      }
+      default: {
+        super.createMonoInstance(type);
+      }
+    }
+    this.addMonoInstance(instance);
+    return instance;
   }
   init() {
     if (this.hasInjectScripts()) {
@@ -42,9 +65,15 @@ class Bundle extends Router {
     }
     this.optionsPageUi = null;
   }
+  getBackgroundPageMono() {
+    if (!this.backgroundPageMono) {
+      this.backgroundPageMono = this.createMonoInstance('backgroundPage');
+    }
+    return this.backgroundPageMono;
+  }
   runBackgroundPage() {
     return Promise.resolve().then(() => {
-      this.executeBackgroundScript(this.backgroundScripts.join('\n'), null);
+      this.executeBackgroundScript(this.backgroundScripts.join('\n'), this.getBackgroundPageMono());
     });
   }
   executeBackgroundScript(code, mono) {
