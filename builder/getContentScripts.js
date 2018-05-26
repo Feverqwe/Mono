@@ -33,7 +33,7 @@ require(path.join(source, './manifest')).content_scripts.map(item => {
   });
 });
 
-const getWight = (type) => {
+const getPriority = (type) => {
   switch (type) {
     case 'document_start': {
       return 2;
@@ -48,8 +48,8 @@ const getWight = (type) => {
 };
 
 CONTENT_SCRIPTS.sort(({run_at: aa}, {run_at: bb}) => {
-  const a = getWight(aa);
-  const b = getWight(bb);
+  const a = getPriority(aa);
+  const b = getPriority(bb);
   return a === b ? 0 : a > b ? -1 : 1;
 });
 
