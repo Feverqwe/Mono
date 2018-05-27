@@ -57,7 +57,7 @@ class Transport {
     let result = null;
     this.listeners.forEach(listener => {
       try {
-        const r = listener(rawMessage.message, {}, response);
+        const r = listener(rawMessage.message, rawMessage.sender || {}, response);
         if (r === true) {
           result = r;
         }
