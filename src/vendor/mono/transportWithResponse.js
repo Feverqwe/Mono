@@ -185,5 +185,6 @@ class TransportWithResponseWithActiveTab extends TransportWithResponse {
 
 export default TransportWithResponse;
 export {
+  copyMessage,
   TransportWithResponseWithActiveTab
 };
