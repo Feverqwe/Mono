@@ -18,7 +18,7 @@ class PageUi {
     this.destroyContainer();
     this.containerNode = document.createElement('div');
     this.containerNode.innerHTML = this.getPageContent();
-    document.appendChild(this.containerNode);
+    document.body.appendChild(this.containerNode);
   }
   getPageContent() {
     return '';
