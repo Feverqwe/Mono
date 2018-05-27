@@ -27,9 +27,6 @@ class Router {
     }
     return this.contentScriptMono;
   }
-  hasInjectScripts() {
-    return this.contentScripts.some(item => isMatchItem(item));
-  }
   inject() {
     const documentEndScripts = [];
     const documentStartScripts = [];
