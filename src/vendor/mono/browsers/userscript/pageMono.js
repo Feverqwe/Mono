@@ -1,5 +1,5 @@
 import Mono from "../../mono";
-import TransportWithResponsePage from "../../TransportWithResponsePage";
+import TransportWithResponsePage from "../../transportWithResponsePage";
 
 class UserscriptPageMono extends Mono {
   constructor(bundle) {
@@ -7,14 +7,6 @@ class UserscriptPageMono extends Mono {
   }
   initTransport() {
     this.transport = new TransportWithResponsePage({
-      addListener: listener => {
-        this.bundle.messaing.addListener('page', listener);
-        this.bundle.messaing.addListener('fromActiveTab', listener);
-      },
-      removeListener: listener => {
-        this.bundle.messaing.removeListener('page', listener);
-        this.bundle.messaing.removeListener('fromActiveTab', listener);
-      },
       sendMessage: (message, response) => {
         this.bundle.messaing.emit('page', message, response);
       },
