@@ -1,22 +1,28 @@
 class Event {
-  constructor(ee, eventName) {
-    this.ee = ee;
-    this.eventName = eventName;
+  constructor() {
+    this.listeners = [];
   }
   addListener(listener) {
-    this.ee.addListener(this.eventName, listener);
+    if (this.listeners.indexOf(listener) === -1) {
+      this.listeners.push(listener);
+    }
   }
   dispatch(...args) {
-    this.ee.emit(this.eventName, ...args);
+    this.listeners.forEach(listener => {
+      listener(...args);
+    });
   }
   hasListener(listener) {
-    return this.ee.listeners(this.eventName).indexOf(listener) !== -1;
+    return this.listeners.indexOf(listener) !== -1;
   }
   hasListeners() {
-    return this.ee.listenerCount(this.eventName) > 0;
+    return this.listeners.length > 0;
   }
   removeListener(listener) {
-    this.ee.removeListener(this.eventName, listener);
+    const pos = this.listeners.indexOf(listener);
+    if (pos !== -1) {
+      this.listeners.splice(pos, 1);
+    }
   }
 }
 

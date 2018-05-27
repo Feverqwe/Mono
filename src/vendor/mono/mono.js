@@ -1,11 +1,8 @@
 import Event from "./event";
 
-const {EventEmitter} = require('events');
-
 class Mono {
   constructor(bundle) {
     this.bundle = bundle;
-    this.ee = new EventEmitter();
     this.transport = null;
     this.onDestroy = null;
     this.sendMessage = null;
@@ -17,7 +14,7 @@ class Mono {
     throw new Error('initTransport error: not exists');
   }
   init() {
-    this.onDestroy = new Event(this.ee, 'destroy');
+    this.onDestroy = new Event();
     this.initTransport();
     this.sendMessage = this.transport.sendMessage.bind(this.transport);
     this.onMessage = {
