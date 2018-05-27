@@ -1,5 +1,7 @@
 import Mono from "../../mono";
 import TransportWithResponse from "../../transportWithResponse";
+import Storage from "../../storage";
+import UserscriptStorage from "./userscriptStorage";
 
 class UserscriptContentScriptMono extends Mono {
   constructor(bundle) {
@@ -18,6 +20,9 @@ class UserscriptContentScriptMono extends Mono {
         this.bundle.messaing.emit('fromActiveTab', message, response);
       },
     });
+  }
+  initStorage() {
+    this.storage = new Storage(new UserscriptStorage());
   }
 }
 

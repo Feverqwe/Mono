@@ -7,11 +7,15 @@ class Mono {
     this.onDestroy = null;
     this.sendMessage = null;
     this.onMessage = null;
+    this.storage = null;
 
     this.init();
   }
   initTransport() {
     throw new Error('initTransport error: not exists');
+  }
+  initStorage() {
+    throw new Error('initStorage error: not exists');
   }
   init() {
     this.onDestroy = new Event();
@@ -23,6 +27,7 @@ class Mono {
       hasListeners: this.transport.hasListeners.bind(this.transport),
       removeListener: this.transport.removeListener.bind(this.transport),
     };
+    this.initStorage();
   }
   destroy() {
     this.onDestroy.dispatch();

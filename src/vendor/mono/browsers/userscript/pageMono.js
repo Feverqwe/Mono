@@ -1,5 +1,7 @@
 import Mono from "../../mono";
 import {TransportWithResponseWithActiveTab} from "../../transportWithResponse";
+import Storage from "../../storage";
+import UserscriptStorage from "./userscriptStorage";
 
 class UserscriptPageMono extends Mono {
   constructor(bundle) {
@@ -22,6 +24,9 @@ class UserscriptPageMono extends Mono {
         this.bundle.messaing.emit('toActiveTab', message, response);
       },
     });
+  }
+  initStorage() {
+    this.storage = new Storage(new UserscriptStorage());
   }
   init() {
     super.init();
