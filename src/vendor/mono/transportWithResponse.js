@@ -9,9 +9,16 @@ const onceFn = cb => {
   };
 };
 
+/**
+ * @typedef {{}} RawTransportWithResponse
+ * @property {function(function)} addListener
+ * @property {function(function)} removeListener
+ * @property {function(*,function)} sendMessage
+ * @property {function(*,function)} sendMessageToActiveTab
+ */
+
 class TransportWithResponse {
-  /**@param {{addListener:function(function),removeListener:function(function),sendMessage:function(*,function)}} transport*/
-  constructor(transport) {
+  constructor(/**RawTransportWithResponse*/transport) {
     this.destroyError = null;
     this.isListen = false;
     this.listeners = [];
