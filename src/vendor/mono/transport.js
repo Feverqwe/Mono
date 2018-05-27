@@ -5,7 +5,6 @@ import TransportWithResponse from "./transportWithResponse";
  * @property {function(function)} addListener
  * @property {function(function)} removeListener
  * @property {function(*)} sendMessage
- * @property {function(*)} sendMessageToActiveTab
  * @property {function(*, Object)} sendMessageTo
  */
 

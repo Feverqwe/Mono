@@ -19,7 +19,6 @@ const copyMessage = message => {
  * @property {function(function)} addListener
  * @property {function(function)} removeListener
  * @property {function(*,function)} sendMessage
- * @property {function(*,function)} sendMessageToActiveTab
  */
 
 class TransportWithResponse extends Event {
