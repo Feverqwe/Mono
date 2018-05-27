@@ -49,6 +49,14 @@ class Transport extends TransportWithResponse {
     });
   }
 
+  putCallbackId(rawMessage, response) {
+    rawMessage.callbackId = `${this.transportId}_${++this.callbackIndex}`;
+    this.idCallbackMap[rawMessage.callbackId] = responseMessage => {
+      delete this.idCallbackMap[rawMessage.callbackId];
+      response(responseMessage);
+    };
+  }
+
   /**
    * @param {*} message
    * @param {function(*)} [response]
@@ -62,11 +70,7 @@ class Transport extends TransportWithResponse {
     };
 
     if (response) {
-      rawMessage.callbackId = `${this.transportId}_${++this.callbackIndex}`;
-      this.idCallbackMap[rawMessage.callbackId] = responseMessage => {
-        delete this.idCallbackMap[rawMessage.callbackId];
-        response(responseMessage);
-      };
+      this.putCallbackId(rawMessage, response);
     }
 
     try {
@@ -103,11 +107,7 @@ class TransportWithActiveTab extends Transport {
     };
 
     if (response) {
-      rawMessage.callbackId = `${this.transportId}_${++this.callbackIndex}`;
-      this.idCallbackMap[rawMessage.callbackId] = responseMessage => {
-        delete this.idCallbackMap[rawMessage.callbackId];
-        response(responseMessage);
-      };
+      this.putCallbackId(rawMessage, response);
     }
 
     try {
