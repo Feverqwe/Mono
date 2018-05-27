@@ -49,12 +49,16 @@ class Transport extends TransportWithResponse {
     });
   }
 
-  putCallbackId(rawMessage, response) {
-    rawMessage.callbackId = `${this.transportId}_${++this.callbackIndex}`;
-    this.idCallbackMap[rawMessage.callbackId] = responseMessage => {
-      delete this.idCallbackMap[rawMessage.callbackId];
-      response(responseMessage);
-    };
+  getRawMessage(message, response) {
+    const rawMessage = super.getRawMessage(message, response);
+    if (response) {
+      rawMessage.callbackId = `${this.transportId}_${++this.callbackIndex}`;
+      this.idCallbackMap[rawMessage.callbackId] = responseMessage => {
+        delete this.idCallbackMap[rawMessage.callbackId];
+        response(responseMessage);
+      };
+    }
+    return rawMessage;
   }
 
   /**
@@ -64,14 +68,7 @@ class Transport extends TransportWithResponse {
   sendMessage(message, response) {
     if (this.destroyError) throw this.destroyError;
 
-    const rawMessage = {
-      transportId: this.transportId,
-      message: message
-    };
-
-    if (response) {
-      this.putCallbackId(rawMessage, response);
-    }
+    const rawMessage = this.getRawMessage(message, response);
 
     try {
       this.transport.sendMessage(rawMessage);
@@ -101,14 +98,7 @@ class TransportWithActiveTab extends Transport {
   sendMessageToActiveTab(message, response) {
     if (this.destroyError) throw this.destroyError;
 
-    const rawMessage = {
-      transportId: this.transportId,
-      message: copyMessage(message)
-    };
-
-    if (response) {
-      this.putCallbackId(rawMessage, response);
-    }
+    const rawMessage = this.getRawMessage(message, response);
 
     try {
       this.transport.sendMessageToActiveTab(rawMessage);

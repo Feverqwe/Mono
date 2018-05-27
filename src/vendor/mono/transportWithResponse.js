@@ -138,6 +138,15 @@ class TransportWithResponse {
     return this.listeners.length > 0;
   }
 
+  getRawMessage(message, response) {
+    const rawMessage = {
+      transportId: this.transportId,
+      message: copyMessage(message)
+    };
+
+    return rawMessage;
+  }
+
   /**
    * @param {*} message
    * @param {function(*)} [response]
@@ -145,10 +154,7 @@ class TransportWithResponse {
   sendMessage(message, response) {
     if (this.destroyError) throw this.destroyError;
 
-    const rawMessage = {
-      transportId: this.transportId,
-      message: copyMessage(message)
-    };
+    const rawMessage = this.getRawMessage(message, response);
 
     this.transport.sendMessage(rawMessage, response);
   }
@@ -174,10 +180,7 @@ class TransportWithResponseWithActiveTab extends TransportWithResponse {
   sendMessageToActiveTab(message, response) {
     if (this.destroyError) throw this.destroyError;
 
-    const rawMessage = {
-      transportId: this.transportId,
-      message: copyMessage(message)
-    };
+    const rawMessage = this.getRawMessage(message, response);
 
     this.transport.sendMessageToActiveTab(rawMessage, response);
   }
