@@ -31,9 +31,7 @@ class TransportWithResponse {
     this.listen = this.listen.bind(this);
   }
 
-  callListeners(transportId, message, sender, response) {
-    if (transportId === this.transportId) return;
-
+  callListeners(message, sender, response) {
     let result = null;
     this.listeners.forEach(listener => {
       try {
@@ -54,12 +52,15 @@ class TransportWithResponse {
    * @private
    */
   listen(rawMessage, rawResponse) {
+    if (rawMessage.transportId === this.transportId) return;
+
     let response;
     if (rawResponse) {
       response = onceFn(responseMessage => {
         if (this.destroyError) {
           console.warn('Send response is skip cause:', this.destroyError);
         } else {
+          rawMessage._responseFired = true;
           rawResponse(copyMessage(responseMessage));
         }
       });
@@ -67,9 +68,15 @@ class TransportWithResponse {
       response = emptyFn;
     }
 
-    const result = this.callListeners(rawMessage.transportId, rawMessage.message, rawMessage.sender || {}, response);
-    if (result !== true) {
-      response(undefined);
+    const result = this.callListeners(rawMessage.message, rawMessage.sender || {}, response);
+    if (result === true) {
+      rawMessage._asyncResponse = true;
+    } else {
+      setTimeout(() => {
+        if (!rawMessage._responseFired && !rawMessage._asyncResponse) {
+          response(undefined);
+        }
+      }, 1);
     }
   }
 
@@ -176,18 +183,7 @@ class TransportWithResponseWithActiveTab extends TransportWithResponse {
   }
 }
 
-/**
- * @typedef {RawTransportWithResponse} RawTransportWithResponsePage
- * @property {function(*,function)} sendMessageToActiveTab
- */
-
-class TransportWithResponsePage extends TransportWithResponseWithActiveTab {
-  startListen() {}
-  stopListen() {}
-}
-
 export default TransportWithResponse;
 export {
-  TransportWithResponseWithActiveTab,
-  TransportWithResponsePage
+  TransportWithResponseWithActiveTab
 };
