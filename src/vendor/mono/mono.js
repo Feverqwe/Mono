@@ -19,7 +19,7 @@ class Mono {
   init() {
     this.onDestroy = new Event(this.ee, 'destroy');
     this.initTransport();
-    this.sendMessage = this.transport.sendMessage.bind(this);
+    this.sendMessage = this.transport.sendMessage.bind(this.transport);
     this.onMessage = {
       addListener: this.transport.addListener.bind(this.transport),
       hasListener: this.transport.hasListener.bind(this.transport),

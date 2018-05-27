@@ -25,7 +25,7 @@ class UserscriptPageMono extends Mono {
   }
   init() {
     super.init();
-    this.sendMessageToActiveTab = this.transport.sendMessageToActiveTab.bind(this);
+    this.sendMessageToActiveTab = this.transport.sendMessageToActiveTab.bind(this.transport);
   }
 }
 
