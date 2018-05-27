@@ -1,17 +1,7 @@
-import Mono from "../../mono";
-import Transport from "../../transport";
+import UserscriptPageMono from "./pageMono";
 
-class UserscriptBackgroundPageMono extends Mono {
-  constructor(bundle) {
-    super(bundle);
-  }
-  initTransport() {
-    this.transport = new Transport({
-      addListener: () => {},
-      removeListener: () => {},
-      sendMessage: () => {},
-    });
-  }
+class UserscriptBackgroundPageMono extends UserscriptPageMono {
+
 }
 
 export default UserscriptBackgroundPageMono;
