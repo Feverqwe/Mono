@@ -1,5 +1,4 @@
-import {TransportWithResponseWithActiveTab} from "../../transportWithResponse";
-import TransportWithResponsePage from "../../transportWithResponsePage";
+import {TransportWithResponseWithActiveTab, TransportWithResponsePage} from "../../transportWithResponse";
 
 /**
  * @typedef {RawTransportWithResponse} RawTransportWithResponsePage

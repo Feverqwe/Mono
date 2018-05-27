@@ -1,5 +1,5 @@
 import Mono from "../../mono";
-import TransportWithResponsePage from "../../transportWithResponsePage";
+import {TransportWithResponsePage} from "../../transportWithResponse";
 
 class UserscriptPageMono extends Mono {
   constructor(bundle) {

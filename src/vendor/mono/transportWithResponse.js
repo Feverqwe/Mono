@@ -176,5 +176,18 @@ class TransportWithResponseWithActiveTab extends TransportWithResponse {
   }
 }
 
+/**
+ * @typedef {RawTransportWithResponse} RawTransportWithResponsePage
+ * @property {function(*,function)} sendMessageToActiveTab
+ */
+
+class TransportWithResponsePage extends TransportWithResponseWithActiveTab {
+  startListen() {}
+  stopListen() {}
+}
+
 export default TransportWithResponse;
-export {TransportWithResponseWithActiveTab};
+export {
+  TransportWithResponseWithActiveTab,
+  TransportWithResponsePage
+};
