@@ -14,7 +14,8 @@ class TransportWithResponsePage extends TransportWithResponse {
     if (this.destroyError) throw this.destroyError;
 
     const rawMessage = {
-      message: message
+      transportId: this.transportId,
+      message: this.copyMessage(message)
     };
 
     this.transport.sendMessageToActiveTab(rawMessage, response);

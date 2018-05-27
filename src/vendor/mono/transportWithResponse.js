@@ -19,6 +19,7 @@ const onceFn = cb => {
 
 class TransportWithResponse {
   constructor(/**RawTransportWithResponse*/transport) {
+    this.transportId = String(Math.trunc(Math.random() * 1000));
     this.destroyError = null;
     this.isListen = false;
     this.listeners = [];
@@ -28,18 +29,20 @@ class TransportWithResponse {
   }
 
   /**
-   * @param {{callbackId:string,message:*,responseId:string,responseMessage:*,sender:Object}} rawMessage
+   * @param {{transportId:string,callbackId:string,message:*,responseId:string,responseMessage:*,sender:Object}} rawMessage
    * @param {function(*)} rawResponse
    * @private
    */
   listen(rawMessage, rawResponse) {
+    if (rawMessage.transportId === this.transportId) return;
+
     let response;
     if (rawResponse) {
       response = onceFn(responseMessage => {
         if (this.destroyError) {
           console.warn('Send response is skip cause:', this.destroyError);
         } else {
-          rawResponse(responseMessage);
+          rawResponse(this.copyMessage(responseMessage));
         }
       });
     } else {
@@ -128,10 +131,15 @@ class TransportWithResponse {
     if (this.destroyError) throw this.destroyError;
 
     const rawMessage = {
-      message: message
+      transportId: this.transportId,
+      message: this.copyMessage(message)
     };
 
     this.transport.sendMessage(rawMessage, response);
+  }
+
+  copyMessage(message) {
+    return message && JSON.parse(JSON.stringify(message));
   }
 
   destroy() {
