@@ -1,5 +1,4 @@
 import TransportWithResponse from "./transportWithResponse";
-import {copyMessage} from "./transportWithResponse";
 
 /**
  * @typedef {{}} RawTransport
