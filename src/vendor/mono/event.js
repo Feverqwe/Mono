@@ -7,7 +7,7 @@ class Event {
     this.ee.addListener(this.eventName, listener);
   }
   dispatch(...args) {
-    this.ee.emit(this.eventName, ...args)
+    this.ee.emit(this.eventName, ...args);
   }
   hasListener(listener) {
     return this.ee.listeners(this.eventName).indexOf(listener) !== -1;
