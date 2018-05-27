@@ -47,6 +47,7 @@ const config = {
         sourceMap: false,
         uglifyOptions: {
           output: {
+            beautify: true,
             comments: /^\s+(@|==\/?UserScript==)/,
           }
         }
