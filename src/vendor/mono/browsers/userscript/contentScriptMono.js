@@ -8,14 +8,14 @@ class UserscriptContentScriptMono extends Mono {
   initTransport() {
     this.transport = new TransportWithResponse({
       addListener: listener => {
-        this.bundle.messaing.addListener('activeTab', listener);
+        this.bundle.messaing.addListener('toActiveTab', listener);
       },
       removeListener: listener => {
-        this.bundle.messaing.removeListener('activeTab', listener);
+        this.bundle.messaing.removeListener('toActiveTab', listener);
       },
       sendMessage: (message, response) => {
         this.bundle.wakeUpBackgroundPage();
-        this.bundle.messaing.emit('activeTab', message, response);
+        this.bundle.messaing.emit('fromActiveTab', message, response);
       },
     });
   }

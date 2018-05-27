@@ -9,17 +9,17 @@ class UserscriptPageMono extends Mono {
     this.transport = new TransportWithResponsePage({
       addListener: listener => {
         this.bundle.messaing.addListener('page', listener);
-        this.bundle.messaing.addListener('activeTab', listener);
+        this.bundle.messaing.addListener('fromActiveTab', listener);
       },
       removeListener: listener => {
         this.bundle.messaing.removeListener('page', listener);
-        this.bundle.messaing.removeListener('activeTab', listener);
+        this.bundle.messaing.removeListener('fromActiveTab', listener);
       },
       sendMessage: (message, response) => {
         this.bundle.messaing.emit('page', message, response);
       },
       sendMessageToActiveTab: (message, response) => {
-        this.bundle.messaing.emit('activeTab', message, response);
+        this.bundle.messaing.emit('toActiveTab', message, response);
       },
     });
   }
