@@ -28,6 +28,21 @@ class TransportWithResponse {
     this.listen = this.listen.bind(this);
   }
 
+  callListeners(message, sender, response) {
+    let result = null;
+    this.listeners.forEach(listener => {
+      try {
+        const r = listener(message, sender, response);
+        if (r === true) {
+          result = r;
+        }
+      } catch (err) {
+        console.error('Error in event handler for mono.onMessage:', err);
+      }
+    });
+    return result;
+  }
+
   /**
    * @param {{transportId:string,callbackId:string,message:*,responseId:string,responseMessage:*,sender:Object}} rawMessage
    * @param {function(*)} rawResponse
@@ -49,17 +64,7 @@ class TransportWithResponse {
       response = emptyFn;
     }
 
-    let result = null;
-    this.listeners.forEach(listener => {
-      try {
-        const r = listener(rawMessage.message, rawMessage.sender || {}, response);
-        if (r === true) {
-          result = r;
-        }
-      } catch (err) {
-        console.error('Error in event handler for mono.onMessage:', err);
-      }
-    });
+    const result = this.callListeners(rawMessage.message, rawMessage.sender || {}, response);
     if (result !== true) {
       response(undefined);
     }
