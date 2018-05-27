@@ -5,13 +5,12 @@ class UserscriptContentScriptMono extends Mono {
   constructor(bundle) {
     super(bundle);
   }
-  init() {
+  initTransport() {
     this.transport = new Transport({
       addListener: () => {},
       removeListener: () => {},
       sendMessage: () => {},
     });
-    super.init();
   }
 }
 

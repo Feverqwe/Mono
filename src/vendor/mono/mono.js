@@ -13,8 +13,12 @@ class Mono {
 
     this.init();
   }
+  initTransport() {
+    throw new Error('initTransport error: not exists');
+  }
   init() {
     this.onDestroy = new Event(this.ee, 'destroy');
+    this.initTransport();
     this.sendMessage = this.transport.sendMessage.bind(this);
     this.onMessage = {
       addListener: this.transport.addListener.bind(this.transport),
@@ -25,6 +29,7 @@ class Mono {
   }
   destroy() {
     this.onDestroy.dispatch();
+    this.transport.destroy();
   }
 }
 

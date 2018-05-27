@@ -15,6 +15,7 @@ class Transport {
     this.transportId = String(Math.trunc(Math.random() * 1000));
     this.callbackIndex = 0;
     this.idCallbackMap = {};
+    this.destroyError = null;
     this.isListen = false;
     this.listeners = [];
     this.transport = transport;
@@ -40,10 +41,14 @@ class Transport {
     let response;
     if (rawMessage.callbackId) {
       response = onceFn(responseMessage => {
-        this.transport.sendMessage({
-          responseId: rawMessage.callbackId,
-          responseMessage: responseMessage
-        });
+        if (this.destroyError) {
+          console.warn('Send response is skip cause:', this.destroyError);
+        } else {
+          this.transport.sendMessage({
+            responseId: rawMessage.callbackId,
+            responseMessage: responseMessage
+          });
+        }
       });
     } else {
       response = emptyFn;
@@ -128,6 +133,8 @@ class Transport {
    * @param {function(*)} [response]
    */
   sendMessage(message, response) {
+    if (this.destroyError) throw this.destroyError;
+
     const rawMessage = {
       message: message
     };
@@ -146,6 +153,13 @@ class Transport {
       delete this.idCallbackMap[rawMessage.callbackId];
       throw err;
     }
+  }
+
+  destroy() {
+    this.destroyError = new Error('Transport is destroyed');
+    this.idCallbackMap = {};
+    this.listeners.splice(0);
+    this.stopListen();
   }
 }
 
