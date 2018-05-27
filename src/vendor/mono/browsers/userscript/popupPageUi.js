@@ -8,7 +8,7 @@ class PopupPageUi extends PageUi {
     this.popupScripts = POPUP_SCRIPTS;
   }
   getPageContent() {
-    return this.optionsPage;
+    return this.popupPage;
   }
   getPageScripts() {
     return this.popupScripts;
