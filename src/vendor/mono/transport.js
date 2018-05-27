@@ -24,7 +24,7 @@ class Transport {
   }
 
   /**
-   * @param {{callbackId:string,message:*,responseId:string,responseMessage:*}} rawMessage
+   * @param {{callbackId:string,message:*,responseId:string,responseMessage:*,sender:Object}} rawMessage
    * @private
    */
   listen(rawMessage) {
