@@ -5,10 +5,15 @@ import UserscriptBackgroundPageMono from "./backgroundPageMono";
 import UserscriptPageMono from "./pageMono";
 import UserscriptContentScriptMono from "./contentScriptMono";
 
+const {EventEmitter} = require('events');
+
 class Bundle extends Router {
   constructor() {
     super();
 
+    this.messaing = new EventEmitter();
+
+    this.backgroundPageLoaded = false;
     this.backgroundScripts = BACKGROUND_SCRIPTS;
     this.backgroundPageMono = null;
 
@@ -40,10 +45,12 @@ class Bundle extends Router {
     return instance;
   }
   init() {
-    if (this.hasInjectScripts()) {
-      this.runBackgroundPage().then(() => {
-        return this.inject();
-      });
+    return this.inject();
+  }
+  wakeUpBackgroundPage() {
+    if (!this.backgroundPageLoaded) {
+      this.backgroundPageLoaded = true;
+      this.runBackgroundPage();
     }
   }
   showPopup() {
@@ -75,9 +82,7 @@ class Bundle extends Router {
     return this.backgroundPageMono;
   }
   runBackgroundPage() {
-    return Promise.resolve().then(() => {
-      this.executeBackgroundScript(this.backgroundScripts.join('\n'), this.getBackgroundPageMono());
-    });
+    this.executeBackgroundScript(this.backgroundScripts.join('\n'), this.getBackgroundPageMono());
   }
   executeBackgroundScript(code, mono) {
     return new Function('MONO', code)(mono);
