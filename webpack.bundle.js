@@ -3,7 +3,6 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
-const defineScripts = require('./builder/defineScripts');
 
 const isWatch = require('./builder/isWatch');
 
@@ -91,14 +90,14 @@ const config = {
     }),
     new DefinePlugin({
       LOCALE_MAP: JSON.stringify(LOCALE_MAP),
-      BACKGROUND_SCRIPTS: defineScripts(BACKGROUND_SCRIPTS),
+      BACKGROUND_SCRIPTS: JSON.stringify(BACKGROUND_SCRIPTS),
       OPTIONS_PAGE: JSON.stringify(OPTIONS_PAGE),
-      OPTIONS_SCRIPTS: defineScripts(OPTIONS_SCRIPTS),
+      OPTIONS_SCRIPTS: JSON.stringify(OPTIONS_SCRIPTS),
       POPUP_PAGE: JSON.stringify(POPUP_PAGE),
-      POPUP_SCRIPTS: defineScripts(POPUP_SCRIPTS),
+      POPUP_SCRIPTS: JSON.stringify(POPUP_SCRIPTS),
       CONTENT_SCRIPTS: JSON.stringify(CONTENT_SCRIPTS),
       CONTENT_SCRIPT_MAP: JSON.stringify(CONTENT_SCRIPT_MAP),
-      CONTENT_SCRIPT_INDEX: defineScripts(CONTENT_SCRIPT_INDEX),
+      CONTENT_SCRIPT_INDEX: JSON.stringify(CONTENT_SCRIPT_INDEX),
       'process.env': {
         'DEBUG': JSON.stringify('*')
       }
