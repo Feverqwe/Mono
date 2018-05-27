@@ -82,7 +82,7 @@ class Bundle extends Router {
     return this.backgroundPageMono;
   }
   runBackgroundPage() {
-    this.executeBackgroundScript(this.backgroundScripts.map(a=>a.toString()).join('\n'), this.getBackgroundPageMono());
+    this.executeBackgroundScript(this.backgroundScripts.join('\n'), this.getBackgroundPageMono());
   }
   executeBackgroundScript(code, mono) {
     return new Function('MONO', code)(mono);

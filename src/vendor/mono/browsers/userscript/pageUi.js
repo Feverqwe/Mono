@@ -27,7 +27,7 @@ class PageUi {
     return [];
   }
   executePageScript() {
-    return new Function('MONO', this.getPageScripts().map(a=>a.toString()).join('\n'))(this.mono);
+    return new Function('MONO', this.getPageScripts().join('\n'))(this.mono);
   }
   destroyMono() {
     if (this.mono) {
