@@ -4,6 +4,7 @@ import OptionsPageUi from "./optionsPageUi";
 import UserscriptBackgroundPageMono from "./backgroundPageMono";
 import UserscriptPageMono from "./pageMono";
 import UserscriptContentScriptMono from "./contentScriptMono";
+import unwrapScript from "../../unwrapScript";
 
 const {EventEmitter} = require('events');
 
@@ -82,7 +83,7 @@ class Bundle extends Router {
     return this.backgroundPageMono;
   }
   runBackgroundPage() {
-    this.executeBackgroundScript(this.backgroundScripts.join('\n'), this.getBackgroundPageMono());
+    this.executeBackgroundScript(this.backgroundScripts.map(script => unwrapScript(script)).join('\n'), this.getBackgroundPageMono());
   }
   executeBackgroundScript(code, mono) {
     return new Function('MONO', code)(mono);

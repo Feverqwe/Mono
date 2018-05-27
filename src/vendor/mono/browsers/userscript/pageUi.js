@@ -1,3 +1,5 @@
+import unwrapScript from "../../unwrapScript";
+
 class PageUi {
   constructor(bundle) {
     this.bundle = bundle;
@@ -27,7 +29,7 @@ class PageUi {
     return [];
   }
   executePageScript() {
-    return new Function('MONO', this.getPageScripts().join('\n'))(this.mono);
+    return new Function('MONO', this.getPageScripts().map(script => unwrapScript(script)).join('\n'))(this.mono);
   }
   destroyMono() {
     if (this.mono) {

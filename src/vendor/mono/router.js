@@ -1,3 +1,5 @@
+import unwrapScript from "./unwrapScript";
+
 class Router {
   constructor() {
     this.monoInstances = [];
@@ -57,7 +59,7 @@ class Router {
     if (documentStartScripts.length) {
       this.runWhenDocumentStart(() => {
         try {
-          this.executeContentScript(documentStartScripts.map(index => this.contentScriptIndex[index]).join('\n'));
+          this.executeContentScript(documentStartScripts.map(index => unwrapScript(this.contentScriptIndex[index])).join('\n'));
         } catch (err) {
           console.error('executeContentScript document_start error', err);
         }
@@ -66,7 +68,7 @@ class Router {
     if (documentEndScripts.length) {
       this.runWhenDocumentEnd(() => {
         try {
-          this.executeContentScript(documentEndScripts.map(index => this.contentScriptIndex[index]).join('\n'));
+          this.executeContentScript(documentEndScripts.map(index => unwrapScript(this.contentScriptIndex[index])).join('\n'));
         } catch (err) {
           console.error('executeContentScript document_end error', err);
         }
@@ -75,7 +77,7 @@ class Router {
     if (documentIdleScripts.length) {
       this.runWhenDocumentIdle(() => {
         try {
-          this.executeContentScript(documentIdleScripts.map(index => this.contentScriptIndex[index]).join('\n'));
+          this.executeContentScript(documentIdleScripts.map(index => unwrapScript(this.contentScriptIndex[index])).join('\n'));
         } catch (err) {
           console.error('executeContentScript document_idle error', err);
         }

@@ -1,6 +1,7 @@
 const {DefinePlugin} = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const path = require('path');
+const defineScripts = require('./builder/defineScripts');
 
 const isWatch = require('./builder/isWatch');
 
@@ -56,8 +57,8 @@ const config = {
     new DefinePlugin({
       LOCALE_MAP: JSON.stringify(LOCALE_MAP),
       CONTENT_SCRIPTS: JSON.stringify(CONTENT_SCRIPTS),
-      CONTENT_SCRIPT_INDEX: JSON.stringify(CONTENT_SCRIPT_INDEX),
       CONTENT_SCRIPT_MAP: JSON.stringify(CONTENT_SCRIPT_MAP),
+      CONTENT_SCRIPT_INDEX: defineScripts(CONTENT_SCRIPT_INDEX),
       'process.env': {
         'DEBUG': JSON.stringify('*')
       }
