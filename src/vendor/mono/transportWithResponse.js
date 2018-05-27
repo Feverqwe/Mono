@@ -31,7 +31,9 @@ class TransportWithResponse {
     this.listen = this.listen.bind(this);
   }
 
-  callListeners(message, sender, response) {
+  callListeners(transportId, message, sender, response) {
+    if (transportId === this.transportId) return;
+
     let result = null;
     this.listeners.forEach(listener => {
       try {
@@ -52,8 +54,6 @@ class TransportWithResponse {
    * @private
    */
   listen(rawMessage, rawResponse) {
-    if (rawMessage.transportId === this.transportId) return;
-
     let response;
     if (rawResponse) {
       response = onceFn(responseMessage => {
@@ -67,7 +67,7 @@ class TransportWithResponse {
       response = emptyFn;
     }
 
-    const result = this.callListeners(rawMessage.message, rawMessage.sender || {}, response);
+    const result = this.callListeners(rawMessage.transportId, rawMessage.message, rawMessage.sender || {}, response);
     if (result !== true) {
       response(undefined);
     }

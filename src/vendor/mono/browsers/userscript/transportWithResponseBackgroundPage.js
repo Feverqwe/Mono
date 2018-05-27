@@ -10,11 +10,11 @@ class TransportWithResponseBackgroundPage extends TransportWithResponseWithActiv
     super(transport);
     this.bundle = bundle;
   }
-  callListeners(message, sender, response) {
-    let result = super.callListeners(message, sender, response);
+  callListeners(...args) {
+    let result = super.callListeners(...args);
     this.bundle.monoInstances.forEach(mono => {
       if (mono.transport instanceof TransportWithResponsePage) {
-        const r = mono.transport.callListeners(message, sender, response);
+        const r = mono.transport.callListeners(...args);
         if (r === true) {
           result = true;
         }
