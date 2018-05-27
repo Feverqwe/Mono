@@ -1,3 +1,5 @@
+import Event from "./event";
+
 const emptyFn = () => {};
 const onceFn = cb => {
   let fired = false;
@@ -20,12 +22,12 @@ const copyMessage = message => {
  * @property {function(*,function)} sendMessageToActiveTab
  */
 
-class TransportWithResponse {
+class TransportWithResponse extends Event {
   constructor(/**RawTransportWithResponse*/transport) {
+    super();
     this.transportId = String(Math.trunc(Math.random() * 1000));
     this.destroyError = null;
     this.isListen = false;
-    this.listeners = [];
     this.transport = transport;
 
     this.listen = this.listen.bind(this);
@@ -104,7 +106,7 @@ class TransportWithResponse {
    * @param {function(*,{},function(*)):boolean} listener
    */
   addListener(listener) {
-    this.listeners.push(listener);
+    super.addListener(listener);
     if (this.listeners.length > 0) {
       this.startListen();
     }
@@ -114,28 +116,10 @@ class TransportWithResponse {
    * @param {function} listener
    */
   removeListener(listener) {
-    const pos = this.listeners.indexOf(listener);
-    if (pos !== -1) {
-      this.listeners.splice(pos, 1);
-    }
+    super.removeListener(listener);
     if (this.listeners.length === 0) {
       this.stopListen();
     }
-  }
-
-  /**
-   * @param {function} listener
-   * @returns {boolean}
-   */
-  hasListener(listener) {
-    return this.listeners.indexOf(listener) !== -1;
-  }
-
-  /**
-   * @returns {boolean}
-   */
-  hasListeners() {
-    return this.listeners.length > 0;
   }
 
   getRawMessage(message, response) {
