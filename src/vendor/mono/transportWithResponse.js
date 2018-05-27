@@ -8,6 +8,9 @@ const onceFn = cb => {
     }
   };
 };
+const copyMessage = message => {
+  return message && JSON.parse(JSON.stringify(message));
+};
 
 /**
  * @typedef {{}} RawTransportWithResponse
@@ -57,7 +60,7 @@ class TransportWithResponse {
         if (this.destroyError) {
           console.warn('Send response is skip cause:', this.destroyError);
         } else {
-          rawResponse(this.copyMessage(responseMessage));
+          rawResponse(copyMessage(responseMessage));
         }
       });
     } else {
@@ -137,14 +140,10 @@ class TransportWithResponse {
 
     const rawMessage = {
       transportId: this.transportId,
-      message: this.copyMessage(message)
+      message: copyMessage(message)
     };
 
     this.transport.sendMessage(rawMessage, response);
-  }
-
-  copyMessage(message) {
-    return message && JSON.parse(JSON.stringify(message));
   }
 
   destroy() {
@@ -170,7 +169,7 @@ class TransportWithResponseWithActiveTab extends TransportWithResponse {
 
     const rawMessage = {
       transportId: this.transportId,
-      message: this.copyMessage(message)
+      message: copyMessage(message)
     };
 
     this.transport.sendMessageToActiveTab(rawMessage, response);
