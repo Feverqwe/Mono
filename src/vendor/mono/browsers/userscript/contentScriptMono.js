@@ -1,9 +1,9 @@
-import Mono from "../../mono";
 import TransportWithResponse from "../../transportWithResponse";
 import Storage from "../../storage";
 import UserscriptStorage from "./userscriptStorage";
+import ContentScriptMono from "../../contentScriptMono";
 
-class UserscriptContentScriptMono extends Mono {
+class UserscriptContentScriptMono extends ContentScriptMono {
   constructor(bundle) {
     super(bundle);
   }

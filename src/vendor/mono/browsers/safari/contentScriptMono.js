@@ -1,7 +1,7 @@
-import Mono from "../../mono";
 import Transport from "../../transport";
+import ContentScriptMono from "../../contentScriptMono";
 
-class SafariContentScriptMono extends Mono {
+class SafariContentScriptMono extends ContentScriptMono {
   constructor(bundle) {
     super(bundle);
   }
