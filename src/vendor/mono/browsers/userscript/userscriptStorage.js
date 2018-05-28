@@ -1,4 +1,10 @@
 class UserscriptStorage {
+  wrapValue(value) {
+    return JSON.stringify({j:value});
+  }
+  unwrapValue(value) {
+    return JSON.parse(value).j;
+  }
   get(keys, callback) {
     const result = {};
     let defaults = {};
@@ -15,7 +21,7 @@ class UserscriptStorage {
       let value = null;
       try {
         if (existsKeys.indexOf(key) !== -1) {
-          value = GM_getValue(key, defaults[key]);
+          value = this.unwrapValue(GM_getValue(key));
           exists = true;
         }
       } catch (err) {
@@ -33,7 +39,7 @@ class UserscriptStorage {
   }
   set(data, callback) {
     Object.keys(data).forEach(key => {
-      GM_setValue(key, data[key]);
+      GM_setValue(key, this.wrapValue(data[key]));
     });
     callback && callback();
   }
