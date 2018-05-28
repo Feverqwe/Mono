@@ -24,7 +24,7 @@ class LsStorage {
           exists = true;
         }
       } catch (err) {
-        console.error('Parse key error', key);
+        console.error(`Parse key (${key}) error`);
       }
       if (!exists && defaults.hasOwnProperty(key)) {
         value = defaults[key];
