@@ -30,17 +30,17 @@ class LsStorage {
     Object.keys(data).forEach(key => {
       localStorage.setItem(key, this.wrapValue(data[key]));
     });
-    callback();
+    callback && callback();
   }
   remove(keys, callback) {
     keys.forEach(key => {
       localStorage.removeItem(key);
     });
-    callback();
+    callback && callback();
   }
   clear(callback) {
     localStorage.clear();
-    callback();
+    callback && callback();
   }
 }
 

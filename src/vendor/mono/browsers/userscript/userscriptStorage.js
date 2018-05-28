@@ -22,13 +22,13 @@ class UserscriptStorage {
     Object.keys(data).forEach(key => {
       GM_setValue(key, data[key]);
     });
-    callback();
+    callback && callback();
   }
   remove(keys, callback) {
     keys.forEach(key => {
       GM_deleteValue(key);
     });
-    callback();
+    callback && callback();
   }
   clear(callback) {
     this.remove(GM_listValues(), callback);
