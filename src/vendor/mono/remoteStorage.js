@@ -9,7 +9,11 @@ class RemoteStorage {
       callback(unwrapObjectValues(result));
     }, err => {
       console.error('storage.get error', defaults, err);
-      callback(defaults);
+      if (defaults && typeof defaults === 'object' && !Array.isArray(defaults)) {
+        callback(defaults);
+      } else {
+        callback({});
+      }
     });
   }
   set(data, callback) {
