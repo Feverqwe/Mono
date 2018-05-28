@@ -9,6 +9,12 @@ class StorageLocal extends Storage {
   }
   get(defaults, callback) {
     const result = {};
+    if (!defaults) {
+      defaults = Object.keys(localStorage).reduce((obj, key) => {
+        obj[key] = void 0;
+        return obj;
+      }, {});
+    }
     Object.keys(defaults).forEach(key => {
       let value = defaults[key];
       try {

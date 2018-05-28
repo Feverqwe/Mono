@@ -1,6 +1,12 @@
 class UserscriptStorage {
   get(defaults, callback) {
     const result = {};
+    if (!defaults) {
+      defaults = Object.keys(GM_listValues()).reduce((obj, key) => {
+        obj[key] = void 0;
+        return obj;
+      }, {});
+    }
     Object.keys(defaults).forEach(key => {
       let value = defaults[key];
       try {
