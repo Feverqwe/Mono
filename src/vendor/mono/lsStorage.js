@@ -1,4 +1,4 @@
-class StorageLocal {
+class LsStorage {
   wrapValue(value) {
     return JSON.stringify({j:value});
   }
@@ -44,4 +44,4 @@ class StorageLocal {
   }
 }
 
-export default StorageLocal;
+export default LsStorage;
