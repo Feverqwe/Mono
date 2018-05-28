@@ -1,3 +1,5 @@
+const serializeError = require('serialize-error');
+
 class BackgroundPageCallFn {
   constructor(mono) {
     this.mono = mono;
@@ -71,11 +73,7 @@ class BackgroundPageCallFn {
     promise.then(result => {
       response({result: result});
     }, err => {
-      response({err: {
-          name: err.name,
-          message: err.message,
-          stack: err.stack
-        }});
+      response({err: serializeError(err)});
     }).catch(function (err) {
       debug('responsePromise error', err);
     });

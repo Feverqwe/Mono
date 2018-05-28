@@ -1,3 +1,5 @@
+const deserializeError = require('deserialize-error');
+
 class ContentScriptCallFn {
   constructor(mono) {
     this.mono = mono;
@@ -26,8 +28,7 @@ class ContentScriptCallFn {
     return new Promise((resolve, reject) => {
       this.mono.sendMessage(msg, response => {
         if (response.err) {
-          const err = new Error();
-          Object.assign(err, response.err);
+          const err = deserializeError(response.err);
           return reject(err);
         } else {
           return resolve(response.result);

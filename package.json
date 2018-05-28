@@ -27,5 +27,8 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {
+    "deserialize-error": "0.0.3",
+    "serialize-error": "^2.1.0"
+  }
 }
