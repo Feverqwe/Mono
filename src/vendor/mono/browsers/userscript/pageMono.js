@@ -4,9 +4,6 @@ import Storage from "../../storage";
 import UserscriptStorage from "./userscriptStorage";
 
 class UserscriptPageMono extends Mono {
-  constructor(bundle) {
-    super(bundle);
-  }
   initTransport() {
     this.transport = new TransportWithResponseWithActiveTab({
       addListener: listener => {
