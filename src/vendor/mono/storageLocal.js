@@ -1,6 +1,4 @@
-import Storage from "./storage";
-
-class StorageLocal extends Storage {
+class StorageLocal {
   wrapValue(value) {
     return JSON.stringify({j:value});
   }
