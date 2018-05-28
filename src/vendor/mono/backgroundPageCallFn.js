@@ -15,8 +15,8 @@ class BackgroundPageCallFn {
     this.mono.onMessage.addListener(this.listener);
   }
 
-  listener(message, sender, response) {
-    switch (message && message.action) {
+  listener(msg, sender, response) {
+    switch (msg && msg.action) {
       case 'callFn': {
         this.responseFn(msg, response);
         return true;

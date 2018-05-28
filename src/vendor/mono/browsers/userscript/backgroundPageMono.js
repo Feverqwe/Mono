@@ -2,13 +2,14 @@ import UserscriptPageMono from "./pageMono";
 import BackgroundPageCallFn from "../../backgroundPageCallFn";
 
 class UserscriptBackgroundPageMono extends UserscriptPageMono {
-  constructor(...args) {
-    super(...args);
+  constructor(bundle) {
+    super(bundle);
     this.backgroundPageCallFn = null;
     this.remote = null;
+
+    this.initCallFn();
   }
-  init() {
-    super.init();
+  initCallFn() {
     this.backgroundPageCallFn = new BackgroundPageCallFn(this);
     this.remote = this.backgroundPageCallFn.remote;
   }
