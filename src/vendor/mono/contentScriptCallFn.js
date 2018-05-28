@@ -4,14 +4,16 @@ class ContentScriptCallFn {
   }
   /**
    * @param {string} fnName
-   * @param {*[]} argsArray
+   * @param {*[]} [argsArray]
+   * @param {{putCallback: boolean}} [options]
    * @return {Promise}
    */
-  callFn(fnName, argsArray = []) {
+  callFn(fnName, argsArray, options) {
     return this.waitPromise({
       action: 'callFn',
       fn: fnName,
-      args: argsArray
+      args: argsArray,
+      options: options
     });
   }
 
