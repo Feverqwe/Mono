@@ -1,4 +1,4 @@
-class StorageRemote {
+class RemoteStorage {
   constructor(mono) {
     this.mono = mono;
   }
@@ -28,4 +28,4 @@ class StorageRemote {
   }
 }
 
-export default StorageRemote;
+export default RemoteStorage;

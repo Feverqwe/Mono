@@ -1,5 +1,7 @@
 import Transport from "../../transport";
 import ContentScriptMono from "../../contentScriptMono";
+import Storage from "../../storage";
+import RemoteStorage from "../../remoteStorage";
 
 class SafariContentScriptMono extends ContentScriptMono {
   constructor(bundle) {
@@ -11,6 +13,9 @@ class SafariContentScriptMono extends ContentScriptMono {
       removeListener: () => {},
       sendMessage: () => {},
     });
+  }
+  initStorage() {
+    this.storage = new Storage(new RemoteStorage());
   }
 }
 
