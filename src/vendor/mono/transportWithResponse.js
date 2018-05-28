@@ -1,4 +1,5 @@
 import Event from "./event";
+import copyMessage from "./copyMessage";
 
 const emptyFn = () => {};
 const onceFn = cb => {
@@ -9,9 +10,6 @@ const onceFn = cb => {
       cb(...args);
     }
   };
-};
-const copyMessage = message => {
-  return message && JSON.parse(JSON.stringify(message));
 };
 
 /**
@@ -171,6 +169,5 @@ class TransportWithResponseWithActiveTab extends TransportWithResponse {
 
 export default TransportWithResponse;
 export {
-  copyMessage,
   TransportWithResponseWithActiveTab
 };
