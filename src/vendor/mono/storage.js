@@ -32,7 +32,7 @@ class Storage {
       keys = [keys];
     }
     if (Array.isArray(keys)) {
-      keys.forEach((obj, key) => {
+      keys.forEach(key => {
         if (typeof key !== 'string') {
           throw new Error('Incorrect key type');
         }
