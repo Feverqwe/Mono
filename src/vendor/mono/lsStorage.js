@@ -5,24 +5,34 @@ class LsStorage {
   unwrapValue(value) {
     return JSON.parse(value).j;
   }
-  get(defaults, callback) {
+  get(keys, callback) {
     const result = {};
-    if (!defaults) {
-      defaults = Object.keys(localStorage).reduce((obj, key) => {
-        obj[key] = void 0;
-        return obj;
-      }, {});
+    let defaults = {};
+    if (!keys) {
+      keys = Object.keys(localStorage);
     }
-    Object.keys(defaults).forEach(key => {
-      let value = defaults[key];
+    if (!Array.isArray(keys)) {
+      defaults = keys;
+      keys = Object.keys(keys);
+    }
+    keys.forEach(key => {
+      let exists = false;
+      let value = null;
       try {
         if (localStorage.hasOwnProperty(key)) {
           value = this.unwrapValue(localStorage.getItem(key));
+          exists = true;
         }
       } catch (err) {
         console.error('Parse key error', key);
       }
-      result[key] = value;
+      if (!exists && defaults.hasOwnProperty(key)) {
+        value = defaults[key];
+        exists = true;
+      }
+      if (exists) {
+        result[key] = value;
+      }
     });
     callback(result);
   }

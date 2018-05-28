@@ -1,20 +1,33 @@
 class UserscriptStorage {
-  get(defaults, callback) {
+  get(keys, callback) {
     const result = {};
-    if (!defaults) {
-      defaults = GM_listValues().reduce((obj, key) => {
-        obj[key] = void 0;
-        return obj;
-      }, {});
+    let defaults = {};
+    let existsKeys = GM_listValues();
+    if (!keys) {
+      keys = existsKeys;
     }
-    Object.keys(defaults).forEach(key => {
-      let value = defaults[key];
+    if (!Array.isArray(keys)) {
+      defaults = keys;
+      keys = Object.keys(keys);
+    }
+    keys.forEach(key => {
+      let exists = false;
+      let value = null;
       try {
-        value = GM_getValue(key, defaults[key]);
+        if (existsKeys.indexOf(key) !== -1) {
+          value = GM_getValue(key, keys[key]);
+          exists = true;
+        }
       } catch (err) {
         console.error('Parse key error', key);
       }
-      result[key] = value;
+      if (!exists && defaults.hasOwnProperty(key)) {
+        value = defaults[key];
+        exists = true;
+      }
+      if (exists) {
+        result[key] = value;
+      }
     });
     callback(result);
   }
