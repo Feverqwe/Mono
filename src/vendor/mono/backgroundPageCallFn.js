@@ -36,14 +36,7 @@ class BackgroundPageCallFn {
     const promise = Promise.resolve().then(() => {
       const {scope, endPoint: fn} = this.resolvePath(msg.fn);
       const args = msg.args || [];
-      const options = msg.options || {};
-      if (options.putCallback) {
-        return new Promise(resolve => {
-          scope[fn].apply(scope, [...args, resolve]);
-        });
-      } else {
-        return scope[fn].apply(scope, args);
-      }
+      return scope[fn].apply(scope, args);
     });
     return this.responsePromise(promise, response);
   }

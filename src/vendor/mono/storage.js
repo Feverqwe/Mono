@@ -1,7 +1,25 @@
+import {wrapObjectValues, unwrapObjectValues} from "./warpObjectValues";
+
 class Storage {
   constructor(api) {
     this.api = api;
-  }
+
+    this.remote = {
+      get: keys => {
+        return new Promise(r => this.get(unwrapObjectValues(keys), r)).then(r => wrapObjectValues(r));
+      },
+      set: items => {
+        return new Promise(r => this.set(unwrapObjectValues(items), r));
+      },
+      remove: keys => {
+        return new Promise(r => this.remove(keys, r));
+      },
+      clear: () => {
+        return new Promise(r => this.clear(r));
+      }
+    }
+  };
+
   /**
    * @param {Object|string|[string]|null|undefined} [keys]
    * @param {function} callback
