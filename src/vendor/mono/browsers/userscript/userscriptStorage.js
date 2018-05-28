@@ -15,7 +15,7 @@ class UserscriptStorage {
       let value = null;
       try {
         if (existsKeys.indexOf(key) !== -1) {
-          value = GM_getValue(key, keys[key]);
+          value = GM_getValue(key, defaults[key]);
           exists = true;
         }
       } catch (err) {
