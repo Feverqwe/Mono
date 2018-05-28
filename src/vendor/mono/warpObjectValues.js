@@ -1,14 +1,18 @@
 const wrapObjectValues = obj => {
-  obj && Object.keys(obj).forEach(key => {
-    obj[key] = {w:obj[key]};
-  });
+  if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
+    Object.keys(obj).forEach(key => {
+      obj[key] = {w: obj[key]};
+    });
+  }
   return obj;
 };
 
 const unwrapObjectValues = obj => {
-  obj && Object.keys(obj).forEach(key => {
-    obj[key] = obj[key].w;
-  });
+  if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
+    Object.keys(obj).forEach(key => {
+      obj[key] = obj[key].w;
+    });
+  }
   return obj;
 };
 
