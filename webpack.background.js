@@ -1,4 +1,5 @@
 const {DefinePlugin} = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 const isWatch = require('./builder/isWatch');
@@ -52,5 +53,15 @@ const config = {
     }),
   ],
 };
+
+if (browser === 'safari') {
+  config.plugins.push(
+    new HtmlWebpackPlugin({
+      filename: 'background.html',
+      template: path.join(source, './background.html'),
+      chunks: ['background']
+    })
+  );
+}
 
 module.exports = config;
