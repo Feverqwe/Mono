@@ -1,5 +1,6 @@
 import ContentScriptMono from "../../contentScriptMono";
 import Storage from "../../storage";
+import ChromeStorage from "./storage";
 
 class ChromeContentScriptMono extends ContentScriptMono {
   initMessages() {
@@ -24,20 +25,7 @@ class ChromeContentScriptMono extends ContentScriptMono {
     super.initMessages();
   }
   initStorage() {
-    this.storage = new Storage({
-      get(keys, callback) {
-        chrome.storage.local.get(keys, callback);
-      },
-      set(data, callback) {
-        chrome.storage.local.set(data, callback);
-      },
-      remove(keys, callback) {
-        chrome.storage.local.remove(keys, callback);
-      },
-      clear(callback) {
-        chrome.storage.local.clear(callback);
-      }
-    });
+    this.storage = new Storage(new ChromeStorage());
   }
 }
 

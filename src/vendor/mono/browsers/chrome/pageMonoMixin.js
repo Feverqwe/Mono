@@ -1,4 +1,5 @@
 import Storage from "../../storage";
+import ChromeStorage from "./storage";
 
 const ChromePageMonoMixin = Parent => class extends Parent {
   initMessages() {
@@ -34,20 +35,7 @@ const ChromePageMonoMixin = Parent => class extends Parent {
     super.initMessages();
   }
   initStorage() {
-    this.storage = new Storage({
-      get(keys, callback) {
-        chrome.storage.local.get(keys, callback);
-      },
-      set(data, callback) {
-        chrome.storage.local.set(data, callback);
-      },
-      remove(keys, callback) {
-        chrome.storage.local.remove(keys, callback);
-      },
-      clear(callback) {
-        chrome.storage.local.clear(callback);
-      }
-    });
+    this.storage = new Storage(new ChromeStorage());
   }
 };
 
