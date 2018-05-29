@@ -12,9 +12,9 @@ const ChromePageMonoMixin = Parent => class extends Parent {
           active: true,
           currentWindow: true
         }, tabs => {
-          const tabId = tabs[0] && tabs[0].id;
-          if (tabId >= 0) {
-            chrome.tabs.sendMessage(tabId, message, response);
+          const tab = tabs[0];
+          if (tab && tab.id >= 0) {
+            chrome.tabs.sendMessage(tab.id, message, response);
           }
         });
       },
