@@ -5,6 +5,18 @@ import {TransportWithActiveTab} from "../../transport";
 
 class SafariPageMono extends Mono {
   initTransport() {
+    const getEvent = message => {
+      return {
+        message: message,
+        target: {
+          page: {
+            dispatchMessage: (eventName, message) => {
+              window.monoDispatchMessage(getEvent(message));
+            }
+          }
+        }
+      }
+    };
     this.transport = new TransportWithActiveTab({
       addListener: listener => {
         listener._listener = event => listener(event.message, event);
@@ -16,23 +28,9 @@ class SafariPageMono extends Mono {
         }
       },
       sendMessage: message => {
-        safari.extension.globalPage.contentWindow.monoSafariDirectOnMessage({
-          message: message,
-          target: {
-            page: {
-              dispatchMessage: window.monoDispatchMessage
-            }
-          }
-        });
+        safari.extension.globalPage.contentWindow.monoDispatchMessage(getEvent(message));
         safari.extension.popovers.forEach(popup => {
-          popup.contentWindow.monoDispatchMessage({
-            message: message,
-            target: {
-              page: {
-                dispatchMessage: window.monoDispatchMessage
-              }
-            }
-          });
+          popup.contentWindow.monoDispatchMessage(getEvent(message));
         });
       },
       sendMessageTo: (message, event) => {
@@ -55,7 +53,7 @@ class SafariPageMono extends Mono {
         }
       },
     });
-    window.monoDispatchMessage = this.transport.listen._listener;
+    window.monoDispatchMessage = event => this.transport.listen(event.message, event);
   }
   initStorage() {
     this.storage = new Storage(new LsStorage());
