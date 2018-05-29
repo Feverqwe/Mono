@@ -1,26 +1,20 @@
 import BackgroundPageMono from "../../backgroundPageMono";
-import initPageTransport from "./initPageTransport";
-import Storage from "../../storage";
-import LsStorage from "../../lsStorage";
+import SafariPageMono from "./pageMono";
 
-class SafariBackgroundPageMono extends BackgroundPageMono {
+class SafariBackgroundPageMono extends SafariPageMono(BackgroundPageMono) {
   constructor() {
     super();
 
     this.initMessages();
     this.initStorage();
+    this.initOptions();
   }
-  initMessages() {
-    this.transport = initPageTransport();
-
-    super.initMessages(this.transport);
-  }
-  initStorage() {
-    this.storage = new Storage(new LsStorage());
-  }
-  destroy() {
-    super.destroy();
-    this.transport.destroy();
+  initOptions() {
+    safari.extension.settings.addEventListener('change', event => {
+      if (event.key === 'show_options') {
+        this.openTab(safari.extension.baseURI + 'options.html', true);
+      }
+    });
   }
 }
 
