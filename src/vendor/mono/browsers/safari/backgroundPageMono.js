@@ -11,7 +11,7 @@ class SafariBackgroundPageMono extends SafariPageMono(BackgroundPageMono) {
   }
   initOptions() {
     safari.extension.settings.addEventListener('change', event => {
-      if (event.key === 'show_options') {
+      if (event.key === 'open_options') {
         this.openTab(safari.extension.baseURI + 'options.html', true);
       }
     });
