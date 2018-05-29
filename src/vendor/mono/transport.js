@@ -42,13 +42,18 @@ class Transport extends TransportWithResponse {
       return;
     }
 
-    super.listen(rawMessage, responseMessage => {
-      this.transport.sendMessageTo({
-        transportId: this.transportId,
-        responseId: rawMessage.callbackId,
-        responseMessage: responseMessage
-      }, event);
-    });
+    let response = null;
+    if (rawMessage.callbackId) {
+      response = responseMessage => {
+        this.transport.sendMessageTo({
+          transportId: this.transportId,
+          responseId: rawMessage.callbackId,
+          responseMessage: responseMessage
+        }, event);
+      };
+    }
+
+    super.listen(rawMessage, response);
   }
 
   getRawMessage(message, response) {
