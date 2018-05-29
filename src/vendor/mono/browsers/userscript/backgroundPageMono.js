@@ -1,17 +1,27 @@
-import UserscriptPageMono from "./pageMono";
-import BackgroundPageCallFn from "../../backgroundPageCallFn";
+import BackgroundPageMono from "../../backgroundPageMono";
+import UserscriptStorage from "./userscriptStorage";
+import Storage from "../../storage";
+import initPageTransport from "./initPageTransport";
 
-class UserscriptBackgroundPageMono extends UserscriptPageMono {
+class UserscriptBackgroundPageMono extends BackgroundPageMono {
   constructor(bundle) {
-    super(bundle);
-    this.backgroundPageCallFn = null;
-    this.remote = null;
+    super();
+    this.bundle = bundle;
 
-    this.initCallFn();
+    this.initMessages();
+    this.initStorage();
   }
-  initCallFn() {
-    this.backgroundPageCallFn = new BackgroundPageCallFn(this);
-    this.remote = this.backgroundPageCallFn.remote;
+  initMessages() {
+    this.transport = initPageTransport(this);
+
+    super.initMessages(this.transport);
+  }
+  initStorage() {
+    this.storage = new Storage(new UserscriptStorage());
+  }
+  destroy() {
+    super.destroy();
+    this.transport.destroy();
   }
 }
 

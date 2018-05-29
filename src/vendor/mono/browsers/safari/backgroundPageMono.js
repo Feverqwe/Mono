@@ -1,17 +1,26 @@
-import BackgroundPageCallFn from "../../backgroundPageCallFn";
-import SafariPageMono from "./pageMono";
+import BackgroundPageMono from "../../backgroundPageMono";
+import initPageTransport from "./initPageTransport";
+import Storage from "../../storage";
+import LsStorage from "../../lsStorage";
 
-class SafariBackgroundPageMono extends SafariPageMono {
+class SafariBackgroundPageMono extends BackgroundPageMono {
   constructor() {
     super();
-    this.backgroundPageCallFn = null;
-    this.remote = null;
 
-    this.initCallFn();
+    this.initMessages();
+    this.initStorage();
   }
-  initCallFn() {
-    this.backgroundPageCallFn = new BackgroundPageCallFn(this);
-    this.remote = this.backgroundPageCallFn.remote;
+  initMessages() {
+    this.transport = initPageTransport();
+
+    super.initMessages(this.transport);
+  }
+  initStorage() {
+    this.storage = new Storage(new LsStorage());
+  }
+  destroy() {
+    super.destroy();
+    this.transport.destroy();
   }
 }
 
