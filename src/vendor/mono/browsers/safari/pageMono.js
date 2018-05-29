@@ -1,7 +1,6 @@
 import Storage from "../../storage";
 import Mono from "../../mono";
 import LsStorage from "../../lsStorage";
-import isSameOrigin from "./isSameOrigin";
 import {TransportWithActiveTab} from "../../transport";
 
 class SafariPageMono extends Mono {
@@ -17,6 +16,14 @@ class SafariPageMono extends Mono {
         }
       },
       sendMessage: message => {
+        safari.extension.globalPage.contentWindow.monoSafariDirectOnMessage({
+          message: message,
+          target: {
+            page: {
+              dispatchMessage: window.monoDispatchMessage
+            }
+          }
+        });
         safari.extension.popovers.forEach(popup => {
           popup.contentWindow.monoDispatchMessage({
             message: message,
@@ -24,14 +31,6 @@ class SafariPageMono extends Mono {
               page: {
                 dispatchMessage: window.monoDispatchMessage
               }
-            }
-          });
-        });
-        safari.application.browserWindows.forEach(window => {
-          window.tabs.forEach(tab => {
-            const page = tab.page;
-            if (page && isSameOrigin(tab.url)) {
-              page.dispatchMessage('message', message);
             }
           });
         });
