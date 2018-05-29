@@ -33,7 +33,7 @@ class SafariContentScriptMono extends ContentScriptMono {
       }
     });
 
-    super.initMessages(this.transport);
+    super.initMessages();
   }
   initStorage() {
     this.storage = new Storage(new RemoteStorage());

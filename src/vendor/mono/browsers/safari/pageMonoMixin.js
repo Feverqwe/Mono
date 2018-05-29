@@ -56,7 +56,7 @@ const SafariPageMonoMixin = Parent => class extends Parent {
 
     window.monoDispatchMessage = event => this.transport.listen(event.message, event);
 
-    super.initMessages(this.transport);
+    super.initMessages();
   }
   initStorage() {
     this.storage = new Storage(new LsStorage());

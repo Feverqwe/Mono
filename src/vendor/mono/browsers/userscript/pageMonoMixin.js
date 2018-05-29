@@ -21,7 +21,7 @@ const UserscriptPageMonoMixin = Parent => class extends Parent {
       },
     });
 
-    super.initMessages(this.transport);
+    super.initMessages();
   }
   initStorage() {
     this.storage = new Storage(new UserscriptStorage());
