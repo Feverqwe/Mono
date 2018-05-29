@@ -39,7 +39,7 @@ gulp.task('buildUserjs', () => {
 });
 
 gulp.task('buildSafari', () => {
-  process.argv.push('--output-path', path.resolve('./dist/safari'));
+  process.argv.push('--output-path', path.resolve('./dist/safari.safariextension'));
   process.argv.push('--mono-browser', 'safari');
   return runWebpack(require('./webpack.safari'));
 });
