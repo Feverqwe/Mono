@@ -8,9 +8,9 @@ const runWebpack = config => {
   return new Promise((resolve, reject) => {
     webpack(config, (err, stats) => {
       if (err) return reject(err);
-      gutil.log(stats.toString({
+      gutil.log(stats.toString(Object.assign(webpack.Stats.presetToOptions('default'), {
         colors: gutil.colors.supportsColor,
-      }));
+      })));
       resolve();
     });
   });
