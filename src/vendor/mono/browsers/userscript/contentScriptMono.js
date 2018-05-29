@@ -1,6 +1,6 @@
 import TransportWithResponse from "../../transportWithResponse";
 import Storage from "../../storage";
-import UserscriptStorage from "./userscriptStorage";
+import UserscriptStorage from "./storage";
 import ContentScriptMono from "../../contentScriptMono";
 
 class UserscriptContentScriptMono extends ContentScriptMono {

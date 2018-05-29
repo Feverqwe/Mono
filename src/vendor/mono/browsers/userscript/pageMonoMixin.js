@@ -1,4 +1,4 @@
-import UserscriptStorage from "./userscriptStorage";
+import UserscriptStorage from "./storage";
 import Storage from "../../storage";
 import {TransportWithResponseWithActiveTab} from "../../transportWithResponse";
 
