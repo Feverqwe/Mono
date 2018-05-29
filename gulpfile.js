@@ -52,7 +52,7 @@ gulp.task('buildChrome', () => {
 
 gulp.task('setArgv', () => {
   process.argv.push('--source-path', path.resolve('./src'));
-  // process.argv.push('--mode', 'production');
+  process.argv.push('--mode', 'production');
   process.argv.push('--mode', 'development');
 });
 

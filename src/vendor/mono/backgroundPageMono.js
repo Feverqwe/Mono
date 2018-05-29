@@ -2,10 +2,6 @@ import Mono from "./mono";
 import BackgroundPageCallFn from "./backgroundPageCallFn";
 import PageMonoMixin from "./pageMonoMixin";
 
-const notImplemented = () => {
-  throw new Error('Unimplemented api');
-};
-
 class BackgroundPageMono extends PageMonoMixin(Mono) {
   initMessages() {
     super.initMessages();
@@ -14,7 +10,7 @@ class BackgroundPageMono extends PageMonoMixin(Mono) {
     this.remote = this.backgroundPageCallFn.remote;
   }
   openTab(url, active) {
-    notImplemented();
+    this.unimplemented();
   }
 }
 
