@@ -1,9 +1,16 @@
 import Transport from "../../transport";
-import ContentScriptMono from "../../contentScriptMono";
 import Storage from "../../storage";
 import RemoteStorage from "../../remoteStorage";
+import Mono from "../../mono";
+import ContentScriptCallFn from "../../contentScriptCallFn";
 
-class SafariContentScriptMono extends ContentScriptMono {
+class SafariContentScriptMono extends Mono {
+  constructor() {
+    super();
+
+    this.contentScriptCallFn = new ContentScriptCallFn(this);
+    this.callFn = this.contentScriptCallFn.callFn.bind(this.contentScriptCallFn);
+  }
   initTransport() {
     this.transport = new Transport({
       addListener: listener => {

@@ -1,11 +1,15 @@
 import TransportWithResponse from "../../transportWithResponse";
 import Storage from "../../storage";
 import UserscriptStorage from "./userscriptStorage";
-import ContentScriptMono from "../../contentScriptMono";
+import Mono from "../../mono";
+import ContentScriptCallFn from "../../contentScriptCallFn";
 
-class UserscriptContentScriptMono extends ContentScriptMono {
+class UserscriptContentScriptMono extends Mono {
   constructor(bundle) {
     super(bundle);
+
+    this.contentScriptCallFn = new ContentScriptCallFn(this);
+    this.callFn = this.contentScriptCallFn.callFn.bind(this.contentScriptCallFn);
   }
   initTransport() {
     this.transport = new TransportWithResponse({
