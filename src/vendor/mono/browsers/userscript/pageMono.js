@@ -1,35 +1,14 @@
-import UserscriptStorage from "./userscriptStorage";
-import Storage from "../../storage";
-import {TransportWithResponseWithActiveTab} from "../../transportWithResponse";
+import PageMono from "../../pageMono";
+import UserscriptPageMonoMixin from "./pageMonoMixin";
 
-const UserscriptPageMono = Parent => class extends Parent {
-  initMessages() {
-    this.transport = new TransportWithResponseWithActiveTab({
-      addListener: listener => {
-        this.bundle.messaing.addListener('page', listener);
-        this.bundle.messaing.addListener('fromActiveTab', listener);
-      },
-      removeListener: listener => {
-        this.bundle.messaing.removeListener('page', listener);
-        this.bundle.messaing.removeListener('fromActiveTab', listener);
-      },
-      sendMessage: (message, response) => {
-        this.bundle.messaing.emit('page', message, response);
-      },
-      sendMessageToActiveTab: (message, response) => {
-        this.bundle.messaing.emit('toActiveTab', message, response);
-      },
-    });
+class UserscriptPageMono extends UserscriptPageMonoMixin(PageMono) {
+  constructor(bundle) {
+    super();
+    this.bundle = bundle;
 
-    super.initMessages(this.transport);
+    this.initMessages();
+    this.initStorage();
   }
-  initStorage() {
-    this.storage = new Storage(new UserscriptStorage());
-  }
-  destroy() {
-    super.destroy();
-    this.transport.destroy();
-  }
-};
+}
 
 export default UserscriptPageMono;

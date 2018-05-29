@@ -2,7 +2,7 @@ import Router from "../../router";
 import PopupPageUi from "./popupPageUi";
 import OptionsPageUi from "./optionsPageUi";
 import UserscriptBackgroundPageMono from "./backgroundPageMono";
-import UserscriptLocalPageMono from "./localPageMono";
+import UserscriptPageMono from "./pageMono";
 import UserscriptContentScriptMono from "./contentScriptMono";
 
 const {EventEmitter} = require('events');
@@ -30,7 +30,7 @@ class Bundle extends Router {
         break;
       }
       case 'page': {
-        instance = new UserscriptLocalPageMono(this);
+        instance = new UserscriptPageMono(this);
         break;
       }
       case 'contentScript': {

@@ -1,16 +1,10 @@
 import Mono from "./mono";
 import BackgroundPageCallFn from "./backgroundPageCallFn";
+import PageMonoMixin from "./pageMonoMixin";
 
-class BackgroundPageMono extends Mono {
+class BackgroundPageMono extends PageMonoMixin(Mono) {
   initMessages() {
-    this.sendMessage = this.transport.sendMessage.bind(this.transport);
-    this.sendMessageToActiveTab = this.transport.sendMessageToActiveTab.bind(this.transport);
-    this.onMessage = {
-      addListener: this.transport.addListener.bind(this.transport),
-      hasListener: this.transport.hasListener.bind(this.transport),
-      hasListeners: this.transport.hasListeners.bind(this.transport),
-      removeListener: this.transport.removeListener.bind(this.transport),
-    };
+    super.initMessages();
 
     this.backgroundPageCallFn = new BackgroundPageCallFn(this);
     this.remote = this.backgroundPageCallFn.remote;

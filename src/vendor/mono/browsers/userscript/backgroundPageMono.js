@@ -1,7 +1,7 @@
 import BackgroundPageMono from "../../backgroundPageMono";
-import UserscriptPageMono from "./pageMono";
+import UserscriptPageMonoMixin from "./pageMonoMixin";
 
-class UserscriptBackgroundPageMono extends UserscriptPageMono(BackgroundPageMono) {
+class UserscriptBackgroundPageMono extends UserscriptPageMonoMixin(BackgroundPageMono) {
   constructor(bundle) {
     super();
     this.bundle = bundle;
