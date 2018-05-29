@@ -3,7 +3,7 @@ import UserscriptStorage from "./userscriptStorage";
 import PageMono from "../../pageMono";
 import initPageTransport from "./initPageTransport";
 
-class UserscriptPageMono extends PageMono {
+class UserscriptLocalPageMono extends PageMono {
   constructor(bundle) {
     super();
     this.bundle = bundle;
@@ -25,4 +25,4 @@ class UserscriptPageMono extends PageMono {
   }
 }
 
-export default UserscriptPageMono;
+export default UserscriptLocalPageMono;

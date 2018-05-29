@@ -3,7 +3,7 @@ import LsStorage from "../../lsStorage";
 import PageMono from "../../pageMono";
 import initPageTransport from "./initPageTransport";
 
-class SafariPageMono extends PageMono {
+class SafariLocalPageMono extends PageMono {
   constructor() {
     super();
 
@@ -24,4 +24,4 @@ class SafariPageMono extends PageMono {
   }
 }
 
-export default SafariPageMono;
+export default SafariLocalPageMono;

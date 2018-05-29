@@ -1,6 +1,6 @@
-import SafariPageMono from "./pageMono";
+import SafariLocalPageMono from "./localPageMono";
 import SafariContentScriptMono from "./contentScriptMono";
 
-const mono = safari.application ? new SafariPageMono() : new SafariContentScriptMono();
+const mono = safari.application ? new SafariLocalPageMono() : new SafariContentScriptMono();
 
 export default mono;
