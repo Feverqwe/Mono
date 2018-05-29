@@ -18,6 +18,10 @@ class Transport extends TransportWithResponse {
     this.listen = this.listen.bind(this);
   }
 
+  getCallbackId() {
+    return `${this.transportId}_${++this.callbackIndex}`
+  }
+
   /**
    * @param {{callbackId:string,message:*,responseId:string,responseMessage:*,sender:Object}} rawMessage
    * @param {Object} event
@@ -50,7 +54,7 @@ class Transport extends TransportWithResponse {
   getRawMessage(message, response) {
     const rawMessage = super.getRawMessage(message, response);
     if (response) {
-      rawMessage.callbackId = `${this.transportId}_${++this.callbackIndex}`;
+      rawMessage.callbackId = this.getCallbackId();
       this.idCallbackMap[rawMessage.callbackId] = responseMessage => {
         delete this.idCallbackMap[rawMessage.callbackId];
         response(responseMessage);
