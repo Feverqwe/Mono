@@ -9,7 +9,7 @@ class SafariPageMono extends Mono {
       return {
         message: message,
         target: {
-          page: {
+          tab: {
             dispatchMessage: (eventName, message) => {
               window.monoDispatchMessage(getEvent(message));
             }
@@ -34,10 +34,10 @@ class SafariPageMono extends Mono {
         });
       },
       sendMessageTo: (message, event) => {
-        if (event.target.page) {
-          event.target.page.dispatchMessage('message', message);
+        if (event.target.tab) {
+          event.target.tab.dispatchMessage('message', message);
         } else {
-          console.warn('event.target.page is not exists');
+          console.warn('event.target.tab is not exists', event);
         }
       },
       sendMessageToActiveTab: message => {
