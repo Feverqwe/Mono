@@ -39,7 +39,7 @@ class ChromeContentScriptMono extends ContentScriptMono {
     super.initMessages();
   }
   initStorage() {
-    this.storage = new Storage(new ChromeStorage());
+    this.storage = new Storage(new ChromeStorage(this));
   }
 }
 
