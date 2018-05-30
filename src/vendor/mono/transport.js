@@ -80,14 +80,10 @@ class Transport extends TransportWithResponse {
     try {
       this.transport.sendMessage(rawMessage);
     } catch (err) {
+      this.mono.lastError = err;
       const wrappedResponse = this.idCallbackMap[rawMessage.callbackId];
-      if (wrappedResponse) {
-        this.mono.lastError = err;
-        wrappedResponse();
-        this.mono.clearLastError();
-      } else {
-        console.error(err);
-      }
+      wrappedResponse && wrappedResponse();
+      this.mono.clearLastError();
     }
   }
 
@@ -116,14 +112,10 @@ class TransportWithActiveTab extends Transport {
     try {
       this.transport.sendMessageToActiveTab(rawMessage);
     } catch (err) {
+      this.mono.lastError = err;
       const wrappedResponse = this.idCallbackMap[rawMessage.callbackId];
-      if (wrappedResponse) {
-        this.mono.lastError = err;
-        wrappedResponse();
-        this.mono.clearLastError();
-      } else {
-        console.error(err);
-      }
+      wrappedResponse && wrappedResponse();
+      this.mono.clearLastError();
     }
   }
 }

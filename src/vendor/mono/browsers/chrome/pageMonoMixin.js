@@ -31,10 +31,9 @@ const ChromePageMonoMixin = Parent => class extends Parent {
             } else {
               chrome.tabs.sendMessage(tab.id, message);
             }
-          } else
-          if (response) {
+          } else {
             this.lastError = new Error('Active tab is not found');
-            response();
+            response && response();
             this.clearLastError();
           }
         });
