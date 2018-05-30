@@ -8,6 +8,8 @@ const mode = require('./builder/getMode');
 
 const source = require('./builder/getSource');
 
+const mono = require('./builder/getMono');
+
 const output = require('./builder/getOutput');
 
 const config = {
@@ -25,8 +27,8 @@ const config = {
       path.join(output, '../safari.entry')
     ]),
     new CopyWebpackPlugin([
-      {from: path.join(source, './vendor/mono/browsers/safari/Info.plist'), to: './Info.plist'},
-      {from: path.join(source, './vendor/mono/browsers/safari/Settings.plist'), to: './Settings.plist'},
+      {from: path.join(mono, './browsers/safari/Info.plist'), to: './Info.plist'},
+      {from: path.join(mono, './browsers/safari/Settings.plist'), to: './Settings.plist'},
       {from: path.join(source, './icons'), to: './icons'},
       {from: path.join(source, './icons/icon_16.png'), to: './Icon-16.png'},
       {from: path.join(source, './icons/icon_32.png'), to: './Icon-32.png'},

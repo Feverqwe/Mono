@@ -13,6 +13,8 @@ const browser = require('./builder/getBrowser');
 
 const source = require('./builder/getSource');
 
+const mono = require('./builder/getMono');
+
 const output = require('./builder/getOutput');
 
 const LOCALE_MAP = require('./builder/getLocaleMap');
@@ -25,7 +27,7 @@ const {POPUP_SCRIPTS, POPUP_PAGE} = require('./builder/getPopup');
 
 const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPT_INDEX, CONTENT_SCRIPTS} = require('./builder/getContentScripts');
 
-let meta = String(fs.readFileSync(path.join(source, `./vendor/mono/browsers/${browser}/meta.txt`)));
+let meta = String(fs.readFileSync(path.join(mono, `./browsers/${browser}/meta.txt`)));
 meta = meta.replace('{version}', require(path.join(source, 'manifest')).version);
 
 const env = require('./builder/getEnv');
@@ -73,7 +75,7 @@ const config = {
   },
   resolve: {
     alias: {
-      'bundle': path.join(source, `./vendor/mono/browsers/${browser}/bundle`),
+      'bundle': path.join(mono, `./browsers/${browser}/bundle`),
     }
   },
   plugins: [

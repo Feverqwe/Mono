@@ -10,6 +10,8 @@ const browser = require('./builder/getBrowser');
 
 const source = require('./builder/getSource');
 
+const mono = require('./builder/getMono');
+
 const output = require('./builder/getOutput');
 
 const env = require('./builder/getEnv');
@@ -43,7 +45,7 @@ const config = {
   },
   resolve: {
     alias: {
-      'mono': path.join(source, `./vendor/mono/browsers/${browser}/page`),
+      'mono': path.join(mono, `./browsers/${browser}/page`),
     }
   },
   plugins: [

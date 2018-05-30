@@ -11,6 +11,8 @@ const browser = require('./builder/getBrowser');
 
 const source = require('./builder/getSource');
 
+const mono = require('./builder/getMono');
+
 const output = require('./builder/getOutput');
 
 const LOCALE_MAP = require('./builder/getLocaleMap');
@@ -47,7 +49,7 @@ const config = {
   },
   resolve: {
     alias: {
-      'router': path.join(source, `./vendor/mono/browsers/${browser}/router`),
+      'router': path.join(mono, `./browsers/${browser}/router`),
     }
   },
   plugins: [
