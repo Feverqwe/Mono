@@ -19,7 +19,7 @@ const ChromePageMonoMixin = Parent => class extends Parent {
         chrome.tabs.query({
           active: true,
           currentWindow: true
-        }).then(tabs => {
+        }, tabs => {
           const tab = tabs[0];
           if (tab && tab.id >= 0) {
             if (response) {
