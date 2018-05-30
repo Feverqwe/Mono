@@ -1,5 +1,5 @@
 import ChromePageMono from "./pageMono";
 
-const mono = ChromePageMono();
+const mono = new ChromePageMono();
 
 export default mono;

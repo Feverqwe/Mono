@@ -4,6 +4,12 @@ import ChromeStorage from "./storage";
 import promisifyApi from "./promisifyApi";
 
 class ChromeContentScriptMono extends ContentScriptMono {
+  constructor() {
+    super();
+
+    this.initMessages();
+    this.initStorage();
+  }
   initMessages() {
     this.transport = {
       sendMessage(message) {
