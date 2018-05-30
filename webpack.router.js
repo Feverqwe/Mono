@@ -9,11 +9,9 @@ const mode = require('./builder/getMode');
 
 const browser = require('./builder/getBrowser');
 
-const source = require('./builder/getSource');
-
 const mono = require('./builder/getMono');
 
-const output = require('./builder/getOutput');
+const {dist} = require('./builder/getOutput');
 
 const LOCALE_MAP = require('./builder/getLocaleMap');
 
@@ -26,7 +24,7 @@ const config = {
     router: 'router',
   },
   output: {
-    path: output,
+    path: dist,
     filename: 'includes/[name].js'
   },
   mode: mode,
@@ -54,7 +52,7 @@ const config = {
   },
   plugins: [
     new CleanWebpackPlugin([
-      path.join(output, 'includes')
+      path.join(dist, 'includes')
     ]),
     new DefinePlugin({
       LOCALE_MAP: JSON.stringify(LOCALE_MAP),

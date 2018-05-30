@@ -15,7 +15,7 @@ const source = require('./builder/getSource');
 
 const mono = require('./builder/getMono');
 
-const output = require('./builder/getOutput');
+const {output, src, dist} = require('./builder/getOutput');
 
 const LOCALE_MAP = require('./builder/getLocaleMap');
 
@@ -37,7 +37,7 @@ const config = {
     bundle: 'bundle',
   },
   output: {
-    path: output,
+    path: dist,
     filename: '[name].js'
   },
   mode: mode,
@@ -80,11 +80,10 @@ const config = {
   },
   plugins: [
     new CleanWebpackPlugin([
-      path.join(output, 'includes'),
-      path.join(output, 'js'),
-      path.join(output, '_locales'),
-      path.join(output, 'options.html'),
-      path.join(output, 'popup.html'),
+      path.join(dist, 'includes'),
+      path.join(dist, 'js'),
+      path.join(dist, 'options.html'),
+      path.join(dist, 'popup.html'),
     ]),
     new BannerPlugin({
       banner: meta,

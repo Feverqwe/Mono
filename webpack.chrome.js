@@ -8,7 +8,7 @@ const mode = require('./builder/getMode');
 
 const source = require('./builder/getSource');
 
-const output = require('./builder/getOutput');
+const {output, src, dist} = require('./builder/getOutput');
 
 const config = {
   entry: {
@@ -16,20 +16,27 @@ const config = {
   },
   output: {
     path: output,
-    filename: '../chrome.entry'
+    filename: 'chrome.entry'
   },
   mode: mode,
   plugins: [
     new CleanWebpackPlugin([
-      output,
-      path.join(output, '../chrome.entry')
+      output
     ]),
     new CopyWebpackPlugin([
-      {from: path.join(source, './manifest.json')},
-      {from: path.join(source, './icons'), to: './icons'},
-      {from: path.join(source, './_locales'), to: './_locales'},
-    ]),
+      {from: path.join(source, './manifest.json'), to: path.join(dist, './manifest.json')},
+      {from: path.join(source, './icons'), to: path.join(dist, './icons')},
+      {from: path.join(source, './_locales'), to: path.join(dist, './_locales')},
+    ])
   ],
 };
+
+if (!isWatch) {
+  config.plugins.unshift(
+    new CopyWebpackPlugin([
+      {from: source, to: src}
+    ])
+  );
+}
 
 module.exports = config;

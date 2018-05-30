@@ -1,11 +1,10 @@
 const path = require('path');
 const fs = require('fs');
 
-const output = require('./getOutput');
-const source = require('./getSource');
+const {src, dist} = require('./getOutput');
 
-const BACKGROUND_SCRIPTS = require(path.join(source, './manifest')).background.scripts.map(filename => {
-  return String(fs.readFileSync(path.join(output, filename)));
+const BACKGROUND_SCRIPTS = require(path.join(src, './manifest')).background.scripts.map(filename => {
+  return String(fs.readFileSync(path.join(dist, filename)));
 });
 
 module.exports = BACKGROUND_SCRIPTS;

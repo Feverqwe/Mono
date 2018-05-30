@@ -3,8 +3,7 @@ const fs = require('fs');
 const matchPattern = require('./matchPattern');
 const matchGlobPattern = require('./matchGlobPattern');
 
-const output = require('./getOutput');
-const source = require('./getSource');
+const {dist, src} = require('./getOutput');
 
 const CONTENT_SCRIPT_MAP = {};
 const CONTENT_SCRIPT_INDEX = [];
@@ -18,11 +17,11 @@ const insertFile = filename => {
   }
   const idx = CONTENT_SCRIPT_MAP[filename];
   if (typeof CONTENT_SCRIPT_INDEX[idx] !== 'string') {
-    CONTENT_SCRIPT_INDEX[idx] = String(fs.readFileSync(path.join(output, filename)));
+    CONTENT_SCRIPT_INDEX[idx] = String(fs.readFileSync(path.join(dist, filename)));
   }
 };
 
-require(path.join(source, './manifest')).content_scripts.forEach(item => {
+require(path.join(src, './manifest')).content_scripts.forEach(item => {
   item.js.forEach(insertFile);
   CONTENT_SCRIPTS.push({
     matches: [].concat(...item.matches.map(pattern => matchPattern(pattern))).join('|'),
@@ -35,7 +34,7 @@ require(path.join(source, './manifest')).content_scripts.forEach(item => {
   });
 });
 
-fs.readdirSync(path.join(output, './includes')).filter(filename => /\.js$/.test(filename)).map(filename => `includes/${filename}`).forEach(insertFile);
+fs.readdirSync(path.join(dist, './includes')).filter(filename => /\.js$/.test(filename)).map(filename => `includes/${filename}`).forEach(insertFile);
 
 module.exports = {
   CONTENT_SCRIPT_MAP,

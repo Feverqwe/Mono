@@ -8,7 +8,7 @@ const mode = require('./builder/getMode');
 
 const source = require('./builder/getSource');
 
-const output = require('./builder/getOutput');
+const {output, src} = require('./builder/getOutput');
 
 const config = {
   entry: {
@@ -16,16 +16,15 @@ const config = {
   },
   output: {
     path: output,
-    filename: '../userjs.entry'
+    filename: 'userjs.entry'
   },
   mode: mode,
   plugins: [
     new CleanWebpackPlugin([
-      output,
-      path.join(output, '../userjs.entry')
+      output
     ]),
     new CopyWebpackPlugin([
-      {from: path.join(source, './icons'), to: './icons'},
+      {from: source, to: src},
     ]),
   ],
 };

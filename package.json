@@ -7,7 +7,7 @@
     "buildUserjs": "gulp userjs",
     "buildSafari": "gulp safari",
     "buildChrome": "gulp chrome",
-    "watchChrome": "webpack --mode development --watch --source-path ./src --mono-path ./mono --output-path ./dist/chrome --mono-browser chrome --config webpack.chrome.js --config webpack.background.js --config webpack.pages.js --config webpack.contentScripts.js"
+    "watchChrome": "webpack --mode development --watch --source-path ./src --mono-path ./mono --1output-path ./dist/chrome --mono-browser chrome --config webpack.chrome.js --config webpack.background.js --config webpack.pages.js --config webpack.contentScripts.js"
   },
   "devDependencies": {
     "babel": "^6.23.0",

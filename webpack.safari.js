@@ -10,7 +10,7 @@ const source = require('./builder/getSource');
 
 const mono = require('./builder/getMono');
 
-const output = require('./builder/getOutput');
+const {output, src, dist} = require('./builder/getOutput');
 
 const config = {
   entry: {
@@ -18,21 +18,21 @@ const config = {
   },
   output: {
     path: output,
-    filename: '../safari.entry'
+    filename: 'safari.entry'
   },
   mode: mode,
   plugins: [
     new CleanWebpackPlugin([
-      output,
-      path.join(output, '../safari.entry')
+      output
     ]),
     new CopyWebpackPlugin([
-      {from: path.join(mono, './browsers/safari/Info.plist'), to: './Info.plist'},
-      {from: path.join(mono, './browsers/safari/Settings.plist'), to: './Settings.plist'},
-      {from: path.join(source, './icons'), to: './icons'},
-      {from: path.join(source, './icons/icon_16.png'), to: './Icon-16.png'},
-      {from: path.join(source, './icons/icon_32.png'), to: './Icon-32.png'},
-      {from: path.join(source, './icons/icon_48.png'), to: './Icon-48.png'},
+      {from: source, to: src},
+      {from: path.join(mono, './browsers/safari/Info.plist'), to: path.join(dist, './Info.plist')},
+      {from: path.join(mono, './browsers/safari/Settings.plist'), to: path.join(dist, './Settings.plist')},
+      {from: path.join(source, './icons'), to: path.join(dist, './icons')},
+      {from: path.join(source, './icons/icon_16.png'), to: path.join(dist, './Icon-16.png')},
+      {from: path.join(source, './icons/icon_32.png'), to: path.join(dist, './Icon-32.png')},
+      {from: path.join(source, './icons/icon_48.png'), to: path.join(dist, './Icon-48.png')},
     ]),
   ],
 };

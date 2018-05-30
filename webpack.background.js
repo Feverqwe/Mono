@@ -8,20 +8,18 @@ const mode = require('./builder/getMode');
 
 const browser = require('./builder/getBrowser');
 
-const source = require('./builder/getSource');
-
 const mono = require('./builder/getMono');
 
-const output = require('./builder/getOutput');
+const {src, dist} = require('./builder/getOutput');
 
 const env = require('./builder/getEnv');
 
 const config = {
   entry: {
-    background: path.join(source, 'js/background'),
+    background: path.join(src, 'js/background'),
   },
   output: {
-    path: output,
+    path: dist,
     filename: 'js/[name].js'
   },
   mode: mode,
@@ -60,7 +58,7 @@ if (browser === 'safari') {
   config.plugins.push(
     new HtmlWebpackPlugin({
       filename: 'background.html',
-      template: path.join(source, './background.html'),
+      template: path.join(src, './background.html'),
       chunks: ['background']
     })
   );

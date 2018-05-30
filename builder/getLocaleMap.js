@@ -1,9 +1,9 @@
 const path = require('path');
 const fs = require('fs');
 
-const source = require('./getSource');
+const {src} = require('./getOutput');
 
-const localesPath = path.join(source, './_locales');
+const localesPath = path.join(src, './_locales');
 
 const LOCALE_MAP = {};
 fs.readdirSync(localesPath).forEach(locale => {

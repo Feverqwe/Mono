@@ -8,21 +8,19 @@ const mode = require('./builder/getMode');
 
 const browser = require('./builder/getBrowser');
 
-const source = require('./builder/getSource');
-
 const mono = require('./builder/getMono');
 
-const output = require('./builder/getOutput');
+const {src, dist} = require('./builder/getOutput');
 
 const env = require('./builder/getEnv');
 
 const config = {
   entry: {
-    popup: path.join(source, './js/popup'),
-    options: path.join(source, './js/options'),
+    popup: path.join(src, './js/popup'),
+    options: path.join(src, './js/options'),
   },
   output: {
-    path: output,
+    path: dist,
     filename: 'js/[name].js'
   },
   mode: mode,
@@ -51,12 +49,12 @@ const config = {
   plugins: [
     new HtmlWebpackPlugin({
       filename: 'popup.html',
-      template: path.join(source, './popup.html'),
+      template: path.join(src, './popup.html'),
       chunks: ['popup']
     }),
     new HtmlWebpackPlugin({
       filename: 'options.html',
-      template: path.join(source, './options.html'),
+      template: path.join(src, './options.html'),
       chunks: ['options']
     }),
     new DefinePlugin({

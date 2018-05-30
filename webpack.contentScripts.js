@@ -7,23 +7,21 @@ const mode = require('./builder/getMode');
 
 const browser = require('./builder/getBrowser');
 
-const source = require('./builder/getSource');
-
 const mono = require('./builder/getMono');
 
-const output = require('./builder/getOutput');
+const {src, dist} = require('./builder/getOutput');
 
 const env = require('./builder/getEnv');
 
 const config = {
   entry: {
-    any: path.join(source, './includes/any'),
-    anyFrame: path.join(source, './includes/anyFrame'),
-    ya: path.join(source, './includes/ya'),
-    yaFrame: path.join(source, './includes/yaFrame'),
+    any: path.join(src, './includes/any'),
+    anyFrame: path.join(src, './includes/anyFrame'),
+    ya: path.join(src, './includes/ya'),
+    yaFrame: path.join(src, './includes/yaFrame'),
   },
   output: {
-    path: output,
+    path: dist,
     filename: 'includes/[name].js'
   },
   mode: mode,
