@@ -23,6 +23,7 @@ const unwrapObjectValues = obj => {
 };
 
 export {
+  isObject,
   wrapObjectValues,
   unwrapObjectValues
 };
