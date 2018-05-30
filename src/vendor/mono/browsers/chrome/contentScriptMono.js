@@ -11,19 +11,27 @@ class ChromeContentScriptMono extends ContentScriptMono {
   }
   initMessages() {
     this.transport = {
-      sendMessage(message, response) {
-        chrome.runtime.sendMessage(message, response);
+      sendMessage: (message, response) => {
+        if (response) {
+          chrome.runtime.sendMessage(message, result => {
+            this.lastError = chrome.runtime.lastError;
+            response(result);
+            this.clearLastError();
+          });
+        } else {
+          chrome.runtime.sendMessage(message);
+        }
       },
-      addListener(listener) {
+      addListener: (listener) => {
         chrome.runtime.onMessage.addListener(listener);
       },
-      hasListener(listener) {
+      hasListener: (listener) => {
         return chrome.runtime.onMessage.hasListener(listener);
       },
-      hasListeners() {
+      hasListeners: () => {
         return chrome.runtime.onMessage.hasListeners();
       },
-      removeListener(listener) {
+      removeListener: (listener) => {
         chrome.runtime.onMessage.removeListener(listener);
       }
     };

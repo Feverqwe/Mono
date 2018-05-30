@@ -4,30 +4,51 @@ import ChromeStorage from "./storage";
 const ChromePageMonoMixin = Parent => class extends Parent {
   initMessages() {
     this.transport = {
-      sendMessage(message, response) {
-        chrome.runtime.sendMessage(message, response);
+      sendMessage: (message, response) => {
+        if (response) {
+          chrome.runtime.sendMessage(message, result => {
+            this.lastError = chrome.runtime.lastError;
+            response(result);
+            this.clearLastError();
+          });
+        } else {
+          chrome.runtime.sendMessage(message);
+        }
       },
-      sendMessageToActiveTab(message, response) {
+      sendMessageToActiveTab: (message, response) => {
         chrome.tabs.query({
           active: true,
           currentWindow: true
-        }, tabs => {
+        }).then(tabs => {
           const tab = tabs[0];
           if (tab && tab.id >= 0) {
-            chrome.tabs.sendMessage(tab.id, message, response);
+            if (response) {
+              chrome.tabs.sendMessage(tab.id, message, result => {
+                this.lastError = chrome.runtime.lastError;
+                response(result);
+                this.clearLastError();
+              });
+            } else {
+              chrome.tabs.sendMessage(tab.id, messag);
+            }
+          } else
+          if (response) {
+            this.lastError = new Error('Active tab is not found');
+            response();
+            this.clearLastError();
           }
         });
       },
-      addListener(listener) {
+      addListener: (listener) => {
         chrome.runtime.onMessage.addListener(listener);
       },
-      hasListener(listener) {
+      hasListener: (listener) => {
         return chrome.runtime.onMessage.hasListener(listener);
       },
-      hasListeners() {
+      hasListeners: () => {
         return chrome.runtime.onMessage.hasListeners();
       },
-      removeListener(listener) {
+      removeListener: (listener) => {
         chrome.runtime.onMessage.removeListener(listener);
       }
     };

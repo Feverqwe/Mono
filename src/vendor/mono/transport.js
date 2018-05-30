@@ -9,8 +9,9 @@ import TransportWithResponse from "./transportWithResponse";
  */
 
 class Transport extends TransportWithResponse {
-  constructor(/**RawTransport*/transport) {
+  constructor(mono, /**RawTransport*/transport) {
     super(transport);
+    this.mono = mono;
     this.callbackIndex = 0;
     this.idCallbackMap = {};
 
@@ -79,8 +80,14 @@ class Transport extends TransportWithResponse {
     try {
       this.transport.sendMessage(rawMessage);
     } catch (err) {
-      delete this.idCallbackMap[rawMessage.callbackId];
-      throw err;
+      const wrappedResponse = this.idCallbackMap[rawMessage.callbackId];
+      if (wrappedResponse) {
+        this.mono.lastError = err;
+        wrappedResponse();
+        this.mono.clearLastError();
+      } else {
+        console.error(err);
+      }
     }
   }
 
@@ -109,8 +116,14 @@ class TransportWithActiveTab extends Transport {
     try {
       this.transport.sendMessageToActiveTab(rawMessage);
     } catch (err) {
-      delete this.idCallbackMap[rawMessage.callbackId];
-      throw err;
+      const wrappedResponse = this.idCallbackMap[rawMessage.callbackId];
+      if (wrappedResponse) {
+        this.mono.lastError = err;
+        wrappedResponse();
+        this.mono.clearLastError();
+      } else {
+        console.error(err);
+      }
     }
   }
 }
