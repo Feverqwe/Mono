@@ -36,9 +36,9 @@ class LsStorage {
     });
     callback(result);
   }
-  set(data, callback) {
-    Object.keys(data).forEach(key => {
-      localStorage.setItem(key, this.wrapValue(data[key]));
+  set(items, callback) {
+    Object.keys(items).forEach(key => {
+      localStorage.setItem(key, this.wrapValue(items[key]));
     });
     callback && callback();
   }

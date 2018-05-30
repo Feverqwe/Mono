@@ -4,21 +4,21 @@ class RemoteStorage {
   constructor(mono) {
     this.mono = mono;
   }
-  get(defaults, callback) {
-    this.mono.callFn('mono.storage.remote.get', [wrapObjectValues(defaults)]).then(result => {
+  get(keys, callback) {
+    this.mono.callFn('mono.storage.remote.get', [wrapObjectValues(keys)]).then(result => {
       callback(unwrapObjectValues(result));
     }, err => {
-      console.error('storage.get error', defaults, err);
-      if (isObject(defaults)) {
-        callback(defaults);
+      console.error('storage.get error', keys, err);
+      if (isObject(keys)) {
+        callback(keys);
       } else {
         callback({});
       }
     });
   }
-  set(data, callback) {
-    this.mono.callFn('mono.storage.remote.set', [wrapObjectValues(data)]).then(callback, err => {
-      console.error('storage.set error', data, err);
+  set(items, callback) {
+    this.mono.callFn('mono.storage.remote.set', [wrapObjectValues(items)]).then(callback, err => {
+      console.error('storage.set error', items, err);
       callback();
     });
   }
