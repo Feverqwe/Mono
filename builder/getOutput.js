@@ -1,5 +1,6 @@
 const path = require('path');
 
+const browser = require('./getBrowser');
 const isWatch = require('./isWatch');
 const source = require('./getSource');
 
@@ -12,6 +13,9 @@ process.argv.some((arg, index) => {
 });
 
 let dist = path.join(output, 'dist');
+if (browser === 'safari') {
+  dist = path.join(output, 'dist.safariextension');
+}
 
 let src = path.join(output, 'src');
 if (isWatch) {
