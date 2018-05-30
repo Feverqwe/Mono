@@ -1,5 +1,9 @@
-class Router {
+import LocaleMixin from "./localeMixin";
+
+class Router extends LocaleMixin(class {}) {
   constructor() {
+    super();
+
     this.monoInstances = [];
 
     this.contentScripts = CONTENT_SCRIPTS;

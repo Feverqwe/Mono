@@ -4,11 +4,10 @@ import OptionsPageUi from "./optionsPageUi";
 import UserscriptBackgroundPageMono from "./backgroundPageMono";
 import UserscriptPageMono from "./pageMono";
 import UserscriptContentScriptMono from "./contentScriptMono";
-import LocaleMixin from "../../localeMixin";
 
 const {EventEmitter} = require('events');
 
-class Bundle extends LocaleMixin(Router) {
+class Bundle extends Router {
   constructor() {
     super();
 

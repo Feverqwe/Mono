@@ -2,18 +2,18 @@ import Transport from "../../transport";
 import Storage from "../../storage";
 import RemoteStorage from "../../remoteStorage";
 import ContentScriptMono from "../../contentScriptMono";
-import LocaleMixin from "../../localeMixin";
 
-class SafariContentScriptMono extends LocaleMixin(ContentScriptMono) {
-  constructor() {
+class SafariContentScriptMono extends ContentScriptMono {
+  constructor(router) {
     super();
+    this.router = router;
 
     this.initMessages();
     this.initStorage();
     this.initI18n();
   }
   initI18n() {
-    this.locale = this.getLocale();
+    this.locale = this.router.getLocale();
     this.i18n = {
       getMessage: (message) => {
         return this.locale[message].message;
