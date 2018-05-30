@@ -65,7 +65,7 @@ const SafariPageMonoMixin = Parent => class extends Parent {
     super.initMessages();
   }
   initStorage() {
-    this.storage = new Storage(new LsStorage());
+    this.storage = new Storage(this, new LsStorage());
   }
   openTab(url, active) {
     let tab = null;

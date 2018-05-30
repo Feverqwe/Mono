@@ -1,21 +1,34 @@
 import {wrapObjectValues, unwrapObjectValues} from "./warpObjectValues";
 
 class Storage {
-  constructor(api) {
+  constructor(mono, api) {
+    this.mono = mono;
     this.api = api;
 
     this.remote = {
       get: keys => {
-        return new Promise(r => this.get(unwrapObjectValues(keys), r)).then(r => wrapObjectValues(r));
+        return new Promise((resolve, reject) => this.get(unwrapObjectValues(keys), result => {
+          const err = this.mono.lastError;
+          err ? reject(err) : resolve(wrapObjectValues(result));
+        }));
       },
       set: items => {
-        return new Promise(r => this.set(unwrapObjectValues(items), r));
+        return new Promise((resolve, reject) => this.set(unwrapObjectValues(items), () => {
+          const err = this.mono.lastError;
+          err ? reject(err) : resolve();
+        }));
       },
       remove: keys => {
-        return new Promise(r => this.remove(keys, r));
+        return new Promise((resolve, reject) => this.remove(keys, () => {
+          const err = this.mono.lastError;
+          err ? reject(err) : resolve();
+        }));
       },
       clear: () => {
-        return new Promise(r => this.clear(r));
+        return new Promise((resolve, reject) => this.clear(() => {
+          const err = this.mono.lastError;
+          err ? reject(err) : resolve();
+        }));
       }
     }
   };

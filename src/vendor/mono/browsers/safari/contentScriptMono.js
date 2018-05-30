@@ -36,7 +36,7 @@ class SafariContentScriptMono extends ContentScriptMono {
     super.initMessages();
   }
   initStorage() {
-    this.storage = new Storage(new RemoteStorage());
+    this.storage = new Storage(this, new RemoteStorage(this));
   }
   destroy() {
     super.destroy();

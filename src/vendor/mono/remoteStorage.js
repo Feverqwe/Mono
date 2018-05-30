@@ -8,30 +8,36 @@ class RemoteStorage {
     this.mono.callFn('mono.storage.remote.get', [wrapObjectValues(keys)]).then(result => {
       callback(unwrapObjectValues(result));
     }, err => {
-      console.error('storage.get error', keys, err);
-      if (isObject(keys)) {
-        callback(keys);
-      } else {
-        callback({});
-      }
+      this.mono.lastError = err;
+      callback();
+      this.mono.clearLastError();
     });
   }
   set(items, callback) {
-    this.mono.callFn('mono.storage.remote.set', [wrapObjectValues(items)]).then(callback, err => {
-      console.error('storage.set error', items, err);
-      callback();
+    this.mono.callFn('mono.storage.remote.set', [wrapObjectValues(items)]).then(() => {
+      callback && callback();
+    }, err => {
+      this.mono.lastError = err;
+      callback && callback();
+      this.mono.clearLastError();
     });
   }
   remove(keys, callback) {
-    this.mono.callFn('mono.storage.remote.remove', [keys]).then(callback, err => {
-      console.error('storage.remove error', keys, err);
+    this.mono.callFn('mono.storage.remote.remove', [keys]).then(() => {
+      callback && callback();
+    }, err => {
+      this.mono.lastError = err;
       callback();
+      this.mono.clearLastError();
     });
   }
   clear(callback) {
-    this.mono.callFn('mono.storage.remote.clear').then(callback, err => {
-      console.error('storage.clear error', err);
+    this.mono.callFn('mono.storage.remote.clear').then(() => {
+      callback && callback();
+    }, err => {
+      this.mono.lastError = err;
       callback();
+      this.mono.clearLastError();
     });
   }
 }

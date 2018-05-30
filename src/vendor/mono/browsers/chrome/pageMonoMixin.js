@@ -55,7 +55,7 @@ const ChromePageMonoMixin = Parent => class extends Parent {
     super.initMessages();
   }
   initStorage() {
-    this.storage = new Storage(new ChromeStorage(this));
+    this.storage = new Storage(this, new ChromeStorage(this));
   }
 };
 

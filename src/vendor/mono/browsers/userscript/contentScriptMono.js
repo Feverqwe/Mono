@@ -29,7 +29,7 @@ class UserscriptContentScriptMono extends ContentScriptMono {
     super.initMessages();
   }
   initStorage() {
-    this.storage = new Storage(new UserscriptStorage());
+    this.storage = new Storage(this, new UserscriptStorage());
   }
   destroy() {
     super.destroy();
