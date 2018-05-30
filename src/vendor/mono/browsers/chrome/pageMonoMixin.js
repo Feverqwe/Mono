@@ -29,7 +29,7 @@ const ChromePageMonoMixin = Parent => class extends Parent {
                 this.clearLastError();
               });
             } else {
-              chrome.tabs.sendMessage(tab.id, messag);
+              chrome.tabs.sendMessage(tab.id, message);
             }
           } else
           if (response) {
