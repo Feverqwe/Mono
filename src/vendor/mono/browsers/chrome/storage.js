@@ -1,17 +1,15 @@
-import promisifyApi from "./promisifyApi";
-
 class ChromeStorage {
-  get(keys) {
-    return promisifyApi('chrome.storage.local.get')(keys);
+  get(keys, callback) {
+    chrome.storage.local.get(keys, callback);
   }
-  set(items) {
-    return promisifyApi('chrome.storage.local.set')(items);
+  set(data, callback) {
+    chrome.storage.local.set(data, callback);
   }
-  remove(keys) {
-    return promisifyApi('chrome.storage.local.remove')(keys);
+  remove(keys, callback) {
+    chrome.storage.local.remove(keys, callback);
   }
-  clear() {
-    return promisifyApi('chrome.storage.local.clear')();
+  clear(callback) {
+    chrome.storage.local.clear(callback);
   }
 }
 

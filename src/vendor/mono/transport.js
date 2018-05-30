@@ -69,22 +69,19 @@ class Transport extends TransportWithResponse {
 
   /**
    * @param {*} message
-   * @return {Promise}
+   * @param {function(*)} [response]
    */
-  sendMessage(message) {
-    return Promise.resolve().then(() => {
-      if (this.destroyError) throw this.destroyError;
+  sendMessage(message, response) {
+    if (this.destroyError) throw this.destroyError;
 
-      let callbackId = null;
-      return new Promise(resolve => {
-        const rawMessage = this.getRawMessage(message, resolve);
-        callbackId = rawMessage.callbackId;
-        return this.transport.sendMessage(rawMessage);
-      }).catch(err => {
-        delete this.idCallbackMap[callbackId];
-        throw err;
-      });
-    });
+    const rawMessage = this.getRawMessage(message, response);
+
+    try {
+      this.transport.sendMessage(rawMessage);
+    } catch (err) {
+      delete this.idCallbackMap[rawMessage.callbackId];
+      throw err;
+    }
   }
 
   destroy() {
@@ -96,28 +93,25 @@ class Transport extends TransportWithResponse {
 
 /**
  * @typedef {RawTransport} RawTransportPage
- * @property {function(*):Promise} sendMessageToActiveTab
+ * @property {function(*,function)} sendMessageToActiveTab
  */
 
 class TransportWithActiveTab extends Transport {
   /**
    * @param {*} message
-   * @return {Promise}
+   * @param {function(*)} [response]
    */
-  sendMessageToActiveTab(message) {
-    return Promise.resolve().then(() => {
-      if (this.destroyError) throw this.destroyError;
+  sendMessageToActiveTab(message, response) {
+    if (this.destroyError) throw this.destroyError;
 
-      let callbackId = null;
-      return new Promise(resolve => {
-        const rawMessage = this.getRawMessage(message, resolve);
-        callbackId = rawMessage.callbackId;
-        return this.transport.sendMessageToActiveTab(rawMessage);
-      }).catch(err => {
-        delete this.idCallbackMap[callbackId];
-        throw err;
-      });
-    });
+    const rawMessage = this.getRawMessage(message, response);
+
+    try {
+      this.transport.sendMessageToActiveTab(rawMessage);
+    } catch (err) {
+      delete this.idCallbackMap[rawMessage.callbackId];
+      throw err;
+    }
   }
 }
 

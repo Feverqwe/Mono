@@ -1,7 +1,6 @@
 import ContentScriptMono from "../../contentScriptMono";
 import Storage from "../../storage";
 import ChromeStorage from "./storage";
-import promisifyApi from "./promisifyApi";
 
 class ChromeContentScriptMono extends ContentScriptMono {
   constructor() {
@@ -12,8 +11,8 @@ class ChromeContentScriptMono extends ContentScriptMono {
   }
   initMessages() {
     this.transport = {
-      sendMessage(message) {
-        return promisifyApi('chrome.runtime.sendMessage')(message);
+      sendMessage(message, response) {
+        chrome.runtime.sendMessage(message, response);
       },
       addListener(listener) {
         chrome.runtime.onMessage.addListener(listener);

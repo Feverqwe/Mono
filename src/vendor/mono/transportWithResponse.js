@@ -16,7 +16,7 @@ const onceFn = cb => {
  * @typedef {{}} RawTransportWithResponse
  * @property {function(function)} addListener
  * @property {function(function)} removeListener
- * @property {function(*):Promise} sendMessage
+ * @property {function(*,function)} sendMessage
  */
 
 class TransportWithResponse extends Event {
@@ -128,16 +128,14 @@ class TransportWithResponse extends Event {
 
   /**
    * @param {*} message
-   * @return {Promise}
+   * @param {function(*)} [response]
    */
-  sendMessage(message) {
-    return Promise.resolve().then(() => {
-      if (this.destroyError) throw this.destroyError;
+  sendMessage(message, response) {
+    if (this.destroyError) throw this.destroyError;
 
-      const rawMessage = this.getRawMessage(message);
+    const rawMessage = this.getRawMessage(message, response);
 
-      return this.transport.sendMessage(rawMessage);
-    });
+    this.transport.sendMessage(rawMessage, response);
   }
 
   destroy() {
@@ -150,22 +148,20 @@ class TransportWithResponse extends Event {
 
 /**
  * @typedef {RawTransportWithResponse} RawTransportWithResponsePage
- * @property {function(*):Promise} sendMessageToActiveTab
+ * @property {function(*,function)} sendMessageToActiveTab
  */
 
 class TransportWithResponseWithActiveTab extends TransportWithResponse {
   /**
    * @param {*} message
-   * @return {Promise}
+   * @param {function(*)} [response]
    */
-  sendMessageToActiveTab(message) {
-    return Promise.resolve().then(() => {
-      if (this.destroyError) throw this.destroyError;
+  sendMessageToActiveTab(message, response) {
+    if (this.destroyError) throw this.destroyError;
 
-      const rawMessage = this.getRawMessage(message);
+    const rawMessage = this.getRawMessage(message, response);
 
-      return this.transport.sendMessageToActiveTab(rawMessage);
-    });
+    this.transport.sendMessageToActiveTab(rawMessage, response);
   }
 }
 

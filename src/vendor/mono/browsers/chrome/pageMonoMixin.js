@@ -1,23 +1,20 @@
 import Storage from "../../storage";
 import ChromeStorage from "./storage";
-import promisifyApi from "./promisifyApi";
 
 const ChromePageMonoMixin = Parent => class extends Parent {
   initMessages() {
     this.transport = {
-      sendMessage(message) {
-        return promisifyApi('chrome.runtime.sendMessage')(message);
+      sendMessage(message, response) {
+        chrome.runtime.sendMessage(message, response);
       },
-      sendMessageToActiveTab(message) {
-        return promisifyApi('chrome.tabs.query')({
+      sendMessageToActiveTab(message, response) {
+        chrome.tabs.query({
           active: true,
           currentWindow: true
-        }).then(tabs => {
+        }, tabs => {
           const tab = tabs[0];
           if (tab && tab.id >= 0) {
-            return promisifyApi('chrome.tabs.sendMessage')(tab.id, message);
-          } else {
-            throw new Error('Active tab not found');
+            chrome.tabs.sendMessage(tab.id, message, response);
           }
         });
       },
