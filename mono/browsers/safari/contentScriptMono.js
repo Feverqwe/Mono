@@ -21,7 +21,7 @@ class SafariContentScriptMono extends ContentScriptMono {
     };
   }
   initMessages() {
-    this.transport = new Transport({
+    this.transport = new Transport(this, {
       addListener: listener => {
         listener._listener = event => listener(event.message, event);
         safari.self.addEventListener('message', listener._listener);
