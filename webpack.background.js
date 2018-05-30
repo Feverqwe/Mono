@@ -55,11 +55,16 @@ const config = {
 };
 
 if (browser === 'safari') {
+  const LOCALE_MAP = require('./builder/getLocaleMap');
+
   config.plugins.push(
     new HtmlWebpackPlugin({
       filename: 'background.html',
       template: path.join(src, './background.html'),
       chunks: ['background']
+    }),
+    new DefinePlugin({
+      'LOCALE_MAP': JSON.stringify(LOCALE_MAP),
     })
   );
 }

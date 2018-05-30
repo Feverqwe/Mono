@@ -65,4 +65,14 @@ const config = {
   ],
 };
 
+if (browser === 'safari') {
+  const LOCALE_MAP = require('./builder/getLocaleMap');
+
+  config.plugins.push(
+    new DefinePlugin({
+      'LOCALE_MAP': JSON.stringify(LOCALE_MAP),
+    })
+  );
+}
+
 module.exports = config;
