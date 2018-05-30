@@ -52,6 +52,7 @@ class Bundle extends Router {
       this.backgroundPageLoaded = true;
       this.runBackgroundPage();
     }
+    return this.backgroundPageMono.readyPromise;
   }
   showPopup() {
     this.closePopup();

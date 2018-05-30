@@ -8,9 +8,16 @@ class BackgroundPageMono extends PageMonoMixin(Mono) {
 
     this.backgroundPageCallFn = new BackgroundPageCallFn(this);
     this.remote = this.backgroundPageCallFn.remote;
+
+    this.readyPromise = Promise.resolve();
   }
   openTab(url, active) {
     this.unimplemented();
+  }
+  async() {
+    let handleResolve = null;
+    this.readyPromise = new Promise(resolve => handleResolve = resolve);
+    return handleResolve;
   }
 }
 
