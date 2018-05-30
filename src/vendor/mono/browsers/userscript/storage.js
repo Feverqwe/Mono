@@ -5,52 +5,58 @@ class UserscriptStorage {
   unwrapValue(value) {
     return JSON.parse(value).j;
   }
-  get(keys, callback) {
-    const result = {};
-    let defaults = {};
-    let existsKeys = GM_listValues();
-    if (!keys) {
-      keys = existsKeys;
-    }
-    if (!Array.isArray(keys)) {
-      defaults = keys;
-      keys = Object.keys(keys);
-    }
-    keys.forEach(key => {
-      let exists = false;
-      let value = null;
-      try {
-        if (existsKeys.indexOf(key) !== -1) {
-          value = this.unwrapValue(GM_getValue(key));
+  get(keys) {
+    return Promise.resolve().then(() => {
+      const result = {};
+      let defaults = {};
+      let existsKeys = GM_listValues();
+      if (!keys) {
+        keys = existsKeys;
+      }
+      if (!Array.isArray(keys)) {
+        defaults = keys;
+        keys = Object.keys(keys);
+      }
+      keys.forEach(key => {
+        let exists = false;
+        let value = null;
+        try {
+          if (existsKeys.indexOf(key) !== -1) {
+            value = this.unwrapValue(GM_getValue(key));
+            exists = true;
+          }
+        } catch (err) {
+          console.error(`Parse key (${key}) error`);
+        }
+        if (!exists && defaults.hasOwnProperty(key)) {
+          value = defaults[key];
           exists = true;
         }
-      } catch (err) {
-        console.error(`Parse key (${key}) error`);
-      }
-      if (!exists && defaults.hasOwnProperty(key)) {
-        value = defaults[key];
-        exists = true;
-      }
-      if (exists) {
-        result[key] = value;
-      }
+        if (exists) {
+          result[key] = value;
+        }
+      });
+      return result;
     });
-    callback(result);
   }
-  set(data, callback) {
-    Object.keys(data).forEach(key => {
-      GM_setValue(key, this.wrapValue(data[key]));
+  set(items) {
+    return Promise.resolve().then(() => {
+      Object.keys(items).forEach(key => {
+        GM_setValue(key, this.wrapValue(items[key]));
+      });
     });
-    callback && callback();
   }
-  remove(keys, callback) {
-    keys.forEach(key => {
-      GM_deleteValue(key);
+  remove(keys) {
+    return Promise.resolve().then(() => {
+      keys.forEach(key => {
+        GM_deleteValue(key);
+      });
     });
-    callback && callback();
   }
-  clear(callback) {
-    this.remove(GM_listValues(), callback);
+  clear() {
+    return Promise.resolve().then(() => {
+      return this.remove(GM_listValues());
+    });
   }
 }
 

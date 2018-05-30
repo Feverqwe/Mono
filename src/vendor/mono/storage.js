@@ -6,70 +6,74 @@ class Storage {
 
     this.remote = {
       get: keys => {
-        return new Promise(r => this.get(unwrapObjectValues(keys), r)).then(r => wrapObjectValues(r));
+        return this.get(unwrapObjectValues(keys)).then(r => wrapObjectValues(r));
       },
       set: items => {
-        return new Promise(r => this.set(unwrapObjectValues(items), r));
+        return this.set(unwrapObjectValues(items));
       },
       remove: keys => {
-        return new Promise(r => this.remove(keys, r));
+        return this.remove(keys);
       },
       clear: () => {
-        return new Promise(r => this.clear(r));
+        return this.clear();
       }
     }
   };
 
   /**
    * @param {Object|string|[string]|null|undefined} [keys]
-   * @param {function} callback
+   * @return {Promise<Object>}
    */
-  get(keys, callback) {
-    if (typeof keys === "undefined") {
-      keys = null;
-    }
-    if (typeof keys === 'string') {
-      keys = [keys];
-    }
-    if (Array.isArray(keys)) {
+  get(keys) {
+    return Promise.resolve().then(() => {
+      if (typeof keys === "undefined") {
+        keys = null;
+      }
+      if (typeof keys === 'string') {
+        keys = [keys];
+      }
+      if (Array.isArray(keys)) {
+        keys.forEach(key => {
+          if (typeof key !== 'string') {
+            throw new Error('Incorrect key type');
+          }
+        });
+      }
+      if (typeof keys !== 'object') {
+        throw new Error('Incorrect keys type');
+      }
+      return this.api.get(keys);
+    });
+  }
+  /**
+   * @param {Object} items
+   * @return {Promise}
+   */
+  set(items) {
+    return this.api.set(items);
+  }
+  /**
+   * @param {String|[String]} [keys]
+   * @return {Promise}
+   */
+  remove(keys) {
+    return Promise.resolve().then(() => {
+      if (typeof keys === 'string') {
+        keys = [keys];
+      }
       keys.forEach(key => {
         if (typeof key !== 'string') {
           throw new Error('Incorrect key type');
         }
       });
-    }
-    if (typeof keys !== 'object') {
-      throw new Error('Incorrect keys type');
-    }
-    this.api.get(keys, callback);
-  }
-  /**
-   * @param {Object} items
-   * @param {function} [callback]
-   */
-  set(items, callback) {
-    this.api.set(items, callback);
-  }
-  /**
-   * @param {String|[String]} [keys]
-   * @param {function} [callback]
-   */
-  remove(keys, callback) {
-    if (typeof keys === 'string') {
-      keys = [keys];
-    }
-    keys.forEach(key => {
-      if (typeof key !== 'string') {
-        throw new Error('Incorrect key type');
-      }
+      return this.api.remove(keys);
     });
-    this.api.remove(keys, callback);
   }
   /**
-   * @param {function} [callback]
+   * @return {Promise}
    */
-  clear(callback) {
-    this.api.clear(callback);
+  clear() {
+    return this.api.clear();
   }
 }
 
