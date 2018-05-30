@@ -48,11 +48,13 @@ class Bundle extends Router {
     return this.inject();
   }
   wakeUpBackgroundPage() {
-    if (!this.backgroundPageLoaded) {
-      this.backgroundPageLoaded = true;
-      this.runBackgroundPage();
-    }
-    return this.backgroundPageMono.readyPromise;
+    return Promise.resolve().then(() => {
+      if (!this.backgroundPageLoaded) {
+        this.backgroundPageLoaded = true;
+        this.runBackgroundPage();
+      }
+      return this.backgroundPageMono.readyPromise;
+    });
   }
   showPopup() {
     this.closePopup();
