@@ -1,4 +1,4 @@
-import {wrapObjectValues, unwrapObjectValues, isObject} from "./warpObjectValues";
+import {unwrapObjectValues, wrapObjectValues} from "./warpObjectValues";
 
 class RemoteStorage {
   constructor(mono) {
