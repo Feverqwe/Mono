@@ -11,7 +11,6 @@ import TransportWithResponse from "./transportWithResponse";
 class Transport extends TransportWithResponse {
   constructor(/**RawTransport*/transport) {
     super(transport);
-    this.transport = transport;
     this.callbackIndex = 0;
     this.idCallbackMap = {};
 
@@ -70,19 +69,22 @@ class Transport extends TransportWithResponse {
 
   /**
    * @param {*} message
-   * @param {function(*)} [response]
+   * @return {Promise}
    */
-  sendMessage(message, response) {
-    if (this.destroyError) throw this.destroyError;
+  sendMessage(message) {
+    return Promise.resolve().then(() => {
+      if (this.destroyError) throw this.destroyError;
 
-    const rawMessage = this.getRawMessage(message, response);
-
-    try {
-      this.transport.sendMessage(rawMessage);
-    } catch (err) {
-      delete this.idCallbackMap[rawMessage.callbackId];
-      throw err;
-    }
+      let callbackId = null;
+      return new Promise(resolve => {
+        const rawMessage = this.getRawMessage(message, resolve);
+        callbackId = rawMessage.callbackId;
+        return this.transport.sendMessage(rawMessage);
+      }).catch(err => {
+        delete this.idCallbackMap[callbackId];
+        throw err;
+      });
+    });
   }
 
   destroy() {
@@ -94,25 +96,28 @@ class Transport extends TransportWithResponse {
 
 /**
  * @typedef {RawTransport} RawTransportPage
- * @property {function(*,function)} sendMessageToActiveTab
+ * @property {function(*):Promise} sendMessageToActiveTab
  */
 
 class TransportWithActiveTab extends Transport {
   /**
    * @param {*} message
-   * @param {function(*)} [response]
+   * @return {Promise}
    */
-  sendMessageToActiveTab(message, response) {
-    if (this.destroyError) throw this.destroyError;
+  sendMessageToActiveTab(message) {
+    return Promise.resolve().then(() => {
+      if (this.destroyError) throw this.destroyError;
 
-    const rawMessage = this.getRawMessage(message, response);
-
-    try {
-      this.transport.sendMessageToActiveTab(rawMessage);
-    } catch (err) {
-      delete this.idCallbackMap[rawMessage.callbackId];
-      throw err;
-    }
+      let callbackId = null;
+      return new Promise(resolve => {
+        const rawMessage = this.getRawMessage(message, resolve);
+        callbackId = rawMessage.callbackId;
+        return this.transport.sendMessageToActiveTab(rawMessage);
+      }).catch(err => {
+        delete this.idCallbackMap[callbackId];
+        throw err;
+      });
+    });
   }
 }
 

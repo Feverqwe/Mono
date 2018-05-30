@@ -37,7 +37,7 @@ const SafariPageMonoMixin = Parent => class extends Parent {
         if (event.target.tab) {
           event.target.tab.dispatchMessage('message', message);
         } else {
-          console.warn('event.target.tab is not exists', event);
+          throw new Error('event.target.tab is not exists');
         }
       },
       sendMessageToActiveTab: message => {
@@ -48,8 +48,14 @@ const SafariPageMonoMixin = Parent => class extends Parent {
             const page = activeTab.page;
             if (page) {
               page.dispatchMessage('message', message);
+            } else {
+              throw new Error('Page not exists');
             }
+          } else {
+            throw new Error('Active tab not found');
           }
+        } else {
+          throw new Error('Active window not found');
         }
       },
     });

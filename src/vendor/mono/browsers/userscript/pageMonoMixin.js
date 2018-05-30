@@ -13,11 +13,11 @@ const UserscriptPageMonoMixin = Parent => class extends Parent {
         this.bundle.messaing.removeListener('page', listener);
         this.bundle.messaing.removeListener('fromActiveTab', listener);
       },
-      sendMessage: (message, response) => {
-        this.bundle.messaing.emit('page', message, response);
+      sendMessage: message => {
+        return new Promise(resolve => this.bundle.messaing.emit('page', message, resolve));
       },
-      sendMessageToActiveTab: (message, response) => {
-        this.bundle.messaing.emit('toActiveTab', message, response);
+      sendMessageToActiveTab: message => {
+        return new Promise(resolve => this.bundle.messaing.emit('toActiveTab', message, resolve));
       },
     });
 

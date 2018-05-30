@@ -28,7 +28,7 @@ class SafariContentScriptMono extends ContentScriptMono {
         if (event.target.tab) {
           event.target.tab.dispatchMessage("message", message);
         } else {
-          console.warn('event.target.tab is not exists');
+          throw new Error('event.target.tab is not exists');
         }
       }
     });

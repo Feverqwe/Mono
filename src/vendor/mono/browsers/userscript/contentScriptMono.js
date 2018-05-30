@@ -19,9 +19,12 @@ class UserscriptContentScriptMono extends ContentScriptMono {
       removeListener: listener => {
         this.bundle.messaing.removeListener('toActiveTab', listener);
       },
-      sendMessage: (message, response) => {
-        this.bundle.wakeUpBackgroundPage();
-        this.bundle.messaing.emit('fromActiveTab', message, response);
+      sendMessage: message => {
+        return Promise.resolve().then(() => {
+          return this.bundle.wakeUpBackgroundPage();
+        }).then(() => {
+          return new Promise(resolve => this.bundle.messaing.emit('fromActiveTab', message, resolve));
+        });
       },
     });
 

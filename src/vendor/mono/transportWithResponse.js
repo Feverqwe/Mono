@@ -16,7 +16,7 @@ const onceFn = cb => {
  * @typedef {{}} RawTransportWithResponse
  * @property {function(function)} addListener
  * @property {function(function)} removeListener
- * @property {function(*,function)} sendMessage
+ * @property {function(*):Promise} sendMessage
  */
 
 class TransportWithResponse extends Event {
@@ -119,25 +119,25 @@ class TransportWithResponse extends Event {
     }
   }
 
-  getRawMessage(message, response) {
-    const rawMessage = {
+  getRawMessage(message) {
+    return {
       transportId: this.transportId,
       message: copyMessage(message)
     };
-
-    return rawMessage;
   }
 
   /**
    * @param {*} message
-   * @param {function(*)} [response]
+   * @return {Promise}
    */
-  sendMessage(message, response) {
-    if (this.destroyError) throw this.destroyError;
+  sendMessage(message) {
+    return Promise.resolve().then(() => {
+      if (this.destroyError) throw this.destroyError;
 
-    const rawMessage = this.getRawMessage(message, response);
+      const rawMessage = this.getRawMessage(message);
 
-    this.transport.sendMessage(rawMessage, response);
+      return this.transport.sendMessage(rawMessage);
+    });
   }
 
   destroy() {
@@ -150,20 +150,22 @@ class TransportWithResponse extends Event {
 
 /**
  * @typedef {RawTransportWithResponse} RawTransportWithResponsePage
- * @property {function(*,function)} sendMessageToActiveTab
+ * @property {function(*):Promise} sendMessageToActiveTab
  */
 
 class TransportWithResponseWithActiveTab extends TransportWithResponse {
   /**
    * @param {*} message
-   * @param {function(*)} [response]
+   * @return {Promise}
    */
-  sendMessageToActiveTab(message, response) {
-    if (this.destroyError) throw this.destroyError;
+  sendMessageToActiveTab(message) {
+    return Promise.resolve().then(() => {
+      if (this.destroyError) throw this.destroyError;
 
-    const rawMessage = this.getRawMessage(message, response);
+      const rawMessage = this.getRawMessage(message);
 
-    this.transport.sendMessageToActiveTab(rawMessage, response);
+      return this.transport.sendMessageToActiveTab(rawMessage);
+    });
   }
 }
 
