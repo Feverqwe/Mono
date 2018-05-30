@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        MonoExtension
-// @version     {version}
+// @version     {VERSION}
 // @include     http://*
 // @include     https://*
 // @run-at      document-end

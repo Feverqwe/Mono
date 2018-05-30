@@ -28,7 +28,7 @@ const {POPUP_SCRIPTS, POPUP_PAGE} = require('./builder/getPopup');
 const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPT_INDEX, CONTENT_SCRIPTS} = require('./builder/getContentScripts');
 
 let meta = String(fs.readFileSync(path.join(mono, `./browsers/${browser}/meta.txt`)));
-meta = meta.replace('{version}', require(path.join(source, 'manifest')).version);
+meta = meta.replace('{VERSION}', require(path.join(source, 'manifest')).version);
 
 const env = require('./builder/getEnv');
 
