@@ -7,6 +7,7 @@ class FirefoxBackgroundPageMono extends FirefoxPageMonoMixin(BackgroundPageMono)
 
     this.initMessages();
     this.initStorage();
+    this.initI18n();
   }
 }
 

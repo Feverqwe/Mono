@@ -7,6 +7,7 @@ class ChromeBackgroundPageMono extends ChromePageMonoMixin(BackgroundPageMono) {
 
     this.initMessages();
     this.initStorage();
+    this.initI18n();
   }
 }
 

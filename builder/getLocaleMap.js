@@ -10,4 +10,6 @@ fs.readdirSync(localesPath).forEach(locale => {
   LOCALE_MAP[locale] = require(path.join(localesPath, locale, 'messages.json'));
 });
 
-module.exports = LOCALE_MAP;
+const DEFAULT_LOCALE = require(path.join(src, './manifest')).default_locale;
+
+module.exports = {DEFAULT_LOCALE, LOCALE_MAP};

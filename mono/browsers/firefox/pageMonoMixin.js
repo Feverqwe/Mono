@@ -2,6 +2,11 @@ import Storage from "../../storage";
 import FirefoxStorage from "./storage";
 
 const FirefoxPageMonoMixin = Parent => class extends Parent {
+  initI18n() {
+    this.i18n = {
+      getMessage: browser.i18n.getMessage.bind(browser.i18n)
+    };
+  }
   initMessages() {
     this.transport = {
       sendMessage: (message, response) => {

@@ -17,7 +17,7 @@ const mono = require('./builder/getMono');
 
 const {output, src, dist} = require('./builder/getOutput');
 
-const LOCALE_MAP = require('./builder/getLocaleMap');
+const {LOCALE_MAP, DEFAULT_LOCALE} = require('./builder/getLocaleMap');
 
 const BACKGROUND_SCRIPTS = require('./builder/getBackgroundScripts');
 
@@ -91,6 +91,7 @@ const config = {
       entryOnly: true
     }),
     new DefinePlugin({
+      DEFAULT_LOCALE: JSON.stringify(DEFAULT_LOCALE),
       LOCALE_MAP: JSON.stringify(LOCALE_MAP),
       BACKGROUND_SCRIPTS: defineScripts(BACKGROUND_SCRIPTS),
       OPTIONS_PAGE: JSON.stringify(OPTIONS_PAGE),
@@ -101,7 +102,7 @@ const config = {
       CONTENT_SCRIPT_MAP: JSON.stringify(CONTENT_SCRIPT_MAP),
       CONTENT_SCRIPT_INDEX: defineScripts(CONTENT_SCRIPT_INDEX),
       'process.env': {
-        'DEBUG': JSON.stringify('*')
+        DEBUG: JSON.stringify('*')
       }
     }),
   ],

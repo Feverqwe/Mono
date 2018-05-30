@@ -8,6 +8,7 @@ class UserscriptPageMono extends UserscriptPageMonoMixin(PageMono) {
 
     this.initMessages();
     this.initStorage();
+    this.initI18n();
   }
 }
 

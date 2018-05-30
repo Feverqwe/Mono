@@ -7,6 +7,7 @@ class SafariPageMono extends SafariPageMonoMixin(PageMono) {
 
     this.initMessages();
     this.initStorage();
+    this.initI18n();
   }
 }
 

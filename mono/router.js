@@ -2,7 +2,6 @@ class Router {
   constructor() {
     this.monoInstances = [];
 
-    this.localeMap = LOCALE_MAP;
     this.contentScripts = CONTENT_SCRIPTS;
     this.contentScriptMap = CONTENT_SCRIPT_MAP;
     this.contentScriptIndex = CONTENT_SCRIPT_INDEX;

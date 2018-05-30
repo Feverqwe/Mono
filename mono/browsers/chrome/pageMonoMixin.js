@@ -2,6 +2,11 @@ import Storage from "../../storage";
 import ChromeStorage from "./storage";
 
 const ChromePageMonoMixin = Parent => class extends Parent {
+  initI18n() {
+    this.i18n = {
+      getMessage: chrome.i18n.getMessage.bind(chrome.i18n)
+    };
+  }
   initMessages() {
     this.transport = {
       sendMessage: (message, response) => {

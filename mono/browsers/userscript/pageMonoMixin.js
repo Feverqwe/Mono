@@ -3,6 +3,14 @@ import Storage from "../../storage";
 import {TransportWithResponseWithActiveTab} from "../../transportWithResponse";
 
 const UserscriptPageMonoMixin = Parent => class extends Parent {
+  initI18n() {
+    this.locale = this.bundle.getLocale();
+    this.i18n = {
+      getMessage: (message) => {
+        return this.locale[message].message;
+      }
+    };
+  }
   initMessages() {
     this.transport = new TransportWithResponseWithActiveTab({
       addListener: listener => {

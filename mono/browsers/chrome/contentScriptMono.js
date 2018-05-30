@@ -8,6 +8,12 @@ class ChromeContentScriptMono extends ContentScriptMono {
 
     this.initMessages();
     this.initStorage();
+    this.initI18n();
+  }
+  initI18n() {
+    this.i18n = {
+      getMessage: chrome.i18n.getMessage.bind(chrome.i18n)
+    };
   }
   initMessages() {
     this.transport = {

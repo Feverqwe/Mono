@@ -59,18 +59,19 @@ const config = {
     }),
     new DefinePlugin({
       'process.env': {
-        'DEBUG': JSON.stringify('*')
+        DEBUG: JSON.stringify('*')
       }
     }),
   ],
 };
 
 if (browser === 'safari') {
-  const LOCALE_MAP = require('./builder/getLocaleMap');
+  const {LOCALE_MAP, DEFAULT_LOCALE} = require('./builder/getLocaleMap');
 
   config.plugins.push(
     new DefinePlugin({
-      'LOCALE_MAP': JSON.stringify(LOCALE_MAP),
+      DEFAULT_LOCALE: JSON.stringify(DEFAULT_LOCALE),
+      LOCALE_MAP: JSON.stringify(LOCALE_MAP),
     })
   );
 }

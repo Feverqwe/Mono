@@ -1,8 +1,17 @@
 import Storage from "../../storage";
 import LsStorage from "../../lsStorage";
 import {TransportWithActiveTab} from "../../transport";
+import LocaleMixin from "../../localeMixin";
 
-const SafariPageMonoMixin = Parent => class extends Parent {
+const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
+  initI18n() {
+    this.locale = this.getLocale();
+    this.i18n = {
+      getMessage: (message) => {
+        return this.locale[message].message;
+      }
+    };
+  }
   initMessages() {
     const getEvent = message => {
       return {

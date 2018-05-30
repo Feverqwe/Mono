@@ -10,6 +10,15 @@ class UserscriptContentScriptMono extends ContentScriptMono {
 
     this.initMessages();
     this.initStorage();
+    this.initI18n();
+  }
+  initI18n() {
+    this.locale = this.bundle.getLocale();
+    this.i18n = {
+      getMessage: (message) => {
+        return this.locale[message].message;
+      }
+    };
   }
   initMessages() {
     this.transport = new TransportWithResponse({

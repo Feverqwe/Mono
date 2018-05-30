@@ -7,6 +7,7 @@ class SafariBackgroundPageMono extends SafariPageMonoMixin(BackgroundPageMono) {
 
     this.initMessages();
     this.initStorage();
+    this.initI18n();
     this.initOptions();
   }
   initOptions() {

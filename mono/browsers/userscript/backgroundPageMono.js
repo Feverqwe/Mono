@@ -8,6 +8,7 @@ class UserscriptBackgroundPageMono extends UserscriptPageMonoMixin(BackgroundPag
 
     this.initMessages();
     this.initStorage();
+    this.initI18n();
   }
 }
 

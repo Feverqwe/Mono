@@ -8,6 +8,12 @@ class FirefoxContentScriptMono extends ContentScriptMono {
 
     this.initMessages();
     this.initStorage();
+    this.initI18n();
+  }
+  initI18n() {
+    this.i18n = {
+      getMessage: browser.i18n.getMessage.bind(browser.i18n)
+    };
   }
   initMessages() {
     this.transport = {

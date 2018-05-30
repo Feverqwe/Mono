@@ -50,7 +50,7 @@ const config = {
   plugins: [
     new DefinePlugin({
       'process.env': {
-        'DEBUG': JSON.stringify('*')
+        DEBUG: JSON.stringify('*')
       }
     }),
   ],
