@@ -1,3 +1,5 @@
+import resolvePath from "./resolvePath";
+
 const serializeError = require('serialize-error');
 
 class BackgroundPageCallFn {
@@ -34,26 +36,11 @@ class BackgroundPageCallFn {
    */
   responseFn(msg, response) {
     const promise = Promise.resolve().then(() => {
-      const {scope, endPoint: fn} = this.resolvePath(msg.fn);
+      const {scope, endPoint: fn} = resolvePath(this.remote, msg.fn);
       const args = msg.args || [];
       return scope[fn].apply(scope, args);
     });
     return this.responsePromise(promise, response);
-  }
-
-  /**
-   * @param {string} path
-   * @return {{scope: Object, endPoint: *}}
-   * @private
-   */
-  resolvePath(path) {
-    const parts = path.split('.');
-    const endPoint = parts.pop();
-    let scope = this.remote;
-    while (parts.length) {
-      scope = scope[parts.shift()];
-    }
-    return {scope, endPoint};
   }
 
   /**
