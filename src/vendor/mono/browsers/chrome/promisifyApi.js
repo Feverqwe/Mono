@@ -18,7 +18,7 @@ const resolvePath = path => {
  * @param {string} path
  * @return {Promise<any>}
  */
-const promisifyApi = path => {
+const chromePromisifyApi = path => {
   let promiseFn = cache[path];
   if (!promiseFn) {
     const {scope, endPoint: fn} = resolvePath(path);
@@ -30,4 +30,4 @@ const promisifyApi = path => {
   return promiseFn;
 };
 
-export default promisifyApi;
+export default chromePromisifyApi;

@@ -8,7 +8,7 @@ const ChromePageMonoMixin = Parent => class extends Parent {
       sendMessage(message) {
         return promisifyApi('chrome.runtime.sendMessage')(message);
       },
-      sendMessageToActiveTab(message, response) {
+      sendMessageToActiveTab(message) {
         return promisifyApi('chrome.tabs.query')({
           active: true,
           currentWindow: true
