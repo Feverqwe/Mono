@@ -17,7 +17,7 @@ class Mono {
   }
   clearLastError() {
     if (this._lastError && !this._lastErrorFired) {
-      console.error('Unhandled mono.lastError:', this.lastError);
+      console.error('Unhandled mono.lastError error:', this.lastError);
     }
     this._lastError = null;
   }
