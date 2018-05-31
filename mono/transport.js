@@ -16,6 +16,8 @@ class Transport extends TransportWithResponse {
     this.idCallbackMap = {};
 
     this.listen = this.listen.bind(this);
+
+    this.startListen();
   }
 
   getCallbackId() {
