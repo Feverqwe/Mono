@@ -24,7 +24,9 @@ class SafariContentScriptMono extends SafariContentScriptApiMixin(ContentScriptM
   initMessages() {
     this.transport = new Transport(this, {
       addListener: listener => {
-        listener._listener = event => listener(event.message, event);
+        if (!listener._listener) {
+          listener._listener = event => listener(event.message, event);
+        }
         safari.self.addEventListener('message', listener._listener);
       },
       removeListener: listener => {

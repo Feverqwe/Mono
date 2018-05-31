@@ -28,7 +28,9 @@ const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
 
     this.transport = new TransportWithActiveTab(this, {
       addListener: listener => {
-        listener._listener = event => listener(event.message, event);
+        if (!listener._listener) {
+          listener._listener = event => listener(event.message, event);
+        }
         safari.application.addEventListener('message', listener._listener);
       },
       removeListener: listener => {
