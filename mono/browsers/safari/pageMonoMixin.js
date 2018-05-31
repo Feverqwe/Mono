@@ -47,8 +47,11 @@ const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
       sendMessageTo: (message, event) => {
         if (event.target.tab) {
           event.target.tab.dispatchMessage('message', message);
+        } else
+        if (event.target.page) {
+          event.target.page.dispatchMessage('message', message);
         } else {
-          throw new Error('event.target.tab is not exists');
+          throw new Error('event.target.tab or event.target.page is not exists');
         }
       },
       sendMessageToActiveTab: message => {
