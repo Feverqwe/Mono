@@ -2,8 +2,9 @@ import Transport from "../../transport";
 import Storage from "../../storage";
 import RemoteStorage from "../../remoteStorage";
 import ContentScriptMono from "../../contentScriptMono";
+import SafariContentScriptApiMixin from "./contentScriptApiMixin";
 
-class SafariContentScriptMono extends ContentScriptMono {
+class SafariContentScriptMono extends SafariContentScriptApiMixin(ContentScriptMono) {
   constructor(router) {
     super();
     this.router = router;

@@ -2,8 +2,9 @@ import TransportWithResponse from "../../transportWithResponse";
 import Storage from "../../storage";
 import UserscriptStorage from "./storage";
 import ContentScriptMono from "../../contentScriptMono";
+import UserscriptContentScriptApiMixin from "./contentScriptApiMixin";
 
-class UserscriptContentScriptMono extends ContentScriptMono {
+class UserscriptContentScriptMono extends UserscriptContentScriptApiMixin(ContentScriptMono) {
   constructor(bundle) {
     super();
     this.bundle = bundle;

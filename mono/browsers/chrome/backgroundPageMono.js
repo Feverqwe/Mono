@@ -1,7 +1,8 @@
 import ChromePageMonoMixin from "./pageMonoMixin";
 import BackgroundPageMono from "../../backgroundPageMono";
+import ChromeBackgroundPageApiMixin from "./backgroundPageApiMixin";
 
-class ChromeBackgroundPageMono extends ChromePageMonoMixin(BackgroundPageMono) {
+class ChromeBackgroundPageMono extends ChromeBackgroundPageApiMixin(ChromePageMonoMixin(BackgroundPageMono)) {
   constructor() {
     super();
 

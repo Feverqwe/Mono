@@ -1,7 +1,8 @@
 import Mono from "./mono";
 import CallFnMixin from "./callFnMixin";
+import ContentScriptApiMixin from "./contentScriptApiMixin";
 
-class ContentScriptMono extends CallFnMixin(Mono) {
+class ContentScriptMono extends ContentScriptApiMixin(CallFnMixin(Mono)) {
   initMessages() {
     this.sendMessage = this.transport.sendMessage.bind(this.transport);
     this.onMessage = {

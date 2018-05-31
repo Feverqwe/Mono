@@ -1,7 +1,8 @@
 import PageMono from "../../pageMono";
 import UserscriptPageMonoMixin from "./pageMonoMixin";
+import UserscriptPageApiMixin from "./pageApiMixin";
 
-class UserscriptPageMono extends UserscriptPageMonoMixin(PageMono) {
+class UserscriptPageMono extends UserscriptPageApiMixin(UserscriptPageMonoMixin(PageMono)) {
   constructor(bundle) {
     super();
     this.bundle = bundle;

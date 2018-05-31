@@ -1,8 +1,9 @@
 import ContentScriptMono from "../../contentScriptMono";
 import Storage from "../../storage";
 import ChromeStorage from "./storage";
+import ChromeContentScriptApiMixin from "./contentScriptApiMixin";
 
-class ChromeContentScriptMono extends ContentScriptMono {
+class ChromeContentScriptMono extends ChromeContentScriptApiMixin(ContentScriptMono) {
   constructor() {
     super();
 

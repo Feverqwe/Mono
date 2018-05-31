@@ -1,7 +1,8 @@
 import PageMono from "../../pageMono";
 import SafariPageMonoMixin from "./pageMonoMixin";
+import SafariPageApiMixin from "./pageApiMixin";
 
-class SafariPageMono extends SafariPageMonoMixin(PageMono) {
+class SafariPageMono extends SafariPageApiMixin(SafariPageMonoMixin(PageMono)) {
   constructor() {
     super();
 

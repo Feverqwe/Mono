@@ -1,7 +1,8 @@
 import BackgroundPageMono from "../../backgroundPageMono";
 import SafariPageMonoMixin from "./pageMonoMixin";
+import SafariBackgroundPageApiMixin from "./backgroundPageApiMixin";
 
-class SafariBackgroundPageMono extends SafariPageMonoMixin(BackgroundPageMono) {
+class SafariBackgroundPageMono extends SafariBackgroundPageApiMixin(SafariPageMonoMixin(BackgroundPageMono)) {
   constructor() {
     super();
 
