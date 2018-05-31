@@ -76,19 +76,6 @@ const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
   initStorage() {
     this.storage = new Storage(this, new LsStorage());
   }
-  openTab(url, active) {
-    let tab = null;
-    let activeWindow = safari.application.activeBrowserWindow;
-    if (activeWindow) {
-      tab = activeWindow.openTab();
-    } else {
-      tab = safari.application.openBrowserWindow().activeTab;
-    }
-    tab.url = url;
-    if (active) {
-      tab.activate();
-    }
-  }
   destroy() {
     super.destroy();
     this.transport.destroy();
