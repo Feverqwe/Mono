@@ -1,7 +1,7 @@
 import Mono from "./mono";
-import ContentScriptCallFn from "./contentScriptCallFn";
+import CallFnMixin from "./callFnMixin";
 
-class ContentScriptMono extends Mono {
+class ContentScriptMono extends CallFnMixin(Mono) {
   initMessages() {
     this.sendMessage = this.transport.sendMessage.bind(this.transport);
     this.onMessage = {
@@ -10,9 +10,6 @@ class ContentScriptMono extends Mono {
       hasListeners: this.transport.hasListeners.bind(this.transport),
       removeListener: this.transport.removeListener.bind(this.transport),
     };
-
-    this.contentScriptCallFn = new ContentScriptCallFn(this);
-    this.callFn = this.contentScriptCallFn.callFn.bind(this.contentScriptCallFn);
   }
 }
 

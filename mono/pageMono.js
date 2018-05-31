@@ -1,14 +1,9 @@
 import Mono from "./mono";
-import ContentScriptCallFn from "./contentScriptCallFn";
 import PageMonoMixin from "./pageMonoMixin";
+import CallFnMixin from "./callFnMixin";
 
-class PageMono extends PageMonoMixin(Mono) {
-  initMessages() {
-    super.initMessages();
+class PageMono extends CallFnMixin(PageMonoMixin(Mono)) {
 
-    this.contentScriptCallFn = new ContentScriptCallFn(this);
-    this.callFn = this.contentScriptCallFn.callFn.bind(this.contentScriptCallFn);
-  }
 }
 
 export default PageMono;

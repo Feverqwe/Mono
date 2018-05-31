@@ -1,9 +1,6 @@
 const deserializeError = require('deserialize-error');
 
-class ContentScriptCallFn {
-  constructor(mono) {
-    this.mono = mono;
-  }
+const CallFnMixin = Parent => class extends Parent {
   /**
    * @param {string} fnName
    * @param {*[]} [argsArray]
@@ -24,7 +21,7 @@ class ContentScriptCallFn {
    */
   waitPromise(msg) {
     return new Promise((resolve, reject) => {
-      this.mono.sendMessage(msg, response => {
+      this.sendMessage(msg, response => {
         if (response.err) {
           const err = deserializeError(response.err);
           return reject(err);
@@ -34,6 +31,6 @@ class ContentScriptCallFn {
       });
     });
   }
-}
+};
 
-export default ContentScriptCallFn;
+export default CallFnMixin;

@@ -1,14 +1,10 @@
 import Mono from "./mono";
-import BackgroundPageCallFn from "./backgroundPageCallFn";
 import PageMonoMixin from "./pageMonoMixin";
+import CallFnListenerMixin from "./callFnListenerMixin";
 
-class BackgroundPageMono extends PageMonoMixin(Mono) {
-  initMessages() {
-    super.initMessages();
-
-    this.backgroundPageCallFn = new BackgroundPageCallFn(this);
-    this.remote = this.backgroundPageCallFn.remote;
-
+class BackgroundPageMono extends CallFnListenerMixin(PageMonoMixin(Mono)) {
+  constructor() {
+    super();
     this.readyPromise = Promise.resolve();
   }
   openTab(url, active) {
