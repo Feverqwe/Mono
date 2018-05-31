@@ -1,4 +1,6 @@
-const SafariBackgroundPageApiMixin = Parent => class extends Parent {
+import SafariApiMixin from "./apiMixin";
+
+const SafariBackgroundPageApiMixin = Parent => class extends SafariApiMixin(Parent) {
 
 };
 

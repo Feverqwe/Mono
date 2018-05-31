@@ -1,4 +1,6 @@
-const ContentScriptApiMixin = Parent => class extends Parent {
+import ApiMixin from "./apiMixin";
+
+const ContentScriptApiMixin = Parent => class extends ApiMixin(Parent) {
 
 };
 

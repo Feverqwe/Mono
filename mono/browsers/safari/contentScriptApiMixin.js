@@ -1,4 +1,6 @@
-const SafariContentScriptApiMixin = Parent => class extends Parent {
+import SafariApiMixin from "./apiMixin";
+
+const SafariContentScriptApiMixin = Parent => class extends SafariApiMixin(Parent) {
 
 };
 

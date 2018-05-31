@@ -1,4 +1,6 @@
-const BackgroundPageApiMixin = Parent => class extends Parent {
+import ApiMixin from "./apiMixin";
+
+const BackgroundPageApiMixin = Parent => class extends ApiMixin(Parent) {
   openTab(url, active) {
     this.unimplemented();
   }

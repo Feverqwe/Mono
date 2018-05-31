@@ -1,4 +1,6 @@
-const UserscriptPageApiMixin = Parent => class extends Parent {
+import UserscriptApiMixin from "./apiMixin";
+
+const UserscriptPageApiMixin = Parent => class extends UserscriptApiMixin(Parent) {
 
 };
 

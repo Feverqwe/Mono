@@ -1,4 +1,6 @@
-const ChromeContentScriptApiMixin = Parent => class extends Parent {
+import ChromeApiMixin from "./apiMixin";
+
+const ChromeContentScriptApiMixin = Parent => class extends ChromeApiMixin(Parent) {
 
 };
 

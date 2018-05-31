@@ -1,4 +1,6 @@
-const ChromeBackgroundPageApiMixin = Parent => class extends Parent {
+import ChromeApiMixin from "./apiMixin";
+
+const ChromeBackgroundPageApiMixin = Parent => class extends ChromeApiMixin(Parent) {
 
 };
 
