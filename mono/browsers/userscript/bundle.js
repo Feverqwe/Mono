@@ -51,7 +51,7 @@ class Bundle extends Router {
     return Promise.resolve().then(() => {
       if (!this.backgroundPageLoaded) {
         this.backgroundPageLoaded = true;
-        this.runBackgroundPage();
+        this.executeBackgroundScripts();
       }
       return this.backgroundPageMono.readyPromise;
     });
@@ -84,11 +84,8 @@ class Bundle extends Router {
     }
     return this.backgroundPageMono;
   }
-  runBackgroundPage() {
-    this.executeBackgroundScript(this.backgroundScripts.join('\n'), this.getBackgroundPageMono());
-  }
-  executeBackgroundScript(code, mono) {
-    return new Function('MONO', code)(mono);
+  executeBackgroundScripts() {
+    this.executeScripts(this.backgroundScripts, this.getBackgroundPageMono());
   }
 }
 

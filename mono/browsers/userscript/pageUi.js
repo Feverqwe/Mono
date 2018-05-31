@@ -8,7 +8,7 @@ class PageUi {
     this.createPageContainer();
     this.createMono();
     this.mono.container = this.containerNode;
-    this.executePageScript();
+    this.executePageScripts();
   }
   createMono() {
     this.destroyMono();
@@ -26,8 +26,8 @@ class PageUi {
   getPageScripts() {
     return [];
   }
-  executePageScript() {
-    return new Function('MONO', this.getPageScripts().join('\n'))(this.mono);
+  executePageScripts() {
+    return this.bundle.executeScripts(this.getPageScripts(), this.mono);
   }
   destroyMono() {
     if (this.mono) {

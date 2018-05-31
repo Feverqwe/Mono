@@ -56,29 +56,17 @@ class Router extends LocaleMixin(class {}) {
     });
     if (documentStartScripts.length) {
       this.runWhenDocumentStart(() => {
-        try {
-          this.executeContentScript(documentStartScripts.map(index => this.contentScriptIndex[index]).join('\n'));
-        } catch (err) {
-          console.error('executeContentScript document_start error', err);
-        }
+        this.executeContentScripts(documentStartScripts.map(index => this.contentScriptIndex[index]));
       });
     }
     if (documentEndScripts.length) {
       this.runWhenDocumentEnd(() => {
-        try {
-          this.executeContentScript(documentEndScripts.map(index => this.contentScriptIndex[index]).join('\n'));
-        } catch (err) {
-          console.error('executeContentScript document_end error', err);
-        }
+        this.executeContentScripts(documentEndScripts.map(index => this.contentScriptIndex[index]));
       });
     }
     if (documentIdleScripts.length) {
       this.runWhenDocumentIdle(() => {
-        try {
-          this.executeContentScript(documentIdleScripts.map(index => this.contentScriptIndex[index]).join('\n'));
-        } catch (err) {
-          console.error('executeContentScript document_idle error', err);
-        }
+        this.executeContentScripts(documentIdleScripts.map(index => this.contentScriptIndex[index]));
       });
     }
   }
@@ -112,8 +100,14 @@ class Router extends LocaleMixin(class {}) {
       }
     });
   }
-  executeContentScript(code) {
-    return new Function('MONO', code)(this.getContentScriptMono());
+  executeScripts(scripts, mono) {
+    scripts.forEach(script => {
+      try {
+        script(mono);
+      } catch (err) {
+        console.error('executeScript error', err);
+      }
+    });
   }
 }
 
