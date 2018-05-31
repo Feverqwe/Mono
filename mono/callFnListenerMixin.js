@@ -14,7 +14,7 @@ const CallFnListenerMixin = Parent => class extends Parent {
   initMessages() {
     super.initMessages();
 
-    this.onMessage.addListener(this.listener);
+    this.onMessage.addListener(this.callFnListener);
   }
 
   /**
@@ -59,7 +59,7 @@ const CallFnListenerMixin = Parent => class extends Parent {
   }
 
   destroy() {
-    this.onMessage.removeListener(this.listener);
+    this.onMessage.removeListener(this.callFnListener);
     super.destroy();
   }
 };
