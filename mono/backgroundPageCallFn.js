@@ -55,7 +55,7 @@ class BackgroundPageCallFn {
     }, err => {
       response({err: serializeError(err)});
     }).catch(function (err) {
-      debug('responsePromise error', err);
+      console.error('responsePromise error', err);
     });
     return true;
   }
