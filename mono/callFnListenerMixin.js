@@ -1,5 +1,7 @@
 import resolvePath from "./resolvePath";
 
+const serializeError = require('serialize-error');
+
 const CallFnListenerMixin = Parent => class extends Parent {
   constructor() {
     super();
