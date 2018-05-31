@@ -8,6 +8,7 @@ class ChromePageMono extends ChromePageApiMixin(ChromePageMonoMixin(PageMono)) {
 
     this.initMessages();
     this.initStorage();
+    this.initI18n();
   }
 }
 
