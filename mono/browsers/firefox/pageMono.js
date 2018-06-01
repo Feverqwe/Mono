@@ -1,7 +1,8 @@
 import FirefoxPageMonoMixin from "./pageMonoMixin";
 import PageMono from "../../pageMono";
+import FirefoxPageApiMixin from "./pageApiMixin";
 
-class FirefoxPageMono extends FirefoxPageMonoMixin(PageMono) {
+class FirefoxPageMono extends FirefoxPageApiMixin(FirefoxPageMonoMixin(PageMono)) {
   constructor() {
     super();
 
