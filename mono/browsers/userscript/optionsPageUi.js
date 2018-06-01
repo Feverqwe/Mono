@@ -11,7 +11,7 @@ class OptionsPageUi extends PageUi {
     return this.optionsPage;
   }
   getPageScripts() {
-    return this.bundle.optionsScripts;
+    return this.optionsScripts;
   }
 }
 
