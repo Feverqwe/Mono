@@ -41,6 +41,7 @@ const config = {
     filename: '[name].js'
   },
   mode: mode,
+  devtool: 'none',
   optimization: {
     minimizer: [
       new UglifyJsPlugin({

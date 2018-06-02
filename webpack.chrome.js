@@ -19,6 +19,7 @@ const config = {
     filename: 'chrome.entry'
   },
   mode: mode,
+  devtool: 'none',
   plugins: [
     new CleanWebpackPlugin([
       output

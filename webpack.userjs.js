@@ -19,6 +19,7 @@ const config = {
     filename: 'userjs.entry'
   },
   mode: mode,
+  devtool: 'none',
   plugins: [
     new CleanWebpackPlugin([
       output

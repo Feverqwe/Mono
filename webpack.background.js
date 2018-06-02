@@ -61,7 +61,12 @@ if (browser === 'safari') {
     new HtmlWebpackPlugin({
       filename: 'background.html',
       template: path.join(src, './background.html'),
-      chunks: ['background']
+      chunks: ['background'],
+      minify: {
+        html5: true,
+        removeComments: true,
+        collapseWhitespace: true
+      }
     }),
     new DefinePlugin({
       DEFAULT_LOCALE: JSON.stringify(DEFAULT_LOCALE),

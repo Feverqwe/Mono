@@ -50,12 +50,22 @@ const config = {
     new HtmlWebpackPlugin({
       filename: 'popup.html',
       template: path.join(src, './popup.html'),
-      chunks: ['popup']
+      chunks: ['popup'],
+      minify: {
+        html5: true,
+        removeComments: true,
+        collapseWhitespace: true
+      }
     }),
     new HtmlWebpackPlugin({
       filename: 'options.html',
       template: path.join(src, './options.html'),
-      chunks: ['options']
+      chunks: ['options'],
+      minify: {
+        html5: true,
+        removeComments: true,
+        collapseWhitespace: true
+      }
     }),
     new DefinePlugin({
       'process.env': {

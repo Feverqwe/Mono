@@ -23,6 +23,7 @@ const config = {
     filename: 'safari.entry'
   },
   mode: mode,
+  devtool: 'none',
   plugins: [
     new CleanWebpackPlugin([
       output

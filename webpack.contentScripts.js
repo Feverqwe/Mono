@@ -25,7 +25,7 @@ const config = {
     filename: 'includes/[name].js'
   },
   mode: mode,
-  devtool: 'source-map',
+  devtool: 'none',
   module: {
     rules: [
       {
