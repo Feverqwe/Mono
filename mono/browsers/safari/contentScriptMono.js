@@ -17,7 +17,8 @@ class SafariContentScriptMono extends SafariContentScriptApiMixin(ContentScriptM
     this.locale = this.router.getLocale();
     this.i18n = {
       getMessage: (message) => {
-        return this.locale[message].message;
+        const item = this.locale[message];
+        return item && item.message || '';
       }
     };
   }

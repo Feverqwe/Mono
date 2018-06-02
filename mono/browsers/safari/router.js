@@ -23,4 +23,4 @@ class SafariRouter extends Router {
   }
 }
 
-export default new SafariRouter();
+export default typeof safari !== 'undefined' && new SafariRouter();

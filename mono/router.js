@@ -56,17 +56,17 @@ class Router extends LocaleMixin(class {}) {
     });
     if (documentStartScripts.length) {
       this.runWhenDocumentStart(() => {
-        this.executeContentScripts(documentStartScripts.map(index => this.contentScriptIndex[index]));
+        this.executeContentScripts(documentStartScripts);
       });
     }
     if (documentEndScripts.length) {
       this.runWhenDocumentEnd(() => {
-        this.executeContentScripts(documentEndScripts.map(index => this.contentScriptIndex[index]));
+        this.executeContentScripts(documentEndScripts);
       });
     }
     if (documentIdleScripts.length) {
       this.runWhenDocumentIdle(() => {
-        this.executeContentScripts(documentIdleScripts.map(index => this.contentScriptIndex[index]));
+        this.executeContentScripts(documentIdleScripts);
       });
     }
   }
@@ -99,6 +99,11 @@ class Router extends LocaleMixin(class {}) {
         setTimeout(listener, 1);
       }
     });
+  }
+  executeContentScripts(idxs) {
+    return this.executeScripts(idxs.map(index => {
+      return this.contentScriptIndex[index];
+    }), this.getContentScriptMono());
   }
   executeScripts(scripts, mono) {
     scripts.forEach(script => {

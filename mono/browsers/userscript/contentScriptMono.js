@@ -17,7 +17,8 @@ class UserscriptContentScriptMono extends UserscriptContentScriptApiMixin(Conten
     this.locale = this.bundle.getLocale();
     this.i18n = {
       getMessage: (message) => {
-        return this.locale[message].message;
+        const item = this.locale[message];
+        return item && item.message || '';
       }
     };
   }
@@ -31,7 +32,11 @@ class UserscriptContentScriptMono extends UserscriptContentScriptApiMixin(Conten
       },
       sendMessage: (message, response) => {
         this.bundle.wakeUpBackgroundPage().then(() => {
-          this.bundle.messaing.emit('fromActiveTab', message, response);
+          const result = this.bundle.messaing.emit('fromActiveTab', message, response);
+          if (!result) {
+            console.info('No one received a message');
+            response();
+          }
         });
       },
     });

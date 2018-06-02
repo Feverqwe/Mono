@@ -8,7 +8,8 @@ const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
     this.locale = this.getLocale();
     this.i18n = {
       getMessage: (message) => {
-        return this.locale[message].message;
+        const item = this.locale[message];
+        return item && item.message || '';
       }
     };
   }

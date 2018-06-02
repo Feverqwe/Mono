@@ -22,6 +22,26 @@ class Transport extends TransportWithResponse {
     return `${this.transportId}_${++this.callbackIndex}`
   }
 
+  sendReceiveReply(rawMessage, event) {
+    this.transport.sendMessageTo({
+      transportId: this.transportId,
+      responseId: rawMessage.callbackId,
+      received: true
+    }, event);
+  }
+
+  waitReceiveReply(callbackId) {
+    setTimeout(() => {
+      const callback = this.idCallbackMap[callbackId];
+      if (callback) {
+        if (!callback.received) {
+          console.info('No one received a message');
+          callback();
+        }
+      }
+    }, 1000);
+  }
+
   /**
    * @param {{callbackId:string,message:*,responseId:string,responseMessage:*,sender:Object}} rawMessage
    * @param {Object} event
@@ -32,11 +52,17 @@ class Transport extends TransportWithResponse {
 
     if (rawMessage.responseId) {
       const callback = this.idCallbackMap[rawMessage.responseId];
-      if (callback) {
-        callback(rawMessage.responseMessage);
+      if (rawMessage.received) {
+        if (callback) {
+          callback.received = true;
+        }
       } else {
-        if (rawMessage.responseId.indexOf(this.transportId) === 0) {
-          console.warn('Callback is not found', rawMessage);
+        if (callback) {
+          callback(rawMessage.responseMessage);
+        } else {
+          if (rawMessage.responseId.indexOf(this.transportId) === 0) {
+            console.warn('Callback is not found', rawMessage);
+          }
         }
       }
       return;
@@ -44,6 +70,7 @@ class Transport extends TransportWithResponse {
 
     let response = null;
     if (rawMessage.callbackId) {
+      this.sendReceiveReply(rawMessage, event);
       response = responseMessage => {
         this.transport.sendMessageTo({
           transportId: this.transportId,
@@ -62,6 +89,7 @@ class Transport extends TransportWithResponse {
       !this.isListen && this.startListen();
 
       rawMessage.callbackId = this.getCallbackId();
+      this.waitReceiveReply(rawMessage.callbackId);
       this.idCallbackMap[rawMessage.callbackId] = responseMessage => {
         delete this.idCallbackMap[rawMessage.callbackId];
         response(responseMessage);
