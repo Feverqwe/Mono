@@ -1,8 +1,11 @@
 import getStorageChanges from "../../getStorageChanges";
+import Event from "../../event";
 
 class GmStorage {
   constructor(mono) {
     this.mono = mono;
+
+    this.onChanged = new Event();
   }
   handleChange(oldStorage, storage) {
     const changes = getStorageChanges(oldStorage, storage);

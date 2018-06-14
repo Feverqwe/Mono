@@ -1,6 +1,15 @@
 class ChromeStorage {
   constructor(mono) {
     this.mono = mono;
+
+    this.onChanged = {
+      addListener: listener => {
+        chrome.storage.onChanged.addListener(listener);
+      },
+      removeListener: listener => {
+        chrome.storage.onChanged.removeListener(listener);
+      }
+    }
   }
   callback(callback, result, notOptionalCallback) {
     this.mono.lastError = chrome.runtime.lastError;

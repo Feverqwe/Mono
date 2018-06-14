@@ -1,6 +1,15 @@
 class FirefoxStorage {
   constructor(mono) {
     this.mono = mono;
+
+    this.onChanged = {
+      addListener: listener => {
+        browser.storage.onChanged.addListener(listener);
+      },
+      removeListener: listener => {
+        browser.storage.onChanged.removeListener(listener);
+      }
+    }
   }
   callback(callback, result, notOptionalCallback) {
     this.mono.lastError = browser.runtime.lastError;
