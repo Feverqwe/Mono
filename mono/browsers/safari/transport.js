@@ -183,19 +183,6 @@ class SafariTransport extends Transport {
     }
   }
 
-  sendMessageToAll(message) {
-    if (this.destroyError) throw this.destroyError;
-
-    const rawMessage = this.getRawMessage(message, response);
-
-    try {
-      this.transport.sendMessageToAll(rawMessage);
-    } catch (err) {
-      this.mono.lastError = err;
-      this.mono.clearLastError();
-    }
-  }
-
   destroy() {
     this.idCallbackMap = {};
     super.destroy();
@@ -220,6 +207,21 @@ class SafariTransportWithActiveTab extends SafariTransport {
 
     try {
       this.transport.sendMessageToActiveTab(rawMessage);
+    } catch (err) {
+      this.mono.lastError = err;
+      const wrappedResponse = this.idCallbackMap[rawMessage.callbackId];
+      wrappedResponse && wrappedResponse();
+      this.mono.clearLastError();
+    }
+  }
+
+  sendMessageToAll(message, response) {
+    if (this.destroyError) throw this.destroyError;
+
+    const rawMessage = this.getRawMessage(message, response);
+
+    try {
+      this.transport.sendMessageToAll(rawMessage);
     } catch (err) {
       this.mono.lastError = err;
       const wrappedResponse = this.idCallbackMap[rawMessage.callbackId];

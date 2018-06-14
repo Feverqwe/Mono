@@ -48,7 +48,7 @@ const config = {
     new HtmlWebpackPlugin({
       filename: 'popup.html',
       template: path.join(sourcePath, './popup.html'),
-      chunks: ['menu'],
+      chunks: ['popup'],
       minify: {
         html5: true,
         removeComments: true,
