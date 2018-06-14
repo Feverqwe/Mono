@@ -9,7 +9,9 @@ class GmStorage {
   }
   handleChange(oldStorage, storage) {
     const changes = getStorageChanges(oldStorage, storage);
-    this.mono.storageChanges.emit(changes);
+    if (changes) {
+      this.mono.storageChanges.emit(changes);
+    }
   }
   wrapValue(value) {
     return JSON.stringify({j:value});

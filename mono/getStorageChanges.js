@@ -20,7 +20,12 @@ const getStorageChanges = (oldStorage, storage) => {
       delete changes[key];
     }
   });
-  return changes;
+
+  if (Object.keys(changes).length) {
+    return changes;
+  } else {
+    return null;
+  }
 };
 
 export default getStorageChanges;

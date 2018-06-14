@@ -215,6 +215,10 @@ class SafariTransportWithActiveTab extends SafariTransport {
     }
   }
 
+  /**
+   * @param {*} message
+   * @param {function(*)} [response]
+   */
   sendMessageToAll(message, response) {
     if (this.destroyError) throw this.destroyError;
 
