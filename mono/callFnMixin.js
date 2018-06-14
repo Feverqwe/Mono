@@ -22,6 +22,10 @@ const CallFnMixin = Parent => class extends Parent {
   waitPromise(msg) {
     return new Promise((resolve, reject) => {
       this.sendMessage(msg, response => {
+        if (!response) {
+          const err = this.lastError || new Error('Unexpected response');
+          return reject(err);
+        } else
         if (response.err) {
           const err = deserializeError(response.err);
           return reject(err);

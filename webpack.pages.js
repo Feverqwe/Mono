@@ -1,56 +1,54 @@
+require('./builder/defaultBuildEnv');
 const {DefinePlugin} = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const getDistPath = require('./builder/getDistPath');
+const getLocaleMap = require('./builder/getLocaleMap');
 
-const isWatch = require('./builder/isWatch');
+const mode = BUILD_ENV.mode;
 
-const mode = require('./builder/getMode');
+const devtool = BUILD_ENV.devtool;
 
-const browser = require('./builder/getBrowser');
+const sourcePath = BUILD_ENV.sourcePath;
 
-const mono = require('./builder/getMono');
+const browser = BUILD_ENV.monoBrowser;
 
-const {src, dist} = require('./builder/getOutput');
+const monoPath = BUILD_ENV.monoPath;
 
-const env = require('./builder/getEnv');
+const distPath = getDistPath();
+
+const jsRulesUseArray = [];
 
 const config = {
   entry: {
-    popup: path.join(src, './js/popup'),
-    options: path.join(src, './js/options'),
+    popup: path.join(sourcePath, './js/popup'),
+    options: path.join(sourcePath, './js/options'),
   },
   output: {
-    path: dist,
-    filename: 'js/[name].js'
+    path: distPath,
+    filename: 'js/[name].js',
   },
   mode: mode,
-  devtool: 'source-map',
+  devtool: devtool,
   module: {
     rules: [
       {
         test: /.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              ['env', env]
-            ]
-          }
-        }
+        use: jsRulesUseArray
       },
     ]
   },
   resolve: {
     alias: {
-      'mono': path.join(mono, `./browsers/${browser}/page`),
+      'mono': path.join(monoPath, `./browsers/${browser}/page`),
     }
   },
   plugins: [
     new HtmlWebpackPlugin({
       filename: 'popup.html',
-      template: path.join(src, './popup.html'),
-      chunks: ['popup'],
+      template: path.join(sourcePath, './popup.html'),
+      chunks: ['menu'],
       minify: {
         html5: true,
         removeComments: true,
@@ -59,7 +57,7 @@ const config = {
     }),
     new HtmlWebpackPlugin({
       filename: 'options.html',
-      template: path.join(src, './options.html'),
+      template: path.join(sourcePath, './options.html'),
       chunks: ['options'],
       minify: {
         html5: true,
@@ -69,14 +67,23 @@ const config = {
     }),
     new DefinePlugin({
       'process.env': {
-        DEBUG: JSON.stringify('*')
-      }
+        DEBUG: JSON.stringify('*'),
+      },
     }),
   ],
 };
 
+if (!['userscript'].includes(browser)) {
+  if (BUILD_ENV.babelOptions) {
+    jsRulesUseArray.push({
+      loader: 'babel-loader',
+      options: BUILD_ENV.babelOptions
+    });
+  }
+}
+
 if (browser === 'safari') {
-  const {LOCALE_MAP, DEFAULT_LOCALE} = require('./builder/getLocaleMap');
+  const {LOCALE_MAP, DEFAULT_LOCALE} = getLocaleMap();
 
   config.plugins.push(
     new DefinePlugin({

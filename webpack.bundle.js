@@ -1,90 +1,91 @@
 const {DefinePlugin, BannerPlugin} = require('webpack');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
 const defineScripts = require('./builder/defineScripts');
+const getDistPath = require('./builder/getDistPath');
+const getBackgroundScripts = require('./builder/getBackgroundScripts');
+const getContentScripts = require('./builder/getContentScripts');
+const getLocaleMap = require('./builder/getLocaleMap');
+const getOptions = require('./builder/getOptions');
+const getPopup = require('./builder/getPopup');
 
-const isWatch = require('./builder/isWatch');
+const mode = BUILD_ENV.mode;
 
-const mode = require('./builder/getMode');
+const browser = BUILD_ENV.monoBrowser;
 
-const browser = require('./builder/getBrowser');
+const monoPath = BUILD_ENV.monoPath;
 
-const source = require('./builder/getSource');
+const distPath = getDistPath();
 
-const mono = require('./builder/getMono');
+const {LOCALE_MAP, DEFAULT_LOCALE} = getLocaleMap();
 
-const {output, src, dist} = require('./builder/getOutput');
+const BACKGROUND_SCRIPTS = getBackgroundScripts();
 
-const {LOCALE_MAP, DEFAULT_LOCALE} = require('./builder/getLocaleMap');
+const {OPTIONS_SCRIPTS, OPTIONS_PAGE} = getOptions();
 
-const BACKGROUND_SCRIPTS = require('./builder/getBackgroundScripts');
+const {POPUP_SCRIPTS, POPUP_PAGE} = getPopup();
 
-const {OPTIONS_SCRIPTS, OPTIONS_PAGE} = require('./builder/getOptions');
+const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPT_INDEX, CONTENT_SCRIPTS} = getContentScripts();
 
-const {POPUP_SCRIPTS, POPUP_PAGE} = require('./builder/getPopup');
+const meta = String(fs.readFileSync(path.join(distPath, `./meta.txt`)));
 
-const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPT_INDEX, CONTENT_SCRIPTS} = require('./builder/getContentScripts');
-
-let meta = String(fs.readFileSync(path.join(mono, `./browsers/${browser}/meta.txt`)));
-meta = meta.replace('{VERSION}', require(path.join(source, 'manifest')).version);
-
-const env = require('./builder/getEnv');
+const jsRulesUseArray = [];
 
 const config = {
   entry: {
     bundle: 'bundle',
   },
   output: {
-    path: dist,
+    path: distPath,
     filename: '[name].js'
   },
   mode: mode,
   devtool: 'none',
-  optimization: {
-    minimizer: [
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: false,
-        uglifyOptions: {
-          output: {
-            beautify: true,
-            comments: /^\s+(@|==\/?UserScript==)/,
-          }
-        }
-      })
-    ]
-  },
-  devtool: 'none',
   module: {
     rules: [
       {
-        test: /.js$/,
+        test: /\.js$/,
+        enforce: 'pre',
         exclude: /node_modules/,
-        use: {
+        use: [{
           loader: 'babel-loader',
           options: {
-            presets: [
-              ['env', env]
-            ]
+            plugins: [
+              [require('./builder/babel-plugin-define'), {
+                BACKGROUND_SCRIPTS: defineScripts(BACKGROUND_SCRIPTS),
+                OPTIONS_PAGE: JSON.stringify(OPTIONS_PAGE),
+                OPTIONS_SCRIPTS: defineScripts(OPTIONS_SCRIPTS),
+                POPUP_PAGE: JSON.stringify(POPUP_PAGE),
+                POPUP_SCRIPTS: defineScripts(POPUP_SCRIPTS),
+                CONTENT_SCRIPTS: JSON.stringify(CONTENT_SCRIPTS),
+                CONTENT_SCRIPT_MAP: JSON.stringify(CONTENT_SCRIPT_MAP),
+                CONTENT_SCRIPT_INDEX: defineScripts(CONTENT_SCRIPT_INDEX),
+              }]
+            ],
           }
-        }
+        }]
+      },
+      {
+        test: /.js$/,
+        exclude: /node_modules/,
+        use: jsRulesUseArray
       },
     ]
   },
   resolve: {
     alias: {
-      'bundle': path.join(mono, `./browsers/${browser}/bundle`),
+      'bundle': path.join(monoPath, `./browsers/${browser}/bundle`),
     }
   },
   plugins: [
     new CleanWebpackPlugin([
-      path.join(dist, 'includes'),
-      path.join(dist, 'js'),
-      path.join(dist, 'options.html'),
-      path.join(dist, 'popup.html'),
+      path.join(distPath, 'includes'),
+      path.join(distPath, 'js'),
+      path.join(distPath, 'options.html'),
+      path.join(distPath, 'popup.html'),
+      path.join(distPath, '_locales'),
+      path.join(distPath, 'manifest.json'),
     ]),
     new BannerPlugin({
       banner: meta,
@@ -94,19 +95,18 @@ const config = {
     new DefinePlugin({
       DEFAULT_LOCALE: JSON.stringify(DEFAULT_LOCALE),
       LOCALE_MAP: JSON.stringify(LOCALE_MAP),
-      BACKGROUND_SCRIPTS: defineScripts(BACKGROUND_SCRIPTS),
-      OPTIONS_PAGE: JSON.stringify(OPTIONS_PAGE),
-      OPTIONS_SCRIPTS: defineScripts(OPTIONS_SCRIPTS),
-      POPUP_PAGE: JSON.stringify(POPUP_PAGE),
-      POPUP_SCRIPTS: defineScripts(POPUP_SCRIPTS),
-      CONTENT_SCRIPTS: JSON.stringify(CONTENT_SCRIPTS),
-      CONTENT_SCRIPT_MAP: JSON.stringify(CONTENT_SCRIPT_MAP),
-      CONTENT_SCRIPT_INDEX: defineScripts(CONTENT_SCRIPT_INDEX),
       'process.env': {
-        DEBUG: JSON.stringify('*')
-      }
-    }),
+        DEBUG: JSON.stringify('*'),
+      },
+    })
   ],
 };
+
+if (BUILD_ENV.babelOptions) {
+  jsRulesUseArray.push({
+    loader: 'babel-loader',
+    options: BUILD_ENV.babelOptions
+  });
+}
 
 module.exports = config;

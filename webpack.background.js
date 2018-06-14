@@ -1,67 +1,73 @@
+require('./builder/defaultBuildEnv');
 const {DefinePlugin} = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const getDistPath = require('./builder/getDistPath');
+const getLocaleMap = require('./builder/getLocaleMap');
 
-const isWatch = require('./builder/isWatch');
+const mode = BUILD_ENV.mode;
 
-const mode = require('./builder/getMode');
+const devtool = BUILD_ENV.devtool;
 
-const browser = require('./builder/getBrowser');
+const sourcePath = BUILD_ENV.sourcePath;
 
-const mono = require('./builder/getMono');
+const browser = BUILD_ENV.monoBrowser;
 
-const {src, dist} = require('./builder/getOutput');
+const monoPath = BUILD_ENV.monoPath;
 
-const env = require('./builder/getEnv');
+const distPath = getDistPath();
+
+const jsRulesUseArray = [];
 
 const config = {
   entry: {
-    background: path.join(src, 'js/background'),
+    background: path.join(sourcePath, 'js/background')
   },
   output: {
-    path: dist,
+    path: distPath,
     filename: 'js/[name].js'
   },
   mode: mode,
-  devtool: 'source-map',
+  devtool: devtool,
   module: {
     rules: [
       {
         test: /.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              ['env', env]
-            ]
-          }
-        }
+        use: jsRulesUseArray
       },
     ]
   },
   resolve: {
     alias: {
-      'mono': path.join(mono, `./browsers/${browser}/backgroundPage`),
+      'mono': path.join(monoPath, `./browsers/${browser}/backgroundPage`),
     }
   },
   plugins: [
     new DefinePlugin({
       'process.env': {
-        DEBUG: JSON.stringify('*')
-      }
+        DEBUG: JSON.stringify('*'),
+      },
     }),
   ],
 };
 
+if (!['userscript'].includes(browser)) {
+  if (BUILD_ENV.babelOptions) {
+    jsRulesUseArray.push({
+      loader: 'babel-loader',
+      options: BUILD_ENV.babelOptions
+    });
+  }
+}
+
 if (browser === 'safari') {
-  const {LOCALE_MAP, DEFAULT_LOCALE} = require('./builder/getLocaleMap');
+  const {LOCALE_MAP, DEFAULT_LOCALE} = getLocaleMap();
 
   config.plugins.push(
     new HtmlWebpackPlugin({
       filename: 'background.html',
-      template: path.join(src, './background.html'),
-      chunks: ['background'],
+      template: path.join(sourcePath, './background.html'),
       minify: {
         html5: true,
         removeComments: true,

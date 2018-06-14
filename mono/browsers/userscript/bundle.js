@@ -1,5 +1,4 @@
 import Router from "../../router";
-import PopupPageUi from "./popupPageUi";
 import OptionsPageUi from "./optionsPageUi";
 import UserscriptBackgroundPageMono from "./backgroundPageMono";
 import UserscriptPageMono from "./pageMono";
@@ -45,16 +44,13 @@ class Bundle extends Router {
     return instance;
   }
   init() {
-    return this.inject();
+      return this.inject();
   }
   wakeUpBackgroundPage() {
-    return Promise.resolve().then(() => {
-      if (!this.backgroundPageLoaded) {
-        this.backgroundPageLoaded = true;
-        this.executeBackgroundScripts();
-      }
-      return this.backgroundPageMono.readyPromise;
-    });
+    if (!this.backgroundPageLoaded) {
+      this.backgroundPageLoaded = true;
+      this.executeBackgroundScripts();
+    }
   }
   showPopup() {
     this.closePopup();

@@ -93,9 +93,14 @@ class Router extends LocaleMixin(class {}) {
   }
   runWhenDocumentIdle(listener) {
     this.runWhenDocumentEnd(() => {
-      if (window.requestIdleCallback) {
-        window.requestIdleCallback(listener);
-      } else {
+      try {
+        if (window.requestIdleCallback) {
+          window.requestIdleCallback(listener);
+        } else {
+          throw new Error('requestIdleCallback in not supported');
+        }
+      } catch (err) {
+        // Violentmonkey BUG, it throw error when use requestIdleCallback
         setTimeout(listener, 1);
       }
     });

@@ -2,29 +2,30 @@ const {DefinePlugin} = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const path = require('path');
 const defineScripts = require('./builder/defineScripts');
+const getDistPath = require('./builder/getDistPath');
+const getContentScripts = require('./builder/getContentScripts');
+const getLocaleMap = require('./builder/getLocaleMap');
 
-const isWatch = require('./builder/isWatch');
+const mode = BUILD_ENV.mode;
 
-const mode = require('./builder/getMode');
+const browser = BUILD_ENV.monoBrowser;
 
-const browser = require('./builder/getBrowser');
+const monoPath = BUILD_ENV.monoPath;
 
-const mono = require('./builder/getMono');
+const distPath = getDistPath();
 
-const {dist} = require('./builder/getOutput');
+const {LOCALE_MAP, DEFAULT_LOCALE} = getLocaleMap();
 
-const {LOCALE_MAP, DEFAULT_LOCALE} = require('./builder/getLocaleMap');
+const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPT_INDEX, CONTENT_SCRIPTS} = getContentScripts();
 
-const {CONTENT_SCRIPT_MAP, CONTENT_SCRIPT_INDEX, CONTENT_SCRIPTS} = require('./builder/getContentScripts');
-
-const env = require('./builder/getEnv');
+const jsRulesUseArray = [];
 
 const config = {
   entry: {
     router: 'router',
   },
   output: {
-    path: dist,
+    path: distPath,
     filename: 'includes/[name].js'
   },
   mode: mode,
@@ -32,39 +33,55 @@ const config = {
   module: {
     rules: [
       {
-        test: /.js$/,
+        test: /\.js$/,
+        enforce: 'pre',
         exclude: /node_modules/,
-        use: {
+        use: [{
           loader: 'babel-loader',
           options: {
-            presets: [
-              ['env', env]
-            ]
+            plugins: [
+              [require('./builder/babel-plugin-define'), {
+                CONTENT_SCRIPTS: JSON.stringify(CONTENT_SCRIPTS),
+                CONTENT_SCRIPT_MAP: JSON.stringify(CONTENT_SCRIPT_MAP),
+                CONTENT_SCRIPT_INDEX: defineScripts(CONTENT_SCRIPT_INDEX),
+              }]
+            ],
           }
-        }
+        }]
+      },
+      {
+        test: /.js$/,
+        exclude: /node_modules/,
+        use: jsRulesUseArray
       },
     ]
   },
   resolve: {
     alias: {
-      'router': path.join(mono, `./browsers/${browser}/router`),
+      'router': path.join(monoPath, `./browsers/${browser}/router`),
     }
   },
   plugins: [
     new CleanWebpackPlugin([
-      path.join(dist, 'includes')
+      path.join(distPath, 'includes'),
+      path.join(distPath, '_locales'),
+      path.join(distPath, 'manifest.json')
     ]),
     new DefinePlugin({
       DEFAULT_LOCALE: JSON.stringify(DEFAULT_LOCALE),
       LOCALE_MAP: JSON.stringify(LOCALE_MAP),
-      CONTENT_SCRIPTS: JSON.stringify(CONTENT_SCRIPTS),
-      CONTENT_SCRIPT_MAP: JSON.stringify(CONTENT_SCRIPT_MAP),
-      CONTENT_SCRIPT_INDEX: defineScripts(CONTENT_SCRIPT_INDEX),
       'process.env': {
-        DEBUG: JSON.stringify('*')
-      }
+        DEBUG: JSON.stringify("*"),
+      },
     }),
   ],
 };
+
+if (BUILD_ENV.babelOptions) {
+  jsRulesUseArray.push({
+    loader: 'babel-loader',
+    options: BUILD_ENV.babelOptions
+  });
+}
 
 module.exports = config;

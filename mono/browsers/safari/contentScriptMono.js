@@ -1,4 +1,4 @@
-import Transport from "../../transport";
+import SafariTransport from "./transport";
 import Storage from "../../storage";
 import RemoteStorage from "../../remoteStorage";
 import ContentScriptMono from "../../contentScriptMono";
@@ -23,7 +23,7 @@ class SafariContentScriptMono extends SafariContentScriptApiMixin(ContentScriptM
     };
   }
   initMessages() {
-    this.transport = new Transport(this, {
+    this.transport = new SafariTransport(this, {
       addListener: listener => {
         if (!listener._listener) {
           listener._listener = event => listener(event.message, event);

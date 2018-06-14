@@ -1,28 +1,30 @@
+require('./builder/defaultBuildEnv');
 const {DefinePlugin} = require('webpack');
 const path = require('path');
+const getDistPath = require('./builder/getDistPath');
 
-const isWatch = require('./builder/isWatch');
+const mode = BUILD_ENV.mode;
 
-const mode = require('./builder/getMode');
+const sourcePath = BUILD_ENV.sourcePath;
 
-const browser = require('./builder/getBrowser');
+const browser = BUILD_ENV.monoBrowser;
 
-const mono = require('./builder/getMono');
+const monoPath = BUILD_ENV.monoPath;
 
-const {src, dist} = require('./builder/getOutput');
+const distPath = getDistPath();
 
-const env = require('./builder/getEnv');
+const jsRulesUseArray = [];
 
 const config = {
   entry: {
-    any: path.join(src, './includes/any'),
-    anyFrame: path.join(src, './includes/anyFrame'),
-    ya: path.join(src, './includes/ya'),
-    yaFrame: path.join(src, './includes/yaFrame'),
+    any: path.join(sourcePath, './includes/any'),
+    anyFrame: path.join(sourcePath, './includes/anyFrame'),
+    ya: path.join(sourcePath, './includes/ya'),
+    yaFrame: path.join(sourcePath, './includes/yaFrame'),
   },
   output: {
-    path: dist,
-    filename: 'includes/[name].js'
+    path: distPath,
+    filename: 'includes/[name].js',
   },
   mode: mode,
   devtool: 'none',
@@ -31,29 +33,31 @@ const config = {
       {
         test: /.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: [
-              ['env', env]
-            ]
-          }
-        }
+        use: jsRulesUseArray
       },
     ]
   },
   resolve: {
     alias: {
-      'mono': path.join(mono, `./browsers/${browser}/contentScript`),
+      'mono': path.join(monoPath, `./browsers/${browser}/contentScript`),
     }
   },
   plugins: [
     new DefinePlugin({
       'process.env': {
-        DEBUG: JSON.stringify('*')
-      }
+        DEBUG: JSON.stringify('*'),
+      },
     }),
   ],
 };
+
+if (!['safari', 'userscript'].includes(browser)) {
+  if (BUILD_ENV.babelOptions) {
+    jsRulesUseArray.push({
+      loader: 'babel-loader',
+      options: BUILD_ENV.babelOptions
+    });
+  }
+}
 
 module.exports = config;

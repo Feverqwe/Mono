@@ -1,76 +1,121 @@
 const gulp = require('gulp');
-const gutil = require('gulp-util');
 const webpack = require('webpack');
 const path = require('path');
-const runSequence = require('run-sequence');
+require('./builder/defaultBuildEnv');
+
+BUILD_ENV.babelOptions.plugins.splice(0);
+BUILD_ENV.babelOptions.presets.splice(0);
 
 const runWebpack = config => {
   return new Promise((resolve, reject) => {
     webpack(config, (err, stats) => {
       if (err) return reject(err);
-      gutil.log(stats.toString(Object.assign(webpack.Stats.presetToOptions('default'), {
-        colors: gutil.colors.supportsColor,
+      console.log(stats.toString(Object.assign(webpack.Stats.presetToOptions('default'), {
+        colors: true,
       })));
       resolve();
     });
   });
 };
 
-gulp.task('buildBase', () => {
+const buildBase = () => {
   return runWebpack([
     require('./webpack.background'),
     require('./webpack.pages'),
     require('./webpack.contentScripts'),
   ]);
-});
+};
 
-gulp.task('buildBundle', () => {
-  return runWebpack(require('./webpack.bundle'));
-});
+gulp.task('buildChrome', () => {
+  const manifest = require('./src/manifest');
 
-gulp.task('buildRouter', () => {
-  return runWebpack(require('./webpack.router'));
-});
+  BUILD_ENV.version = manifest.version;
 
-gulp.task('buildUserjs', () => {
-  process.argv.push('--1output-path', path.resolve('./dist/userjs'));
-  process.argv.push('--mono-browser', 'userscript');
-  return runWebpack(require('./webpack.userjs'));
+  BUILD_ENV.babelOptions.presets.push(
+    ['env', {
+      targets: {
+        browsers: [
+          'Chrome >= 40'
+        ]
+      }
+    }]
+  );
+
+  BUILD_ENV.outputPath = path.resolve('./dist/chrome');
+  BUILD_ENV.monoBrowser = 'chrome';
+
+  return runWebpack(require('./webpack.chrome'))
+    .then(() => buildBase());
 });
 
 gulp.task('buildSafari', () => {
-  process.argv.push('--1output-path', path.resolve('./dist/safari'));
-  process.argv.push('--mono-browser', 'safari');
-  return runWebpack(require('./webpack.safari'));
+  const manifest = require('./src/manifest');
+
+  BUILD_ENV.version = manifest.version;
+
+  BUILD_ENV.babelOptions.presets.push(
+    ['env', {
+      targets: {
+        browsers: [
+          'Safari >= 10'
+        ]
+      }
+    }]
+  );
+
+  BUILD_ENV.outputPath = path.resolve('./dist/safari');
+  BUILD_ENV.monoBrowser = 'safari';
+
+  return runWebpack(require('./webpack.safari'))
+    .then(() => buildBase())
+    .then(() => runWebpack(require('./webpack.router')));
 });
 
-gulp.task('buildChrome', () => {
-  process.argv.push('--1output-path', path.resolve('./dist/chrome'));
-  process.argv.push('--mono-browser', 'chrome');
-  return runWebpack(require('./webpack.chrome'));
+gulp.task('buildUserjs', () => {
+  const manifest = require('./src/manifest');
+
+  BUILD_ENV.version = manifest.version;
+
+  BUILD_ENV.babelOptions.presets.push(
+    ['env', {
+      targets: {
+        browsers: [
+          'Chrome >= 40',
+          'Safari >= 10',
+          'Firefox >= 48'
+        ]
+      }
+    }]
+  );
+
+  BUILD_ENV.outputPath = path.resolve('./dist/userjs');
+  BUILD_ENV.monoBrowser = 'userscript';
+
+  return runWebpack(require('./webpack.userjs'))
+    .then(() => buildBase())
+    .then(() => runWebpack(require('./webpack.bundle')));
 });
 
-gulp.task('setArgv', () => {
-  process.argv.push('--mono-path', path.resolve('./mono'));
-  process.argv.push('--source-path', path.resolve('./src'));
-  // process.argv.push('--mode', 'production');
-  process.argv.push('--mode', 'development');
+gulp.task('setArgv', done => {
+  BUILD_ENV.monoPath = path.resolve('./mono');
+  BUILD_ENV.sourcePath = path.resolve('./src');
+  BUILD_ENV.devtool = 'source-map';
+  BUILD_ENV.mode = process.env.RELEASE ? 'production' : 'development';
+  if (BUILD_ENV.mode === 'production') {
+    BUILD_ENV.devtool = 'none';
+  }
+  done();
 });
 
 let fired = false;
-gulp.task('singleTaskLock', () => {
+gulp.task('singleTaskLock', done => {
   if (fired) throw new Error("Another task is already running");
   fired = true;
+  done();
 });
 
-gulp.task('userjs', callback => {
-  runSequence('singleTaskLock', 'setArgv', 'buildUserjs', 'buildBase', 'buildBundle', callback);
-});
+gulp.task('userjs', gulp.series('singleTaskLock', 'setArgv', 'buildUserjs'));
 
-gulp.task('safari', callback => {
-  runSequence('singleTaskLock', 'setArgv', 'buildSafari', 'buildBase', 'buildRouter', callback);
-});
+gulp.task('safari', gulp.series('singleTaskLock', 'setArgv', 'buildSafari'));
 
-gulp.task('chrome', callback => {
-  runSequence('singleTaskLock', 'setArgv', 'buildChrome', 'buildBase', callback);
-});
+gulp.task('chrome', gulp.series('singleTaskLock', 'setArgv', 'buildChrome'));

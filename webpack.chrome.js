@@ -1,43 +1,42 @@
+require('./builder/defaultBuildEnv');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
+const getArgvValue = require('./builder/getArgvValue');
+const getDistPath = require('./builder/getDistPath');
+const RemoveAssets = require('./builder/removeAssets');
 
-const isWatch = require('./builder/isWatch');
+const isWatch = getArgvValue('--watch');
 
-const mode = require('./builder/getMode');
+const mode = BUILD_ENV.mode;
 
-const source = require('./builder/getSource');
+const sourcePath = BUILD_ENV.sourcePath;
 
-const {output, src, dist} = require('./builder/getOutput');
+const outputPath = BUILD_ENV.outputPath;
+
+const distPath = getDistPath();
 
 const config = {
   entry: {
     empty: './builder/noop',
   },
   output: {
-    path: output,
-    filename: 'chrome.entry'
+    path: outputPath,
+    filename: 'empty.point'
   },
   mode: mode,
   devtool: 'none',
   plugins: [
     new CleanWebpackPlugin([
-      output
+      outputPath
     ]),
     new CopyWebpackPlugin([
-      {from: path.join(source, './manifest.json'), to: path.join(dist, './manifest.json')},
-      {from: path.join(source, './icons'), to: path.join(dist, './icons')},
-      {from: path.join(source, './_locales'), to: path.join(dist, './_locales')},
-    ])
+      {from: path.join(sourcePath, './manifest.json'), to: path.join(distPath, './manifest.json')},
+      {from: path.join(sourcePath, './icons'), to: path.join(distPath, './icons')},
+      {from: path.join(sourcePath, './_locales'), to: path.join(distPath, './_locales')},
+    ]),
+    new RemoveAssets(['empty.point']),
   ],
 };
-
-if (!isWatch) {
-  config.plugins.unshift(
-    new CopyWebpackPlugin([
-      {from: source, to: src}
-    ])
-  );
-}
 
 module.exports = config;

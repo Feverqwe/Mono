@@ -1,15 +1,21 @@
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
+const getManifest = require('./getManifest');
+const getDistPath = require('./getDistPath');
 
-const {src} = require('./getOutput');
+const getLocaleMap = () => {
+  const dist = getDistPath();
 
-const localesPath = path.join(src, './_locales');
+  const localesPath = path.join(dist, './_locales');
 
-const LOCALE_MAP = {};
-fs.readdirSync(localesPath).forEach(locale => {
-  LOCALE_MAP[locale] = require(path.join(localesPath, locale, 'messages.json'));
-});
+  const LOCALE_MAP = {};
+  fs.readdirSync(localesPath).forEach(locale => {
+    LOCALE_MAP[locale] = require(path.join(localesPath, locale, 'messages.json'));
+  });
 
-const DEFAULT_LOCALE = require(path.join(src, './manifest')).default_locale;
+  const DEFAULT_LOCALE = getManifest().default_locale;
 
-module.exports = {DEFAULT_LOCALE, LOCALE_MAP};
+  return {DEFAULT_LOCALE, LOCALE_MAP};
+};
+
+module.exports = getLocaleMap;

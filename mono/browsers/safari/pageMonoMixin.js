@@ -1,7 +1,7 @@
 import Storage from "../../storage";
 import LsStorage from "../../lsStorage";
-import {TransportWithActiveTab} from "../../transport";
 import LocaleMixin from "../../localeMixin";
+import {SafariTransportWithActiveTab} from "./transport";
 
 const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
   initI18n() {
@@ -16,9 +16,9 @@ const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
   initMessages() {
     const getEvent = message => {
       return {
-        message: message,
+        message: Object.assign({}, message),
         target: {
-          tab: {
+          page: {
             dispatchMessage: (eventName, message) => {
               window.monoDispatchMessage(getEvent(message));
             }
@@ -27,7 +27,7 @@ const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
       }
     };
 
-    this.transport = new TransportWithActiveTab(this, {
+    this.transport = new SafariTransportWithActiveTab(this, {
       addListener: listener => {
         if (!listener._listener) {
           listener._listener = event => listener(event.message, event);
@@ -46,13 +46,10 @@ const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
         });
       },
       sendMessageTo: (message, event) => {
-        if (event.target.tab) {
-          event.target.tab.dispatchMessage('message', message);
-        } else
         if (event.target.page) {
           event.target.page.dispatchMessage('message', message);
         } else {
-          throw new Error('event.target.tab or event.target.page is not exists');
+          throw new Error('event.target.page is not exists');
         }
       },
       sendMessageToActiveTab: message => {
@@ -75,7 +72,11 @@ const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
       },
     });
 
-    window.monoDispatchMessage = event => this.transport.listen(event.message, event);
+    window.monoDispatchMessage = event => {
+      if (this.transport.isListen) {
+        this.transport.listen(event.message, event);
+      }
+    };
 
     super.initMessages();
   }

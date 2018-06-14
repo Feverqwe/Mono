@@ -1,16 +1,21 @@
 const path = require('path');
 const fs = require('fs');
 const getScriptsAndHtmlFormHtml = require('./getScriptsAndBodyFormHtml');
+const getDistPath = require('./getDistPath');
 
-const {dist} = require('./getOutput');
+const getOptions = () => {
+  const dist = getDistPath();
 
-const scriptContent = [];
+  const scriptContent = [];
 
-const html = String(fs.readFileSync(path.join(dist, 'options.html')));
-const {scripts, body} = getScriptsAndHtmlFormHtml(html);
+  const html = String(fs.readFileSync(path.join(dist, 'options.html')));
+  const {scripts, body} = getScriptsAndHtmlFormHtml(html);
 
-scripts.forEach(filename => {
-  scriptContent.push(String(fs.readFileSync(path.join(dist, filename))));
-});
+  scripts.forEach(filename => {
+    scriptContent.push(String(fs.readFileSync(path.join(dist, filename))));
+  });
 
-module.exports = {OPTIONS_SCRIPTS: scriptContent, OPTIONS_PAGE: body};
+  return {OPTIONS_SCRIPTS: scriptContent, OPTIONS_PAGE: body};
+};
+
+module.exports = getOptions;

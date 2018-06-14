@@ -1,101 +1,151 @@
-import TransportWithResponse from "./transportWithResponse";
+import Event from "./event";
+import copyMessage from "./copyMessage";
+
+const emptyFn = () => {};
+const onceFn = cb => {
+  let fired = false;
+  return (...args) => {
+    if (!fired) {
+      fired = true;
+      cb(...args);
+    }
+  };
+};
 
 /**
- * @typedef {{}} RawTransport
+ * @typedef {{}} RawTransportWithResponse
  * @property {function(function)} addListener
  * @property {function(function)} removeListener
- * @property {function(*)} sendMessage
- * @property {function(*, Object)} sendMessageTo
+ * @property {function(*,function)} sendMessage
  */
 
-class Transport extends TransportWithResponse {
-  constructor(mono, /**RawTransport*/transport) {
-    super(transport);
-    this.mono = mono;
-    this.callbackIndex = 0;
-    this.idCallbackMap = {};
+class Transport extends Event {
+  constructor(/**RawTransportWithResponse*/transport) {
+    super();
+    this.transportId = String(parseInt(Math.random() * 1000, 10));
+    this.destroyError = null;
+    this.isListen = false;
+    this.transport = transport;
 
     this.listen = this.listen.bind(this);
   }
 
-  getCallbackId() {
-    return `${this.transportId}_${++this.callbackIndex}`
-  }
-
-  sendReceiveReply(rawMessage, event) {
-    this.transport.sendMessageTo({
-      transportId: this.transportId,
-      responseId: rawMessage.callbackId,
-      received: true
-    }, event);
-  }
-
-  waitReceiveReply(callbackId) {
-    setTimeout(() => {
-      const callback = this.idCallbackMap[callbackId];
-      if (callback) {
-        if (!callback.received) {
-          console.info('No one received a message');
-          callback();
+  callListeners(message, sender, response) {
+    let result = null;
+    this.listeners.forEach(listener => {
+      try {
+        const r = listener(message, sender, response);
+        if (r === true) {
+          result = r;
         }
+      } catch (err) {
+        console.error('Error in event handler for mono.onMessage:', err);
       }
-    }, 1000);
+    });
+    return result;
   }
 
   /**
-   * @param {{callbackId:string,message:*,responseId:string,responseMessage:*,sender:Object}} rawMessage
-   * @param {Object} event
+   * @typedef {{}} RawMessage
+   * @property {string} transportId
+   * @property {*} message
+   * @property {{url:string}} sender
+   * @property {boolean} _responseFired
+   * @property {boolean} _forceResponse
+   * @property {boolean} _asyncResponse
+   */
+
+  /**
+   * @param {RawMessage} rawMessage
+   * @param {function(*)} rawResponse
    * @private
    */
-  listen(rawMessage, event) {
+  listen(rawMessage, rawResponse) {
     if (rawMessage.transportId === this.transportId) return;
 
-    if (rawMessage.responseId) {
-      const callback = this.idCallbackMap[rawMessage.responseId];
-      if (rawMessage.received) {
-        if (callback) {
-          callback.received = true;
-        }
-      } else {
-        if (callback) {
-          callback(rawMessage.responseMessage);
-        } else {
-          if (rawMessage.responseId.indexOf(this.transportId) === 0) {
-            console.warn('Callback is not found', rawMessage);
+    let response;
+    if (rawResponse) {
+      response = onceFn((responseMessage, isForce) => {
+        if (this.destroyError) {
+          console.warn('Send response is skip cause:', this.destroyError);
+        } else
+        if (!rawMessage._responseFired) {
+          rawMessage._responseFired = true;
+          rawMessage._forceResponse = isForce;
+          try {
+            rawResponse(copyMessage(responseMessage));
+          } catch (err) {
+            console.warn('Send response error', err);
           }
+        } else {
+          console.warn('Send response is skip cause: Already fired');
         }
-      }
-      return;
+      });
+    } else {
+      response = emptyFn;
     }
 
-    let response = null;
-    if (rawMessage.callbackId) {
-      this.sendReceiveReply(rawMessage, event);
-      response = responseMessage => {
-        this.transport.sendMessageTo({
-          transportId: this.transportId,
-          responseId: rawMessage.callbackId,
-          responseMessage: responseMessage
-        }, event);
-      };
+    const result = this.callListeners(rawMessage.message, rawMessage.sender || {}, response);
+    if (result === true) {
+      rawMessage._asyncResponse = true;
+    } else
+    if (!rawMessage._responseFired) {
+      setTimeout(() => {
+        if (!rawMessage._responseFired && !rawMessage._asyncResponse) {
+          response(undefined, true);
+        }
+      }, 1);
     }
-
-    super.listen(rawMessage, response);
   }
 
-  getRawMessage(message, response) {
-    const rawMessage = super.getRawMessage(message, response);
-    if (response) {
-      !this.isListen && this.startListen();
-
-      rawMessage.callbackId = this.getCallbackId();
-      this.waitReceiveReply(rawMessage.callbackId);
-      this.idCallbackMap[rawMessage.callbackId] = responseMessage => {
-        delete this.idCallbackMap[rawMessage.callbackId];
-        response(responseMessage);
-      };
+  /**
+   * @private
+   */
+  startListen() {
+    if (!this.isListen) {
+      this.isListen = true;
+      this.transport.addListener(this.listen);
     }
-    return rawMessage;
+  }
+
+  /**
+   * @private
+   */
+  stopListen() {
+    if (this.isListen) {
+      this.isListen = false;
+      this.transport.removeListener(this.listen);
+    }
+  }
+
+  /**
+   * @param {function(*,{},function(*)):boolean} listener
+   */
+  addListener(listener) {
+    super.addListener(listener);
+    if (this.listeners.length > 0) {
+      this.startListen();
+    }
+  }
+
+  /**
+   * @param {function} listener
+   */
+  removeListener(listener) {
+    super.removeListener(listener);
+    if (this.listeners.length === 0) {
+      this.stopListen();
+    }
+  }
+
+  getRawMessage(message) {
+    return {
+      transportId: this.transportId,
+      message: copyMessage(message),
+      sender: {
+        url: location.href
+      }
+    };
   }
 
   /**
@@ -107,25 +157,19 @@ class Transport extends TransportWithResponse {
 
     const rawMessage = this.getRawMessage(message, response);
 
-    try {
-      this.transport.sendMessage(rawMessage);
-    } catch (err) {
-      this.mono.lastError = err;
-      const wrappedResponse = this.idCallbackMap[rawMessage.callbackId];
-      wrappedResponse && wrappedResponse();
-      this.mono.clearLastError();
-    }
+    this.transport.sendMessage(rawMessage, response);
   }
 
   destroy() {
-    this.idCallbackMap = {};
-    super.destroy();
+    this.destroyError = new Error('Transport is destroyed');
+    this.listeners.splice(0);
+    this.stopListen();
   }
 }
 
 
 /**
- * @typedef {RawTransport} RawTransportPage
+ * @typedef {RawTransportWithResponse} RawTransportWithResponsePage
  * @property {function(*,function)} sendMessageToActiveTab
  */
 
@@ -139,14 +183,7 @@ class TransportWithActiveTab extends Transport {
 
     const rawMessage = this.getRawMessage(message, response);
 
-    try {
-      this.transport.sendMessageToActiveTab(rawMessage);
-    } catch (err) {
-      this.mono.lastError = err;
-      const wrappedResponse = this.idCallbackMap[rawMessage.callbackId];
-      wrappedResponse && wrappedResponse();
-      this.mono.clearLastError();
-    }
+    this.transport.sendMessageToActiveTab(rawMessage, response);
   }
 }
 

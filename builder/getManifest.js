@@ -1,9 +1,11 @@
+const fs = require('fs-extra');
 const path = require('path');
+const getDistPath = require('./getDistPath');
 
-const {src} = require('./getOutput');
+const dist = getDistPath();
 
 const getManifest = () => {
-  return require(path.join(src, './manifest'));
+  return fs.readJsonSync(path.join(dist, './manifest.json'));
 };
 
 module.exports = getManifest;

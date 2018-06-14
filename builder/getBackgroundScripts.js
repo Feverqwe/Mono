@@ -1,10 +1,16 @@
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
+const getDistPath = require('./getDistPath');
+const getManifest = require('./getManifest');
 
-const {src, dist} = require('./getOutput');
+const getBackgroundScripts = () => {
+  const dist = getDistPath();
 
-const BACKGROUND_SCRIPTS = require(path.join(src, './manifest')).background.scripts.map(filename => {
-  return String(fs.readFileSync(path.join(dist, filename)));
-});
+  const BACKGROUND_SCRIPTS = getManifest().background.scripts.map(filename => {
+    return String(fs.readFileSync(path.join(dist, filename)));
+  });
 
-module.exports = BACKGROUND_SCRIPTS;
+  return BACKGROUND_SCRIPTS;
+};
+
+module.exports = getBackgroundScripts;

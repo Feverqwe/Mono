@@ -8,6 +8,7 @@ class FirefoxPageMono extends FirefoxPageApiMixin(FirefoxPageMonoMixin(PageMono)
 
     this.initMessages();
     this.initStorage();
+    this.initI18n();
   }
 }
 

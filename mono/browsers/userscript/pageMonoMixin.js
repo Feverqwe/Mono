@@ -1,6 +1,7 @@
 import UserscriptStorage from "./storage";
 import Storage from "../../storage";
-import {TransportWithResponseWithActiveTab} from "../../transportWithResponse";
+import {TransportWithActiveTab} from "../../transport";
+import GmStorage from "./gmStorage";
 
 const UserscriptPageMonoMixin = Parent => class extends Parent {
   initI18n() {
@@ -13,7 +14,7 @@ const UserscriptPageMonoMixin = Parent => class extends Parent {
     };
   }
   initMessages() {
-    this.transport = new TransportWithResponseWithActiveTab({
+    this.transport = new TransportWithActiveTab({
       addListener: listener => {
         this.bundle.messaing.addListener('page', listener);
         this.bundle.messaing.addListener('fromActiveTab', listener);
@@ -41,7 +42,11 @@ const UserscriptPageMonoMixin = Parent => class extends Parent {
     super.initMessages();
   }
   initStorage() {
-    this.storage = new Storage(this, new UserscriptStorage());
+    if (typeof GM === 'object') {
+      this.storage = new Storage(this, new GmStorage());
+    } else {
+      this.storage = new Storage(this, new UserscriptStorage());
+    }
   }
   destroy() {
     super.destroy();
