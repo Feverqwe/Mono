@@ -3,7 +3,6 @@ import LsStorage from "../../lsStorage";
 import LocaleMixin from "../../localeMixin";
 import {SafariTransportWithActiveTab} from "./transport";
 import SafariStorageChanges from "./storageChanges";
-import copyMessage from "../../copyMessage";
 
 const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
   initI18n() {
@@ -79,7 +78,7 @@ const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
         });
         safari.application.browserWindows.forEach(window => {
           window.tabs.forEach(tab => {
-            tab.page.dispatchMessage('message', copyMessage(message));
+            tab.page.dispatchMessage('message', message);
           });
         });
       }

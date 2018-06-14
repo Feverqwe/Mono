@@ -130,7 +130,7 @@ class SafariTransport extends Transport {
     }
 
     if (rawMessage.sender) {
-      rawMessage.sender.tab = event.target;
+      rawMessage.sender = Object.assign({}, rawMessage.sender, {tab: event.target});
     }
 
     let response = null;
