@@ -1,8 +1,11 @@
 import {unwrapObjectValues, wrapObjectValues} from "./warpObjectValues";
+import Event from "./event";
 
 class RemoteStorage {
   constructor(mono) {
     this.mono = mono;
+
+    this.onChanged = new Event();
   }
   onError(callback, err, notOptionalCallback) {
     this.mono.lastError = err;
