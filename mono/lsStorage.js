@@ -1,4 +1,13 @@
+import getStorageChanges from "./getStorageChanges";
+
 class LsStorage {
+  constructor(mono) {
+    this.mono = mono;
+  }
+  handleChange(oldStorage, storage) {
+    const changes = getStorageChanges(oldStorage, storage);
+    this.mono.storageChanges.emit(changes);
+  }
   wrapValue(value) {
     return JSON.stringify({j:value});
   }
@@ -37,20 +46,30 @@ class LsStorage {
     callback(result);
   }
   set(items, callback) {
-    Object.keys(items).forEach(key => {
-      localStorage.setItem(key, this.wrapValue(items[key]));
+    const keys = Object.keys(items);
+    this.get(keys, oldStorage => {
+      keys.forEach(key => {
+        localStorage.setItem(key, this.wrapValue(items[key]));
+      });
+      this.handleChange(oldStorage, items);
+      callback && callback();
     });
-    callback && callback();
   }
   remove(keys, callback) {
-    keys.forEach(key => {
-      localStorage.removeItem(key);
+    this.get(keys, oldStorage => {
+      keys.forEach(key => {
+        localStorage.removeItem(key);
+      });
+      this.handleChange(oldStorage, {});
+      callback && callback();
     });
-    callback && callback();
   }
   clear(callback) {
-    localStorage.clear();
-    callback && callback();
+    this.get(Object.keys(localStorage), oldStorage => {
+      localStorage.clear();
+      this.handleChange(oldStorage, {});
+      callback && callback();
+    });
   }
 }
 

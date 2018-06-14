@@ -4,6 +4,7 @@ import GmStorage from "./gmStorage";
 import UserscriptStorage from "./storage";
 import ContentScriptMono from "../../contentScriptMono";
 import UserscriptContentScriptApiMixin from "./contentScriptApiMixin";
+import UserscriptStorageChanges from "./storageChanges";
 
 class UserscriptContentScriptMono extends UserscriptContentScriptApiMixin(ContentScriptMono) {
   constructor(bundle) {
@@ -45,11 +46,12 @@ class UserscriptContentScriptMono extends UserscriptContentScriptApiMixin(Conten
     super.initMessages();
   }
   initStorage() {
-    if (typeof GM === 'object') {
-      this.storage = new Storage(this, new GmStorage());
+    if (typeof GM_getValue === 'function') {
+      this.storage = new Storage(this, new UserscriptStorage(this));
     } else {
-      this.storage = new Storage(this, new UserscriptStorage());
+      this.storage = new Storage(this, new GmStorage(this));
     }
+    this.storageChanges = new UserscriptStorageChanges(this);
   }
   destroy() {
     super.destroy();

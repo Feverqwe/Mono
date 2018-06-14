@@ -6,6 +6,7 @@ import Transport from "../../transport";
  * @property {function(function)} removeListener
  * @property {function(*)} sendMessage
  * @property {function(*, Object)} sendMessageTo
+ * @property {function(*)} sendMessageToAll
  */
 
 class SafariTransport extends Transport {
@@ -178,6 +179,19 @@ class SafariTransport extends Transport {
       this.mono.lastError = err;
       const wrappedResponse = this.idCallbackMap[rawMessage.callbackId];
       wrappedResponse && wrappedResponse();
+      this.mono.clearLastError();
+    }
+  }
+
+  sendMessageToAll(message) {
+    if (this.destroyError) throw this.destroyError;
+
+    const rawMessage = this.getRawMessage(message, response);
+
+    try {
+      this.transport.sendMessageToAll(rawMessage);
+    } catch (err) {
+      this.mono.lastError = err;
       this.mono.clearLastError();
     }
   }

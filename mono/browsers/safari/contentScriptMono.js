@@ -3,6 +3,7 @@ import Storage from "../../storage";
 import RemoteStorage from "../../remoteStorage";
 import ContentScriptMono from "../../contentScriptMono";
 import SafariContentScriptApiMixin from "./contentScriptApiMixin";
+import StorageChangesListener from "./storageChangesListener";
 
 class SafariContentScriptMono extends SafariContentScriptApiMixin(ContentScriptMono) {
   constructor(router) {
@@ -51,6 +52,7 @@ class SafariContentScriptMono extends SafariContentScriptApiMixin(ContentScriptM
   }
   initStorage() {
     this.storage = new Storage(this, new RemoteStorage(this));
+    this.storageChangesListener = new StorageChangesListener(this);
   }
   destroy() {
     super.destroy();

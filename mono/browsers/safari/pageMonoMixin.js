@@ -2,6 +2,7 @@ import Storage from "../../storage";
 import LsStorage from "../../lsStorage";
 import LocaleMixin from "../../localeMixin";
 import {SafariTransportWithActiveTab} from "./transport";
+import SafariStorageChanges from "./storageChanges";
 
 const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
   initI18n() {
@@ -70,6 +71,17 @@ const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
           throw new Error('Active window not found');
         }
       },
+      sendMessageToAll: message => {
+        safari.extension.globalPage.contentWindow.monoDispatchMessage(getEvent(message));
+        safari.extension.popovers.forEach(popup => {
+          popup.contentWindow.monoDispatchMessage(getEvent(message));
+        });
+        safari.application.browserWindows.forEach(window => {
+          window.tabs.forEach(tab => {
+            tab.page.dispatchMessage('message', message);
+          });
+        });
+      }
     });
 
     window.monoDispatchMessage = event => {
@@ -81,7 +93,8 @@ const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
     super.initMessages();
   }
   initStorage() {
-    this.storage = new Storage(this, new LsStorage());
+    this.storage = new Storage(this, new LsStorage(this));
+    this.storageChanges = new SafariStorageChanges(this);
   }
   destroy() {
     super.destroy();

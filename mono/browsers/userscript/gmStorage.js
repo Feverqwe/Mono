@@ -1,4 +1,13 @@
+import getStorageChanges from "../../getStorageChanges";
+
 class GmStorage {
+  constructor(mono) {
+    this.mono = mono;
+  }
+  handleChange(oldStorage, storage) {
+    const changes = getStorageChanges(oldStorage, storage);
+    this.mono.storageChanges.emit(changes);
+  }
   wrapValue(value) {
     return JSON.stringify({j:value});
   }
@@ -46,21 +55,28 @@ class GmStorage {
     });
   }
   set(items, callback) {
-    Promise.all(Object.keys(items).map(key => {
-      return GM.setValue(key, this.wrapValue(items[key])).catch(err => {
-        console.error(`Set item (${key}) error`, err);
+    const keys = Object.keys(items);
+    this.get(keys, oldStorage => {
+      Promise.all(keys.map(key => {
+        return GM.setValue(key, this.wrapValue(items[key])).catch(err => {
+          console.error(`Set item (${key}) error`, err);
+        });
+      })).then(() => {
+        this.handleChange(oldStorage, items);
+        callback && callback();
       });
-    })).then(() => {
-      callback && callback();
     });
   }
   remove(keys, callback) {
-    Promise.all(keys.map(key => {
-      return GM.deleteValue(key).catch(err => {
-        console.error(`Remove key (${key}) error`, err);
+    this.get(keys, oldStorage => {
+      Promise.all(keys.map(key => {
+        return GM.deleteValue(key).catch(err => {
+          console.error(`Remove key (${key}) error`, err);
+        });
+      })).then(() => {
+        this.handleChange(oldStorage, {});
+        callback && callback();
       });
-    })).then(() => {
-      callback && callback();
     });
   }
   clear(callback) {

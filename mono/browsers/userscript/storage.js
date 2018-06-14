@@ -1,4 +1,13 @@
+import getStorageChanges from "../../getStorageChanges";
+
 class UserscriptStorage {
+  constructor(mono) {
+    this.mono = mono;
+  }
+  handleChange(oldStorage, storage) {
+    const changes = getStorageChanges(oldStorage, storage);
+    this.mono.storageChanges.emit(changes);
+  }
   wrapValue(value) {
     return JSON.stringify({j:value});
   }
@@ -38,16 +47,23 @@ class UserscriptStorage {
     callback(result);
   }
   set(items, callback) {
-    Object.keys(items).forEach(key => {
-      GM_setValue(key, this.wrapValue(items[key]));
+    const keys = Object.keys(items);
+    this.get(keys, oldStorage => {
+      keys.forEach(key => {
+        GM_setValue(key, this.wrapValue(items[key]));
+      });
+      this.handleChange(oldStorage, items);
+      callback && callback();
     });
-    callback && callback();
   }
   remove(keys, callback) {
-    keys.forEach(key => {
-      GM_deleteValue(key);
+    this.get(keys, oldStorage => {
+      keys.forEach(key => {
+        GM_deleteValue(key);
+      });
+      this.handleChange(oldStorage, {});
+      callback && callback();
     });
-    callback && callback();
   }
   clear(callback) {
     this.remove(GM_listValues(), callback);

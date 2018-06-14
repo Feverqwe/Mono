@@ -1,9 +1,12 @@
 import {wrapObjectValues, unwrapObjectValues} from "./warpObjectValues";
+import Event from "./event";
 
 class Storage {
   constructor(mono, api) {
     this.mono = mono;
     this.api = api;
+
+    this.onChanged = new Event();
 
     this.remote = {
       get: keys => {

@@ -2,6 +2,7 @@ import UserscriptStorage from "./storage";
 import Storage from "../../storage";
 import {TransportWithActiveTab} from "../../transport";
 import GmStorage from "./gmStorage";
+import UserscriptStorageChanges from "./storageChanges";
 
 const UserscriptPageMonoMixin = Parent => class extends Parent {
   initI18n() {
@@ -42,11 +43,12 @@ const UserscriptPageMonoMixin = Parent => class extends Parent {
     super.initMessages();
   }
   initStorage() {
-    if (typeof GM === 'object') {
-      this.storage = new Storage(this, new GmStorage());
+    if (typeof GM_getValue === 'function') {
+      this.storage = new Storage(this, new UserscriptStorage(this));
     } else {
-      this.storage = new Storage(this, new UserscriptStorage());
+      this.storage = new Storage(this, new GmStorage(this));
     }
+    this.storageChanges = new UserscriptStorageChanges(this);
   }
   destroy() {
     super.destroy();
