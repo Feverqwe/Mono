@@ -1,5 +1,5 @@
-import Storage from "../../storage";
 import FirefoxStorage from "./storage";
+import StorageMixin from "../../storageMixin";
 
 const FirefoxPageMonoMixin = Parent => class extends Parent {
   initI18n() {
@@ -60,7 +60,7 @@ const FirefoxPageMonoMixin = Parent => class extends Parent {
     super.initMessages();
   }
   initStorage() {
-    this.storage = new Storage(this, new FirefoxStorage(this));
+    this.storage = new (StorageMixin(FirefoxStorage))(this);
   }
 };
 

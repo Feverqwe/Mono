@@ -6,6 +6,12 @@ class ChromeStorage {
       addListener: listener => {
         chrome.storage.onChanged.addListener(listener);
       },
+      hasListener: listener => {
+        return chrome.storage.onChanged.hasListener(listener);
+      },
+      hasListeners: () => {
+        return chrome.storage.onChanged.hasListeners();
+      },
       removeListener: listener => {
         chrome.storage.onChanged.removeListener(listener);
       }

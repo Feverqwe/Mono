@@ -1,11 +1,10 @@
 import {wrapObjectValues, unwrapObjectValues} from "./warpObjectValues";
 
-class Storage {
-  constructor(mono, api) {
-    this.mono = mono;
-    this.api = api;
+const StorageMixin = StorageApi => class extends StorageApi {
+  constructor(mono) {
+    super();
 
-    this.onChanged = api.onChanged;
+    this.mono = mono;
 
     this.remote = {
       get: keys => {
@@ -56,14 +55,14 @@ class Storage {
     if (typeof keys !== 'object') {
       throw new Error('Incorrect keys type');
     }
-    this.api.get(keys, callback);
+    super.get(keys, callback);
   }
   /**
    * @param {Object} items
    * @param {function} [callback]
    */
   set(items, callback) {
-    this.api.set(items, callback);
+    super.set(items, callback);
   }
   /**
    * @param {String|[String]} [keys]
@@ -78,14 +77,14 @@ class Storage {
         throw new Error('Incorrect key type');
       }
     });
-    this.api.remove(keys, callback);
+    super.remove(keys, callback);
   }
   /**
    * @param {function} [callback]
    */
   clear(callback) {
-    this.api.clear(callback);
+    super.clear(callback);
   }
-}
+};
 
-export default Storage;
+export default StorageMixin;

@@ -1,4 +1,3 @@
-import getStorageChanges from "../../getStorageChanges";
 import Event from "../../event";
 
 class UserscriptStorage {
@@ -8,10 +7,7 @@ class UserscriptStorage {
     this.onChanged = new Event();
   }
   handleChange(oldStorage, storage) {
-    const changes = getStorageChanges(oldStorage, storage);
-    if (changes) {
-      this.mono.storageChanges.emit(changes);
-    }
+    throw new Error('handleChange is not supported');
   }
   wrapValue(value) {
     return JSON.stringify({j:value});

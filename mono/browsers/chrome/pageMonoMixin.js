@@ -1,5 +1,5 @@
-import Storage from "../../storage";
 import ChromeStorage from "./storage";
+import StorageMixin from "../../storageMixin";
 
 const ChromePageMonoMixin = Parent => class extends Parent {
   initI18n() {
@@ -60,7 +60,7 @@ const ChromePageMonoMixin = Parent => class extends Parent {
     super.initMessages();
   }
   initStorage() {
-    this.storage = new Storage(this, new ChromeStorage(this));
+    this.storage = new (StorageMixin(ChromeStorage))(this);
   }
 };
 

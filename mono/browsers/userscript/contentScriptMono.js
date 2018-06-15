@@ -1,10 +1,10 @@
 import Transport from "../../transport";
-import Storage from "../../storage";
 import GmStorage from "./gmStorage";
 import UserscriptStorage from "./storage";
 import ContentScriptMono from "../../contentScriptMono";
 import UserscriptContentScriptApiMixin from "./contentScriptApiMixin";
-import UserscriptStorageChanges from "./storageChanges";
+import StorageMixin from "../../storageMixin";
+import UserscriptStorageChangesMixin from "./storageChangesMixin";
 
 class UserscriptContentScriptMono extends UserscriptContentScriptApiMixin(ContentScriptMono) {
   constructor(bundle) {
@@ -47,11 +47,10 @@ class UserscriptContentScriptMono extends UserscriptContentScriptApiMixin(Conten
   }
   initStorage() {
     if (typeof GM_getValue === 'function') {
-      this.storage = new Storage(this, new UserscriptStorage(this));
+      this.storage = new (StorageMixin(UserscriptStorageChangesMixin(UserscriptStorage)))(this);
     } else {
-      this.storage = new Storage(this, new GmStorage(this));
+      this.storage = new (StorageMixin(UserscriptStorageChangesMixin(GmStorage)))(this);
     }
-    this.storageChanges = new UserscriptStorageChanges(this);
   }
   destroy() {
     super.destroy();

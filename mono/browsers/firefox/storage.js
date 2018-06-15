@@ -6,6 +6,12 @@ class FirefoxStorage {
       addListener: listener => {
         browser.storage.onChanged.addListener(listener);
       },
+      hasListener: listener => {
+        return browser.storage.onChanged.hasListener(listener);
+      },
+      hasListeners: () => {
+        return browser.storage.onChanged.hasListeners();
+      },
       removeListener: listener => {
         browser.storage.onChanged.removeListener(listener);
       }

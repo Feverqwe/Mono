@@ -1,9 +1,9 @@
 import SafariTransport from "./transport";
-import Storage from "../../storage";
 import RemoteStorage from "../../remoteStorage";
 import ContentScriptMono from "../../contentScriptMono";
 import SafariContentScriptApiMixin from "./contentScriptApiMixin";
-import StorageChangesListener from "./storageChangesListener";
+import StorageMixin from "../../storageMixin";
+import SafariStorageChangesMixin from "./storageChangesMixin";
 
 class SafariContentScriptMono extends SafariContentScriptApiMixin(ContentScriptMono) {
   constructor(router) {
@@ -51,8 +51,7 @@ class SafariContentScriptMono extends SafariContentScriptApiMixin(ContentScriptM
     super.initMessages();
   }
   initStorage() {
-    this.storage = new Storage(this, new RemoteStorage(this));
-    this.storageChangesListener = new StorageChangesListener(this);
+    this.storage = new (StorageMixin(SafariStorageChangesMixin(RemoteStorage)))(this);
   }
   destroy() {
     super.destroy();

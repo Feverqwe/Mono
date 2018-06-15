@@ -1,8 +1,8 @@
-import Storage from "../../storage";
 import LsStorage from "../../lsStorage";
 import LocaleMixin from "../../localeMixin";
 import {SafariTransportWithActiveTab} from "./transport";
-import SafariStorageChanges from "./storageChanges";
+import StorageMixin from "../../storageMixin";
+import SafariStorageChangesMixin from "./storageChangesMixin";
 
 const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
   initI18n() {
@@ -93,8 +93,7 @@ const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
     super.initMessages();
   }
   initStorage() {
-    this.storage = new Storage(this, new LsStorage(this));
-    this.storageChanges = new SafariStorageChanges(this);
+    this.storage = new (StorageMixin(SafariStorageChangesMixin(LsStorage)))(this);
   }
   destroy() {
     super.destroy();

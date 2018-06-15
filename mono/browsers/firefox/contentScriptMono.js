@@ -1,7 +1,7 @@
 import ContentScriptMono from "../../contentScriptMono";
-import Storage from "../../storage";
 import FirefoxStorage from "./storage";
 import FirefoxContentScriptApiMixin from "./contentScriptApiMixin";
+import StorageMixin from "../../storageMixin";
 
 class FirefoxContentScriptMono extends FirefoxContentScriptApiMixin(ContentScriptMono) {
   constructor() {
@@ -46,7 +46,7 @@ class FirefoxContentScriptMono extends FirefoxContentScriptApiMixin(ContentScrip
     super.initMessages();
   }
   initStorage() {
-    this.storage = new Storage(this, new FirefoxStorage(this));
+    this.storage = new (StorageMixin(FirefoxStorage))(this);
   }
 }
 
