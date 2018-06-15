@@ -1,5 +1,5 @@
 import Event from "./event";
-import {wrapObjectValues} from "./warpObjectValues";
+import {unwrapObjectValues, wrapObjectValues} from "./warpObjectValues";
 
 class LsStorage {
   constructor(mono) {
