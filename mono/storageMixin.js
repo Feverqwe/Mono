@@ -1,12 +1,4 @@
-import {wrapObjectValues, unwrapObjectValues} from "./warpObjectValues";
-
 const StorageMixin = StorageApi => class extends StorageApi {
-  constructor(mono) {
-    super();
-
-    this.mono = mono;
-  };
-
   /**
    * @param {Object|string|[string]|null|undefined} [keys]
    * @param {function} callback

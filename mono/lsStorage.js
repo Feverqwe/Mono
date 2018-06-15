@@ -1,4 +1,3 @@
-import getStorageChanges from "./getStorageChanges";
 import Event from "./event";
 import {wrapObjectValues} from "./warpObjectValues";
 

@@ -2,7 +2,7 @@ import getStorageChanges from "../../getStorageChanges";
 
 const SafariStorageChangesMixin = Parent => class extends Parent {
   constructor(mono) {
-    super();
+    super(mono);
     this.mono = mono;
 
     this.changesListener = this.changesListener.bind(this);
