@@ -5,33 +5,6 @@ const StorageMixin = StorageApi => class extends StorageApi {
     super();
 
     this.mono = mono;
-
-    this.remote = {
-      get: keys => {
-        return new Promise((resolve, reject) => this.get(unwrapObjectValues(keys), result => {
-          const err = this.mono.lastError;
-          err ? reject(err) : resolve(wrapObjectValues(result));
-        }));
-      },
-      set: items => {
-        return new Promise((resolve, reject) => this.set(unwrapObjectValues(items), () => {
-          const err = this.mono.lastError;
-          err ? reject(err) : resolve();
-        }));
-      },
-      remove: keys => {
-        return new Promise((resolve, reject) => this.remove(keys, () => {
-          const err = this.mono.lastError;
-          err ? reject(err) : resolve();
-        }));
-      },
-      clear: () => {
-        return new Promise((resolve, reject) => this.clear(() => {
-          const err = this.mono.lastError;
-          err ? reject(err) : resolve();
-        }));
-      }
-    }
   };
 
   /**
