@@ -1,7 +1,6 @@
 import ContentScriptMono from "../../contentScriptMono";
 import ChromeStorage from "./storage";
 import ChromeContentScriptApiMixin from "./contentScriptApiMixin";
-import StorageMixin from "../../storageMixin";
 
 class ChromeContentScriptMono extends ChromeContentScriptApiMixin(ContentScriptMono) {
   constructor() {
@@ -46,7 +45,7 @@ class ChromeContentScriptMono extends ChromeContentScriptApiMixin(ContentScriptM
     super.initMessages();
   }
   initStorage() {
-    this.storage = new (StorageMixin(ChromeStorage))(this);
+    this.storage = new ChromeStorage(this);
   }
 }
 
