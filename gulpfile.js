@@ -72,6 +72,28 @@ gulp.task('buildFirefox', () => {
     .then(() => buildBase());
 });
 
+gulp.task('buildEdge', () => {
+  const manifest = require('./src/manifest');
+
+  BUILD_ENV.version = manifest.version;
+
+  BUILD_ENV.babelOptions.presets.push(
+    ['env', {
+      targets: {
+        browsers: [
+          'Edge >= 14.14291'
+        ]
+      }
+    }]
+  );
+
+  BUILD_ENV.outputPath = path.resolve('./dist/edge');
+  BUILD_ENV.monoBrowser = 'edge';
+
+  return runWebpack(require('./webpack.chrome'))
+    .then(() => buildBase());
+});
+
 gulp.task('buildSafari', () => {
   const manifest = require('./src/manifest');
 
@@ -145,3 +167,5 @@ gulp.task('safari', gulp.series('singleTaskLock', 'setArgv', 'buildSafari'));
 gulp.task('chrome', gulp.series('singleTaskLock', 'setArgv', 'buildChrome'));
 
 gulp.task('firefox', gulp.series('singleTaskLock', 'setArgv', 'buildFirefox'));
+
+gulp.task('edge', gulp.series('singleTaskLock', 'setArgv', 'buildEdge'));

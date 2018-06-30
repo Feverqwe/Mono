@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "run-p buildChrome buildFirefox buildSafari buildUserjs",
+    "build": "run-p buildChrome buildFirefox buildEdge buildSafari buildUserjs",
     "buildUserjs": "gulp userjs",
     "buildSafari": "gulp safari",
     "buildChrome": "gulp chrome",
     "buildFirefox": "gulp firefox",
+    "buildEdge": "gulp edge",
     "watchChrome": "webpack --mode development --watch --source-path ./src --mono-path ./mono --1output-path ./dist/chrome --mono-browser chrome --config webpack.chrome.js --config webpack.background.js --config webpack.pages.js --config webpack.contentScripts.js"
   },
   "devDependencies": {
