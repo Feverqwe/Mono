@@ -14,6 +14,7 @@ global.BUILD_ENV = global.BUILD_ENV || {
   devtool: 'source-map',
   mode: getArgvValue('--mode'),
   version: sourcePathArg === null ? '' : fs.readJsonSync(path.join(path.resolve(sourcePathArg), 'manifest.json')).version,
+  geckoId: null,
   babelOptions: {
     presets: [
       ['env', {

@@ -48,6 +48,30 @@ gulp.task('buildChrome', () => {
     .then(() => buildBase());
 });
 
+gulp.task('buildFirefox', () => {
+  const manifest = require('./src/manifest');
+  const version = `${manifest.version}`;
+
+  BUILD_ENV.geckoId = 'mono@example.example';
+  BUILD_ENV.version = version;
+
+  BUILD_ENV.babelOptions.presets.push(
+    ['env', {
+      targets: {
+        browsers: [
+          'Firefox >= 48'
+        ]
+      }
+    }]
+  );
+
+  BUILD_ENV.outputPath = path.resolve('./dist/firefox');
+  BUILD_ENV.monoBrowser = 'firefox';
+
+  return runWebpack(require('./webpack.firefox'))
+    .then(() => buildBase());
+});
+
 gulp.task('buildSafari', () => {
   const manifest = require('./src/manifest');
 
@@ -119,3 +143,5 @@ gulp.task('userjs', gulp.series('singleTaskLock', 'setArgv', 'buildUserjs'));
 gulp.task('safari', gulp.series('singleTaskLock', 'setArgv', 'buildSafari'));
 
 gulp.task('chrome', gulp.series('singleTaskLock', 'setArgv', 'buildChrome'));
+
+gulp.task('firefox', gulp.series('singleTaskLock', 'setArgv', 'buildFirefox'));
