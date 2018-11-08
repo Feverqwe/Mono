@@ -50,7 +50,7 @@ const config = {
         }]
       },
       {
-        test: /.js$/,
+        test: /\.js$/,
         exclude: /node_modules/,
         use: jsRulesUseArray
       },

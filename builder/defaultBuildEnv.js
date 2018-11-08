@@ -13,11 +13,11 @@ global.BUILD_ENV = global.BUILD_ENV || {
   outputPath: outputPathArg === null ? '' : path.resolve(outputPathArg),
   devtool: 'source-map',
   mode: getArgvValue('--mode'),
-  version: sourcePathArg === null ? '' : fs.readJsonSync(path.join(path.resolve(sourcePathArg), 'manifest.json')).version,
   geckoId: null,
+  version: sourcePathArg === null ? '' : fs.readJsonSync(path.join(path.resolve(sourcePathArg), 'manifest.json')).version,
   babelOptions: {
     presets: [
-      ['env', {
+      ['@babel/preset-env', {
         targets: {
           browsers: [
             'Chrome >= 65']

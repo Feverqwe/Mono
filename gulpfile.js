@@ -32,7 +32,7 @@ gulp.task('buildChrome', () => {
   BUILD_ENV.version = manifest.version;
 
   BUILD_ENV.babelOptions.presets.push(
-    ['env', {
+    ['@babel/preset-env', {
       targets: {
         browsers: [
           'Chrome >= 40'
@@ -56,7 +56,7 @@ gulp.task('buildFirefox', () => {
   BUILD_ENV.version = version;
 
   BUILD_ENV.babelOptions.presets.push(
-    ['env', {
+    ['@babel/preset-env', {
       targets: {
         browsers: [
           'Firefox >= 48'
@@ -78,7 +78,7 @@ gulp.task('buildEdge', () => {
   BUILD_ENV.version = manifest.version;
 
   BUILD_ENV.babelOptions.presets.push(
-    ['env', {
+    ['@babel/preset-env', {
       targets: {
         browsers: [
           'Edge >= 14.14291'
@@ -100,7 +100,7 @@ gulp.task('buildSafari', () => {
   BUILD_ENV.version = manifest.version;
 
   BUILD_ENV.babelOptions.presets.push(
-    ['env', {
+    ['@babel/preset-env', {
       targets: {
         browsers: [
           'Safari >= 10'
@@ -123,7 +123,7 @@ gulp.task('buildUserjs', () => {
   BUILD_ENV.version = manifest.version;
 
   BUILD_ENV.babelOptions.presets.push(
-    ['env', {
+    ['@babel/preset-env', {
       targets: {
         browsers: [
           'Chrome >= 40',

@@ -16,9 +16,11 @@ class UserscriptContentScriptMono extends UserscriptContentScriptApiMixin(Conten
     this.initI18n();
   }
   initI18n() {
-    this.locale = this.bundle.getLocale();
     this.i18n = {
       getMessage: (message) => {
+        if (!this.locale) {
+          this.locale = this.bundle.getLocale();
+        }
         const item = this.locale[message];
         return item && item.message || '';
       }

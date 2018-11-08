@@ -6,9 +6,11 @@ import SafariStorageChangesMixin from "./storageChangesMixin";
 
 const SafariPageMonoMixin = Parent => class extends LocaleMixin(Parent) {
   initI18n() {
-    this.locale = this.getLocale();
     this.i18n = {
       getMessage: (message) => {
+        if (!this.locale) {
+          this.locale = this.getLocale();
+        }
         const item = this.locale[message];
         return item && item.message || '';
       }

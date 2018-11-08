@@ -31,7 +31,7 @@ const config = {
   module: {
     rules: [
       {
-        test: /.js$/,
+        test: /\.js$/,
         exclude: /node_modules/,
         use: jsRulesUseArray
       },
