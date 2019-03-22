@@ -16,12 +16,9 @@ const LocaleMixin = Parent => class extends Parent {
       availableLanguages = [navigator.language];
     }
     const languages = preferredLanguages(availableLanguages.join(','), Object.keys(this.localeMap));
-    let locale = null;
+    let locale = this.localeMap[this.defaultLocale];
     if (languages) {
-      locale = this.localeMap[languages[0]];
-    }
-    if (!locale) {
-      locale = this.localeMap[this.defaultLocale];
+      locale = Object.assign({}, locale, this.localeMap[languages[0]]);
     }
     return locale;
   }
